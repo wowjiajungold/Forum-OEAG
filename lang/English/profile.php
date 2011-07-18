@@ -74,14 +74,10 @@ $lang_profile = array(
 'Posts info'					=>	'Posts: %s',
 'Registered info'				=>	'Registered: %s',
 'Last post info'				=>	'Last post: %s',
-<<<<<<< HEAD
-'Show posts'					=>	'Show all posts',
-=======
 'Last visit info'				=>	'Last visit: %s',
 'Show posts'					=>	'Show all posts',
 'Show topics'					=>	'Show all topics',
 'Show subscriptions'			=>	'Show all subscriptions',
->>>>>>> fluxbb-1.4.5
 'Realname'						=>	'Real name',
 'Location'						=>	'Location',
 'Website'						=>	'Website',
@@ -119,13 +115,10 @@ $lang_profile = array(
 'Post display legend'			=>	'Set your options for viewing posts',
 'Post display info'				=>	'If you are on a slow connection, disabling these options, particularly showing images in posts and signatures, will make pages load faster.',
 'Instructions'					=>	'When you update your profile, you will be redirected back to this page.',
-<<<<<<< HEAD
 'Years old'                     =>  'Years old',
 'Age'                           =>  'Age',
 'Birthdate'                     =>  'Birthdate',
 'Age profile use'               =>  'Month Day Year',
-=======
->>>>>>> fluxbb-1.4.5
 
 // Administration stuff
 'Group membership legend'		=>	'Choose user group',

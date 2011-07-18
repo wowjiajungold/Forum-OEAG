@@ -1,20 +1,12 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 // Include UTF-8 function
@@ -220,11 +212,7 @@ else if ($action == 'change_email')
 			{
 				$mail_subject = $lang_common['Banned email notification'];
 				$mail_message = sprintf($lang_common['Banned email change message'], $pun_user['username'], $new_email)."\n";
-<<<<<<< HEAD
-				$mail_message .= sprintf($lang_common['User profile'], $pun_config['o_base_url'].'/profile.php?id='.$id)."\n";
-=======
 				$mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$id)."\n";
->>>>>>> fluxbb-1.4.5
 				$mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
 
 				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
@@ -244,11 +232,7 @@ else if ($action == 'change_email')
 
 				$mail_subject = $lang_common['Duplicate email notification'];
 				$mail_message = sprintf($lang_common['Duplicate email change message'], $pun_user['username'], implode(', ', $dupe_list))."\n";
-<<<<<<< HEAD
-				$mail_message .= sprintf($lang_common['User profile'], $pun_config['o_base_url'].'/profile.php?id='.$id)."\n";
-=======
 				$mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$id)."\n";
->>>>>>> fluxbb-1.4.5
 				$mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
 
 				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
@@ -269,13 +253,8 @@ else if ($action == 'change_email')
 		$mail_message = trim(substr($mail_tpl, $first_crlf));
 
 		$mail_message = str_replace('<username>', $pun_user['username'], $mail_message);
-<<<<<<< HEAD
-		$mail_message = str_replace('<base_url>', $pun_config['o_base_url'], $mail_message);
-		$mail_message = str_replace('<activation_url>', $pun_config['o_base_url'].'/profile.php?action=change_email&id='.$id.'&key='.$new_email_key, $mail_message);
-=======
 		$mail_message = str_replace('<base_url>', get_base_url(), $mail_message);
 		$mail_message = str_replace('<activation_url>', get_base_url().'/profile.php?action=change_email&id='.$id.'&key='.$new_email_key, $mail_message);
->>>>>>> fluxbb-1.4.5
 		$mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'].' '.$lang_common['Mailer'], $mail_message);
 
 		pun_mail($new_email, $mail_subject, $mail_message);
@@ -368,19 +347,6 @@ else if ($action == 'upload_avatar' || $action == 'upload_avatar2')
 				message($lang_profile['Bad type']);
 
 			// Make sure the file isn't too big
-<<<<<<< HEAD
-			if (floor($uploaded_file['size']) > $pun_config['o_avatars_size'])
-				message($lang_profile['Too large'].' '.forum_number_format($pun_config['o_avatars_size']).' '.$lang_profile['bytes'].'.');
-
-			// Move the file to the avatar directory. We do this before checking the width/height to circumvent open_basedir restrictions
-			if (!@move_uploaded_file($uploaded_file['tmp_name'], $pun_config['o_avatars_dir'].'/'.$id.'.tmp'))
-				message($lang_profile['Move failed'].' <a href="mailto:'.$pun_config['o_admin_email'].'">'.$pun_config['o_admin_email'].'</a>.');
-
-			list($width, $height, $type,) = @getimagesize($pun_config['o_avatars_dir'].'/'.$id.'.tmp');
-
-			// Determine type
-			$extension = null;
-=======
 			if ($uploaded_file['size'] > $pun_config['o_avatars_size'])
 				message($lang_profile['Too large'].' '.forum_number_format($pun_config['o_avatars_size']).' '.$lang_profile['bytes'].'.');
 
@@ -391,7 +357,6 @@ else if ($action == 'upload_avatar' || $action == 'upload_avatar2')
 			list($width, $height, $type,) = @getimagesize(PUN_ROOT.$pun_config['o_avatars_dir'].'/'.$id.'.tmp');
 
 			// Determine type
->>>>>>> fluxbb-1.4.5
 			if ($type == IMAGETYPE_GIF)
 				$extension = '.gif';
 			else if ($type == IMAGETYPE_JPEG)
@@ -401,34 +366,21 @@ else if ($action == 'upload_avatar' || $action == 'upload_avatar2')
 			else
 			{
 				// Invalid type
-<<<<<<< HEAD
-				@unlink($pun_config['o_avatars_dir'].'/'.$id.'.tmp');
-=======
 				@unlink(PUN_ROOT.$pun_config['o_avatars_dir'].'/'.$id.'.tmp');
->>>>>>> fluxbb-1.4.5
 				message($lang_profile['Bad type']);
 			}
 
 			// Now check the width/height
 			if (empty($width) || empty($height) || $width > $pun_config['o_avatars_width'] || $height > $pun_config['o_avatars_height'])
 			{
-<<<<<<< HEAD
-				@unlink($pun_config['o_avatars_dir'].'/'.$id.'.tmp');
-=======
 				@unlink(PUN_ROOT.$pun_config['o_avatars_dir'].'/'.$id.'.tmp');
->>>>>>> fluxbb-1.4.5
 				message($lang_profile['Too wide or high'].' '.$pun_config['o_avatars_width'].'x'.$pun_config['o_avatars_height'].' '.$lang_profile['pixels'].'.');
 			}
 
 			// Delete any old avatars and put the new one in place
 			delete_avatar($id);
-<<<<<<< HEAD
-			@rename($pun_config['o_avatars_dir'].'/'.$id.'.tmp', $pun_config['o_avatars_dir'].'/'.$id.$extension);
-			@chmod($pun_config['o_avatars_dir'].'/'.$id.$extension, 0644);
-=======
 			@rename(PUN_ROOT.$pun_config['o_avatars_dir'].'/'.$id.'.tmp', PUN_ROOT.$pun_config['o_avatars_dir'].'/'.$id.$extension);
 			@chmod(PUN_ROOT.$pun_config['o_avatars_dir'].'/'.$id.$extension, 0644);
->>>>>>> fluxbb-1.4.5
 		}
 		else
 			message($lang_profile['Unknown failure']);
@@ -454,11 +406,7 @@ else if ($action == 'upload_avatar' || $action == 'upload_avatar2')
 						<input type="hidden" name="form_sent" value="1" />
 						<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $pun_config['o_avatars_size'] ?>" />
 						<label class="required"><strong><?php echo $lang_profile['File'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br /><input name="req_file" type="file" size="40" /><br /></label>
-<<<<<<< HEAD
-						<p><?php echo $lang_profile['Avatar desc'].' '.$pun_config['o_avatars_width'].' x '.$pun_config['o_avatars_height'].' '.$lang_profile['pixels'].' '.$lang_common['and'].' '.forum_number_format($pun_config['o_avatars_size']).' '.$lang_profile['bytes'].' ('.forum_number_format(ceil($pun_config['o_avatars_size'] / 1024)) ?> KB).</p>
-=======
 						<p><?php echo $lang_profile['Avatar desc'].' '.$pun_config['o_avatars_width'].' x '.$pun_config['o_avatars_height'].' '.$lang_profile['pixels'].' '.$lang_common['and'].' '.forum_number_format($pun_config['o_avatars_size']).' '.$lang_profile['bytes'].' ('.file_size($pun_config['o_avatars_size']).').' ?></p>
->>>>>>> fluxbb-1.4.5
 					</div>
 				</fieldset>
 			</div>
@@ -496,15 +444,12 @@ else if (isset($_POST['update_group_membership']))
 
 	$db->query('UPDATE '.$db->prefix.'users SET group_id='.$new_group_id.' WHERE id='.$id) or error('Unable to change user group', __FILE__, __LINE__, $db->error());
 
-<<<<<<< HEAD
-=======
 	// Regenerate the users info cache
 	if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 		require PUN_ROOT.'include/cache.php';
 
 	generate_users_info_cache();
 
->>>>>>> fluxbb-1.4.5
 	$result = $db->query('SELECT g_moderator FROM '.$db->prefix.'groups WHERE g_id='.$new_group_id) or error('Unable to fetch group', __FILE__, __LINE__, $db->error());
 	$new_group_mod = $db->result($result);
 
@@ -621,12 +566,8 @@ else if (isset($_POST['delete_user']) || isset($_POST['delete_user_comply']))
 		}
 
 		// Delete any subscriptions
-<<<<<<< HEAD
-		$db->query('DELETE FROM '.$db->prefix.'subscriptions WHERE user_id='.$id) or error('Unable to delete subscriptions', __FILE__, __LINE__, $db->error());
-=======
 		$db->query('DELETE FROM '.$db->prefix.'topic_subscriptions WHERE user_id='.$id) or error('Unable to delete topic subscriptions', __FILE__, __LINE__, $db->error());
 		$db->query('DELETE FROM '.$db->prefix.'forum_subscriptions WHERE user_id='.$id) or error('Unable to delete forum subscriptions', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
 
 		// Remove him/her from the online list (if they happen to be logged in)
 		$db->query('DELETE FROM '.$db->prefix.'online WHERE user_id='.$id) or error('Unable to remove user from online list', __FILE__, __LINE__, $db->error());
@@ -665,19 +606,17 @@ else if (isset($_POST['delete_user']) || isset($_POST['delete_user_comply']))
 		// Delete user avatar
 		delete_avatar($id);
 
-<<<<<<< HEAD
         // PMS
         $db->query('DELETE FROM '.$db->prefix.'messages WHERE owner='.$id) or error('Unable to delete user\'s messages', __FILE__, __LINE__, $db->error());
         $db->query('DELETE FROM '.$db->prefix.'messages WHERE sender_id='.$id) or error('Unable to delete user\'s messages', __FILE__, __LINE__, $db->error());
         $db->query('DELETE FROM '.$db->prefix.'contacts WHERE user_id='.$id) or error('Unable to delete user\'s contacts', __FILE__, __LINE__, $db->error());
         $db->query('DELETE FROM '.$db->prefix.'contacts WHERE contact_id='.$id) or error('Unable to delete user\'s contacts', __FILE__, __LINE__, $db->error());
-=======
+
 		// Regenerate the users info cache
 		if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 			require PUN_ROOT.'include/cache.php';
 
 		generate_users_info_cache();
->>>>>>> fluxbb-1.4.5
 
 		redirect('index.php', $lang_profile['User delete redirect']);
 	}
@@ -716,18 +655,6 @@ else if (isset($_POST['delete_user']) || isset($_POST['delete_user_comply']))
 else if (isset($_POST['form_sent']))
 {
 	// Fetch the user group of the user we are editing
-<<<<<<< HEAD
-	$result = $db->query('SELECT u.group_id, g.g_moderator FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON (g.g_id=u.group_id) WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-	if (!$db->num_rows($result))
-		message($lang_common['Bad request']);
-
-	list($group_id, $is_moderator) = $db->fetch_row($result);
-
-	if ($pun_user['id'] != $id &&
-		(!$pun_user['is_admmod'] ||
-		($pun_user['g_moderator'] == '1' && $pun_user['g_mod_edit_users'] == '0') ||
-		($pun_user['g_moderator'] == '1' && $is_moderator)))
-=======
 	$result = $db->query('SELECT u.username, u.group_id, g.g_moderator FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON (g.g_id=u.group_id) WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 	if (!$db->num_rows($result))
 		message($lang_common['Bad request']);
@@ -739,8 +666,7 @@ else if (isset($_POST['form_sent']))
 		($pun_user['g_id'] != PUN_ADMIN &&															// or we aren't an admin and ...
 		($pun_user['g_mod_edit_users'] == '0' ||													// mods aren't allowed to edit users
 		$group_id == PUN_ADMIN ||																	// or the user is an admin
-		$is_moderator))))																			// or the user is another mod
->>>>>>> fluxbb-1.4.5
+		$is_moderator))))
 		message($lang_common['No permission']);
 
 	if ($pun_user['is_admmod'])
@@ -763,16 +689,10 @@ else if (isset($_POST['form_sent']))
 			// Make sure we got a valid language string
 			if (isset($_POST['form']['language']))
 			{
-<<<<<<< HEAD
-				$form['language'] = preg_replace('#[\.\\\/]#', '', pun_trim($_POST['form']['language']));
-				if (!file_exists(PUN_ROOT.'lang/'.$form['language'].'/common.php'))
-						message($lang_common['Bad request']);
-=======
 				$languages = forum_list_langs();
 				$form['language'] = pun_trim($_POST['form']['language']);
 				if (!in_array($form['language'], $languages))
 					message($lang_common['Bad request']);
->>>>>>> fluxbb-1.4.5
 			}
 
 			if ($pun_user['is_admmod'])
@@ -783,20 +703,6 @@ else if (isset($_POST['form_sent']))
 				if ($pun_user['g_id'] == PUN_ADMIN || ($pun_user['g_moderator'] == '1' && $pun_user['g_mod_rename_users'] == '1'))
 				{
 					$form['username'] = pun_trim($_POST['req_username']);
-<<<<<<< HEAD
-					$old_username = pun_trim($_POST['old_username']);
-
-					// Check username
-					require PUN_ROOT.'lang/'.$pun_user['language'].'/register.php';
-
-					$errors = array();
-					check_username($form['username'], $id);
-					if (!empty($errors))
-						message($errors[0]);
-
-					if ($form['username'] != $old_username)
-						$username_updated = true;
-=======
 
 					if ($form['username'] != $old_username)
 					{
@@ -810,7 +716,6 @@ else if (isset($_POST['form_sent']))
 
 						$username_updated = true;
 					}
->>>>>>> fluxbb-1.4.5
 				}
 
 				// We only allow administrators to update the post count
@@ -837,20 +742,16 @@ else if (isset($_POST['form_sent']))
 				'realname'		=> pun_trim($_POST['form']['realname']),
 				'url'			=> pun_trim($_POST['form']['url']),
 				'location'		=> pun_trim($_POST['form']['location']),
-<<<<<<< HEAD
 				// Age
                 'birthd'        => pun_trim($_POST['form']['birthd']),
                 'birthm'        => pun_trim($_POST['form']['birthm']),
                 'birthy'        => pun_trim($_POST['form']['birthy']),
                 'sex'           => pun_trim($_POST['form']['sex'])
-=======
->>>>>>> fluxbb-1.4.5
 			);
 
 			// Add http:// if the URL doesn't contain it already (while allowing https://, too)
 			if ($form['url'] != '' && !preg_match('#^https?://#i', $form['url']))
 				$form['url'] = 'http://'.$form['url'];
-<<<<<<< HEAD
             
             // MOD AGE - 11 LINES NEW CODE FOLLOW
             if (!is_numeric($form['birthd']) or !is_numeric($form['birthm']) or !is_numeric($form['birthy'])) {
@@ -864,8 +765,6 @@ else if (isset($_POST['form_sent']))
             unset($form['birthd']);
             unset($form['birthm']);
             unset($form['birthy']);
-=======
->>>>>>> fluxbb-1.4.5
 
 			if ($pun_user['g_id'] == PUN_ADMIN)
 				$form['title'] = pun_trim($_POST['title']);
@@ -920,12 +819,9 @@ else if (isset($_POST['form_sent']))
 					message(sprintf($lang_prof_reg['Sig too many lines'], $pun_config['p_sig_lines']));
 				else if ($form['signature'] && $pun_config['p_sig_all_caps'] == '0' && is_all_uppercase($form['signature']) && !$pun_user['is_admmod'])
 					$form['signature'] = utf8_ucwords(utf8_strtolower($form['signature']));
-<<<<<<< HEAD
 				
 				if(preg_match_all("/\[img\](.*?)\[\/img\]/si",$form['signature'],$matches)!=false)
                     check_signature($matches,$form['signature']);
-=======
->>>>>>> fluxbb-1.4.5
 
 				// Validate BBCode syntax
 				if ($pun_config['p_sig_bbcode'] == '1')
@@ -977,43 +873,22 @@ else if (isset($_POST['form_sent']))
 			// Make sure we got a valid style string
 			if (isset($_POST['form']['style']))
 			{
-<<<<<<< HEAD
-				$form['style'] = preg_replace('#[\.\\\/]#', '', pun_trim($_POST['form']['style']));
-				if (!file_exists(PUN_ROOT.'style/'.$form['style'].'.css'))
-						message($lang_common['Bad request']);
-=======
 				$styles = forum_list_styles();
 				$form['style'] = pun_trim($_POST['form']['style']);
 				if (!in_array($form['style'], $styles))
 					message($lang_common['Bad request']);
->>>>>>> fluxbb-1.4.5
 			}
 
 			break;
 		}
-
-<<<<<<< HEAD
-// 		case 'privacy':
-// 		{
-// 			$form = array(
-// 				'email_setting'			=> intval($_POST['form']['email_setting']),
-// 				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
-// 				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
-// 			);
-// 
-// 			if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
-// 				$form['email_setting'] = $pun_config['o_default_email_setting'];
-// 
-// 			break;
-// 		}
         
         // PMS
         case 'privacy':
         {
             $form = array(
-                'email_setting'         => intval($_POST['form']['email_setting']),
-                'notify_with_post'      => isset($_POST['form']['notify_with_post']) ? '1' : '0',
-                'auto_notify'           => isset($_POST['form']['auto_notify']) ? '1' : '0',
+				'email_setting'			=> intval($_POST['form']['email_setting']),
+				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
+				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
                 'use_pm'                => isset($_POST['form']['use_pm']) ? '1' : '0',
                 'notify_pm'             => isset($_POST['form']['notify_pm']) ? '1' : '0',
             );
@@ -1023,21 +898,6 @@ else if (isset($_POST['form_sent']))
 
             break;
         }
-=======
-		case 'privacy':
-		{
-			$form = array(
-				'email_setting'			=> intval($_POST['form']['email_setting']),
-				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
-				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
-			);
-
-			if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
-				$form['email_setting'] = $pun_config['o_default_email_setting'];
-
-			break;
-		}
->>>>>>> fluxbb-1.4.5
 
 		default:
 			message($lang_common['Bad request']);
@@ -1069,16 +929,12 @@ else if (isset($_POST['form_sent']))
 		$db->query('UPDATE '.$db->prefix.'forums SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update forums', __FILE__, __LINE__, $db->error());
 		$db->query('UPDATE '.$db->prefix.'online SET ident=\''.$db->escape($form['username']).'\' WHERE ident=\''.$db->escape($old_username).'\'') or error('Unable to update online list', __FILE__, __LINE__, $db->error());
 
-<<<<<<< HEAD
         // PMS
         $db->query('UPDATE '.$db->prefix.'messages SET sender=\''.$db->escape($form['username']).'\' WHERE sender=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
         $db->query('UPDATE '.$db->prefix.'messages SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
         $db->query('UPDATE '.$db->prefix.'contacts SET contact_name=\''.$db->escape($form['username']).'\' WHERE contact_name=\''.$db->escape($old_username).'\'') or error('Unable to update contacts', __FILE__, __LINE__, $db->error());
         $db->query('UPDATE '.$db->prefix.'messages SET receiver=REPLACE(receiver,\''.$db->escape($old_username).'\',\''.$db->escape($form['username']).'\') WHERE receiver LIKE \'%'.$db->escape($old_username).'%\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
 
-
-=======
->>>>>>> fluxbb-1.4.5
 		// If the user is a moderator or an administrator we have to update the moderator lists
 		$result = $db->query('SELECT group_id FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 		$group_id = $db->result($result);
@@ -1110,11 +966,7 @@ else if (isset($_POST['form_sent']))
 }
 
 
-<<<<<<< HEAD
-$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.birthdate, u.sex, u.signature, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.notify_pm, u.use_pm, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.last_visit, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-=======
-$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.signature, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, u.last_visit, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
+$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.signature, u.sex, u.signature, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.notify_pm, u.use_pm, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.last_visit, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 if (!$db->num_rows($result))
 	message($lang_common['Bad request']);
 
@@ -1130,19 +982,12 @@ if ($user['signature'] != '')
 
 
 // View or edit?
-<<<<<<< HEAD
-if ($pun_user['id'] != $id &&
-	(!$pun_user['is_admmod'] ||
-	($pun_user['g_moderator'] == '1' && $pun_user['g_mod_edit_users'] == '0') ||
-	($pun_user['g_moderator'] == '1' && $user['g_moderator'] == '1')))
-=======
 if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. editing your own profile)
 	(!$pun_user['is_admmod'] ||																	// and we are not an admin or mod
 	($pun_user['g_id'] != PUN_ADMIN &&															// or we aren't an admin and ...
 	($pun_user['g_mod_edit_users'] == '0' ||													// mods aren't allowed to edit users
 	$user['g_id'] == PUN_ADMIN ||																// or the user is an admin
-	$user['g_moderator'] == '1'))))																// or the user is another mod
->>>>>>> fluxbb-1.4.5
+	$user['g_moderator'] == '1'))))
 {
 	$user_personal = array();
 
@@ -1158,7 +1003,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 		$user_personal[] = '<dt>'.$lang_profile['Realname'].'</dt>';
 		$user_personal[] = '<dd>'.pun_htmlspecialchars(($pun_config['o_censoring'] == '1') ? censor_words($user['realname']) : $user['realname']).'</dd>';
 	}
-<<<<<<< HEAD
 	
 	if ($user['sex'] != '')
     {
@@ -1169,8 +1013,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
         $user_personal[] = '<dt>'.$lang_common['Sex'].': </dt>';
         $user_personal[] = '<dd>'.$user['sex'].'</dd>';
     }
-=======
->>>>>>> fluxbb-1.4.5
 
 	if ($user['location'] != '')
 	{
@@ -1184,15 +1026,12 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 		$user_personal[] = '<dt>'.$lang_profile['Website'].'</dt>';
 		$user_personal[] = '<dd><span class="website"><a href="'.$user['url'].'">'.$user['url'].'</a></span></dd>';
 	}
-<<<<<<< HEAD
     
     if ($user['birthdate'] != '')
     {
         $user_personal[] = '<dt>'.$lang_profile['Age'].': </dt>';
         $user_personal[] = '<dd>'.calculAge($user['birthdate']).' '.$lang_profile['Years old'].'</dd>';
     }
-=======
->>>>>>> fluxbb-1.4.5
 
 	if ($user['email_setting'] == '0' && !$pun_user['is_guest'] && $pun_user['g_send_email'] == '1')
 		$email_field = '<a href="mailto:'.$user['email'].'">'.$user['email'].'</a>';
@@ -1205,7 +1044,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 		$user_personal[] = '<dt>'.$lang_common['Email'].'</dt>';
 		$user_personal[] = '<dd><span class="email">'.$email_field.'</span></dd>';
 	}
-<<<<<<< HEAD
 	
 	// PMS    
     if ($pun_config['o_pms_enabled'] == '1' && !$pun_user['is_guest'] && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1' && $user['use_pm'] == '1')
@@ -1229,9 +1067,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
         $user_personal[] = '<dt>'.$lang_pms['Contacts'].'</dt>';
         $user_personal[] = '<dd>'.$pm_add_field.'</span></dd>';
     }
-
-=======
->>>>>>> fluxbb-1.4.5
 
 	$user_messaging = array();
 
@@ -1291,10 +1126,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 	$posts_field = '';
 	if ($pun_config['o_show_post_count'] == '1' || $pun_user['is_admmod'])
 		$posts_field = forum_number_format($user['num_posts']);
-<<<<<<< HEAD
-	if ($pun_user['g_search'] == '1' && $user['num_posts'] > 0)
-		$posts_field .= (($posts_field != '') ? ' - ' : '').'<a href="search.php?action=show_user&amp;user_id='.$id.'">'.$lang_profile['Show posts'].'</a>';
-=======
 	if ($pun_user['g_search'] == '1')
 	{
 		$quick_searches = array();
@@ -1309,7 +1140,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 		if (!empty($quick_searches))
 			$posts_field .= (($posts_field != '') ? ' - ' : '').implode(' - ', $quick_searches);
 	}
->>>>>>> fluxbb-1.4.5
 	if ($posts_field != '')
 	{
 		$user_activity[] = '<dt>'.$lang_common['Posts'].'</dt>';
@@ -1324,15 +1154,12 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 
 	$user_activity[] = '<dt>'.$lang_common['Registered'].'</dt>';
 	$user_activity[] = '<dd>'.format_time($user['registered'], true).'</dd>';
-<<<<<<< HEAD
 	
     if ($pun_config['o_show_last_visit'] == '1' || $pun_user['is_admmod'])
     {
         $user_activity[] = '<dt>'.$lang_common['Visit'].'</dt>';
         $user_activity[] = '<dd>'.format_time($user['last_visit']).'</dd>';
     }
-=======
->>>>>>> fluxbb-1.4.5
 
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), sprintf($lang_profile['Users profile'], pun_htmlspecialchars($user['username'])));
 	define('PUN_ALLOW_INDEX', 1);
@@ -1403,23 +1230,16 @@ else
 		if ($pun_user['is_admmod'])
 		{
 			if ($pun_user['g_id'] == PUN_ADMIN || $pun_user['g_mod_rename_users'] == '1')
-<<<<<<< HEAD
-				$username_field = '<input type="hidden" name="old_username" value="'.pun_htmlspecialchars($user['username']).'" /><label class="required"><strong>'.$lang_common['Username'].' <span>'.$lang_common['Required'].'</span></strong><br /><input type="text" name="req_username" value="'.pun_htmlspecialchars($user['username']).'" size="25" maxlength="25" /><br /></label>'."\n";
-=======
 				$username_field = '<label class="required"><strong>'.$lang_common['Username'].' <span>'.$lang_common['Required'].'</span></strong><br /><input type="text" name="req_username" value="'.pun_htmlspecialchars($user['username']).'" size="25" maxlength="25" /><br /></label>'."\n";
->>>>>>> fluxbb-1.4.5
 			else
 				$username_field = '<p>'.sprintf($lang_profile['Username info'], pun_htmlspecialchars($user['username'])).'</p>'."\n";
 
 			$email_field = '<label class="required"><strong>'.$lang_common['Email'].' <span>'.$lang_common['Required'].'</span></strong><br /><input type="text" name="req_email" value="'.$user['email'].'" size="40" maxlength="80" /><br /></label><p><span class="email"><a href="misc.php?email='.$id.'">'.$lang_common['Send email'].'</a></span></p>'."\n";
-<<<<<<< HEAD
 
             // PMS
             if ($user['use_pm'] == '1')
                 $email_field .= '<p><a href="pms_send.php?uid='.$id.'">'.$lang_pms['Quick message'].'</a> - <a href="pms_contacts.php?add='.$id.'">'.$lang_pms['Add to contacts'].'</a></p>'."\n";
 
-=======
->>>>>>> fluxbb-1.4.5
 		}
 		else
 		{
@@ -1432,14 +1252,6 @@ else
 		}
 
 		$posts_field = '';
-<<<<<<< HEAD
-		if ($pun_user['g_id'] == PUN_ADMIN)
-			$posts_field = '<label>'.$lang_common['Posts'].'<br /><input type="text" name="num_posts" value="'.$user['num_posts'].'" size="8" maxlength="8" /><br /></label><p class="actions"><span><a href="search.php?action=show_user&amp;user_id='.$id.'">'.$lang_profile['Show posts'].'</a></span></p>'."\n";
-		else if ($pun_config['o_show_post_count'] == '1' || $pun_user['is_admmod'])
-			$posts_field = '<p>'.sprintf($lang_profile['Posts info'], forum_number_format($user['num_posts']).($pun_user['g_search'] == '1' ? ' - <a href="search.php?action=show_user&amp;user_id='.$id.'">'.$lang_profile['Show posts'].'</a>' : '')).'</p>'."\n";
-		else if ($pun_user['g_search'] == '1')
-			$posts_field = '<p class="actions"><span><a href="search.php?action=show_user&amp;user_id='.$id.'">'.$lang_profile['Show posts'].'</a></span></p>'."\n";
-=======
 		$posts_actions = array();
 
 		if ($pun_user['g_id'] == PUN_ADMIN)
@@ -1457,8 +1269,6 @@ else
 		}
 
 		$posts_field .= (!empty($posts_actions) ? '<p class="actions">'.implode(' - ', $posts_actions).'</p>' : '')."\n";
->>>>>>> fluxbb-1.4.5
-
 
 		$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Profile'], $lang_profile['Section essentials']);
 		$required_fields = array('req_username' => $lang_common['Username'], 'req_email' => $lang_common['Email']);
@@ -1614,14 +1424,8 @@ else
 						<legend><?php echo $lang_profile['User activity'] ?></legend>
 						<div class="infldset">
 							<p><?php printf($lang_profile['Registered info'], format_time($user['registered'], true).(($pun_user['is_admmod']) ? ' (<a href="moderate.php?get_host='.pun_htmlspecialchars($user['registration_ip']).'">'.pun_htmlspecialchars($user['registration_ip']).'</a>)' : '')) ?></p>
-<<<<<<< HEAD
-<?php //if ($pun_config['show_last_visit'] || $pun_user['is_admmod']): ?>                            <p><?php printf($lang_profile['Last visit info'], format_time($user['last_visit'], true)) ?></p>
-<?php //endif; ?>
-							<p><?php printf($lang_profile['Last post info'], $last_post) ?></p>
-=======
 							<p><?php printf($lang_profile['Last post info'], $last_post) ?></p>
 							<p><?php printf($lang_profile['Last visit info'], format_time($user['last_visit'])) ?></p>
->>>>>>> fluxbb-1.4.5
 							<?php echo $posts_field ?>
 <?php if ($pun_user['is_admmod']): ?>							<label><?php echo $lang_profile['Admin note'] ?><br />
 							<input id="admin_note" type="text" name="admin_note" value="<?php echo pun_htmlspecialchars($user['admin_note']) ?>" size="30" maxlength="30" /><br /></label>
@@ -1658,7 +1462,6 @@ else
 							<input type="hidden" name="form_sent" value="1" />
 							<label><?php echo $lang_profile['Realname'] ?><br /><input type="text" name="form[realname]" value="<?php echo pun_htmlspecialchars($user['realname']) ?>" size="40" maxlength="40" /><br /></label>
 <?php if (isset($title_field)): ?>							<?php echo $title_field ?>
-<<<<<<< HEAD
 <?php endif; ?>
 							<label><?php echo $lang_common['Sex'] ?><br /></label>
                             <select name="form[sex]">
@@ -1701,10 +1504,6 @@ else
 <?php } ?>
                         </select>
                         <br />
-=======
-<?php endif; ?>							<label><?php echo $lang_profile['Location'] ?><br /><input type="text" name="form[location]" value="<?php echo pun_htmlspecialchars($user['location']) ?>" size="30" maxlength="30" /><br /></label>
-							<label><?php echo $lang_profile['Website'] ?><br /><input type="text" name="form[url]" value="<?php echo pun_htmlspecialchars($user['url']) ?>" size="50" maxlength="80" /><br /></label>
->>>>>>> fluxbb-1.4.5
 						</div>
 					</fieldset>
 				</div>
@@ -1801,11 +1600,7 @@ else
 							</div>
 							<ul class="bblinks">
 								<li><span><a href="help.php#bbcode" onclick="window.open(this.href); return false;"><?php echo $lang_common['BBCode'] ?></a> <?php echo ($pun_config['p_sig_bbcode'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
-<<<<<<< HEAD
 								<li><span><a href="help.php#img" onclick="window.open(this.href); return false;"><?php echo $lang_common['img tag'] ?></a> <?php echo ($pun_config['p_sig_img_tag'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
-=======
-								<li><span><a href="help.php#img" onclick="window.open(this.href); return false;"><?php echo $lang_common['img tag'] ?></a> <?php echo ($pun_config['p_sig_bbcode'] == '1' && $pun_config['p_sig_img_tag'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
->>>>>>> fluxbb-1.4.5
 								<li><span><a href="help.php#smilies" onclick="window.open(this.href); return false;"><?php echo $lang_common['Smilies'] ?></a> <?php echo ($pun_config['o_smilies_sig'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
 							</ul>
 							<?php echo $signature_preview ?>
@@ -1871,11 +1666,7 @@ else
 		}
 
 ?>
-<<<<<<< HEAD
-<?php if ($pun_config['o_smilies'] == '1' || $pun_config['o_smilies_sig'] == '1' || $pun_config['o_signatures'] == '1' || $pun_config['o_avatars'] == '1' || $pun_config['p_message_img_tag'] == '1' || $pun_config['p_sig_img_tag'] == '1'): ?>
-=======
-<?php if ($pun_config['o_smilies'] == '1' || $pun_config['o_smilies_sig'] == '1' || $pun_config['o_signatures'] == '1' || $pun_config['o_avatars'] == '1' || ($pun_config['p_message_bbcode'] == '1' && $pun_config['p_message_img_tag'] == '1')): ?>
->>>>>>> fluxbb-1.4.5
+<?php if ($pun_config['o_smilies'] == '1' || $pun_config['o_smilies_sig'] == '1' || $pun_config['o_signatures'] == '1' || $pun_config['o_avatars'] == '1' || ($pun_config['p_message_bbcode'] == '1' && $pun_config['p_message_img_tag'] == '1') || $pun_config['p_sig_img_tag'] == '1'): ?>
 				<div class="inform">
 					<fieldset>
 						<legend><?php echo $lang_profile['Post display legend'] ?></legend>
@@ -1885,13 +1676,10 @@ else
 <?php if ($pun_config['o_smilies'] == '1' || $pun_config['o_smilies_sig'] == '1'): ?>								<label><input type="checkbox" name="form[show_smilies]" value="1"<?php if ($user['show_smilies'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show smilies'] ?><br /></label>
 <?php endif; if ($pun_config['o_signatures'] == '1'): ?>								<label><input type="checkbox" name="form[show_sig]" value="1"<?php if ($user['show_sig'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show sigs'] ?><br /></label>
 <?php endif; if ($pun_config['o_avatars'] == '1'): ?>								<label><input type="checkbox" name="form[show_avatars]" value="1"<?php if ($user['show_avatars'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show avatars'] ?><br /></label>
-<<<<<<< HEAD
 <?php endif; if ($pun_config['p_message_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img]" value="1"<?php if ($user['show_img'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images'] ?><br /></label>
 <?php endif; if ($pun_config['p_sig_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img_sig]" value="1"<?php if ($user['show_img_sig'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images sigs'] ?><br /></label>
-=======
 <?php endif; if ($pun_config['p_message_bbcode'] == '1' && $pun_config['p_message_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img]" value="1"<?php if ($user['show_img'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images'] ?><br /></label>
 <?php endif; if ($pun_config['o_signatures'] == '1' && $pun_config['p_sig_bbcode'] == '1' && $pun_config['p_sig_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img_sig]" value="1"<?php if ($user['show_img_sig'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images sigs'] ?><br /></label>
->>>>>>> fluxbb-1.4.5
 <?php endif; ?>
 							</div>
 						</div>
@@ -1942,30 +1730,19 @@ else
 						</div>
 					</fieldset>
 				</div>
-<<<<<<< HEAD
-<?php if ($pun_config['o_subscriptions'] == '1'): ?>				<div class="inform">
-=======
 <?php if ($pun_config['o_forum_subscriptions'] == '1' || $pun_config['o_topic_subscriptions'] == '1'): ?>				<div class="inform">
->>>>>>> fluxbb-1.4.5
 					<fieldset>
 						<legend><?php echo $lang_profile['Subscription legend'] ?></legend>
 						<div class="infldset">
 							<div class="rbox">
 								<label><input type="checkbox" name="form[notify_with_post]" value="1"<?php if ($user['notify_with_post'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Notify full'] ?><br /></label>
-<<<<<<< HEAD
-								<label><input type="checkbox" name="form[auto_notify]" value="1"<?php if ($user['auto_notify'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Auto notify full'] ?><br /></label>
-=======
 <?php if ($pun_config['o_topic_subscriptions'] == '1'): ?>								<label><input type="checkbox" name="form[auto_notify]" value="1"<?php if ($user['auto_notify'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Auto notify full'] ?><br /></label>
 <?php endif; ?>
->>>>>>> fluxbb-1.4.5
 							</div>
 						</div>
 					</fieldset>
 				</div>
-<<<<<<< HEAD
-<?php endif; ?>
-                <?php
-                if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1') : ?>
+<?php if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1') { ?>
                 <script type="text/javascript">
                 //<![CDATA[
                 function switchEtatByCheck(id_element, id_from_element)
@@ -2003,16 +1780,11 @@ else
                         </div>
                     </fieldset>
                 </div>
-                <?php endif; ?>
 				<p class="buttons"><input type="submit" name="update" value="<?php echo $lang_common['Submit'] ?>" /> <?php echo $lang_profile['Instructions'] ?></p>
-=======
-<?php endif; ?>				<p class="buttons"><input type="submit" name="update" value="<?php echo $lang_common['Submit'] ?>" /> <?php echo $lang_profile['Instructions'] ?></p>
->>>>>>> fluxbb-1.4.5
 			</form>
 		</div>
 	</div>
 <?php
-
 	}
 	else if ($section == 'admin')
 	{
@@ -2029,11 +1801,7 @@ else
 	<div class="blockform">
 		<h2><span><?php echo pun_htmlspecialchars($user['username']).' - '.$lang_profile['Section admin'] ?></span></h2>
 		<div class="box">
-<<<<<<< HEAD
-			<form id="profile7" method="post" action="profile.php?section=admin&amp;id=<?php echo $id ?>&amp;action=foo">
-=======
 			<form id="profile7" method="post" action="profile.php?section=admin&amp;id=<?php echo $id ?>">
->>>>>>> fluxbb-1.4.5
 				<div class="inform">
 				<input type="hidden" name="form_sent" value="1" />
 					<fieldset>
@@ -2153,10 +1921,5 @@ else
 	<div class="clearer"></div>
 </div>
 <?php
-
+}
 	require PUN_ROOT.'footer.php';
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> fluxbb-1.4.5
