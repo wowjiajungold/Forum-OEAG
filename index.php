@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Copyright (C) 2008-2010 FluxBB
+ * Copyright (C) 2008-2011 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
-define('PUN_ROOT', './');
+define('PUN_ROOT', dirname(__FILE__).'/');
 require PUN_ROOT.'include/common.php';
 
 
@@ -33,6 +33,12 @@ if ($pun_config['o_feed_type'] == '1')
 	$page_head = array('feed' => '<link rel="alternate" type="application/rss+xml" href="extern.php?action=feed&amp;type=rss" title="'.$lang_common['RSS active topics feed'].'" />');
 else if ($pun_config['o_feed_type'] == '2')
 	$page_head = array('feed' => '<link rel="alternate" type="application/atom+xml" href="extern.php?action=feed&amp;type=atom" title="'.$lang_common['Atom active topics feed'].'" />');
+
+$forum_actions = array();
+
+// Display a "mark all as read" link
+if (!$pun_user['is_guest'])
+	$forum_actions[] = '<a href="misc.php?action=markread">'.$lang_common['Mark all as read'].'</a>';
 
 $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']));
 define('PUN_ALLOW_INDEX', 1);
@@ -83,7 +89,7 @@ while ($cur_forum = $db->fetch_assoc($result))
 	$icon_type = 'icon';
 
 	// Are there new posts since our last visit?
-	if (!$pun_user['is_guest'] && $cur_forum['last_post'] > $pun_user['last_visit'] && (empty($tracked_topics['forums'][$cur_forum['fid']]) || $cur_forum['last_post'] > $tracked_topics['forums'][$cur_forum['fid']]) && $new_topics[$cur_forum['fid']])
+	if (!$pun_user['is_guest'] && $cur_forum['last_post'] > $pun_user['last_visit'] && (empty($tracked_topics['forums'][$cur_forum['fid']]) || $cur_forum['last_post'] > $tracked_topics['forums'][$cur_forum['fid']]))
 	{
 		// There are new posts in this forum, but have we read all of them already?
 		foreach ($new_topics[$cur_forum['fid']] as $check_topic_id => $check_last_post)
@@ -138,8 +144,8 @@ while ($cur_forum = $db->fetch_assoc($result))
 				$moderators[] = pun_htmlspecialchars($mod_username);
 		}
 
-		//$moderators = "\t\t\t\t\t\t\t\t".'<p class="modlist">(<em>'.$lang_common['Moderated by'].'</em> '.implode(', ', $moderators).')</p>'."\n";
-        $moderators = "";
+		$moderators = "\t\t\t\t\t\t\t\t".'<p class="modlist">(<em>'.$lang_common['Moderated by'].'</em> '.implode(', ', $moderators).')</p>'."\n";
+		$moderators= "";
 	}
 
 ?>
@@ -166,19 +172,18 @@ if ($cur_category > 0)
 else
 	echo '<div id="idx0" class="block"><div class="box"><div class="inbox"><p>'.$lang_index['Empty board'].'</p></div></div></div>';
 
-
 // Collect some statistics from the database
-$result = $db->query('SELECT COUNT(id)-1 FROM '.$db->prefix.'users WHERE group_id!='.PUN_UNVERIFIED) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
-$stats['total_users'] = $db->result($result);
+if (file_exists(FORUM_CACHE_DIR.'cache_users_info.php'))
+	include FORUM_CACHE_DIR.'cache_users_info.php';
 
-$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'posts WHERE posted >= '.strtotime(date('Y-m-d'))) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
-$stats['total_posts_today'] = $db->result($result);
+if (!defined('PUN_USERS_INFO_LOADED'))
+{
+	if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+		require PUN_ROOT.'include/cache.php';
 
-$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'topics WHERE posted >= '.strtotime(date('Y-m-d'))) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
-$stats['total_topics_today'] = $db->result($result);
-
-$result = $db->query('SELECT id, username FROM '.$db->prefix.'users WHERE group_id!='.PUN_UNVERIFIED.' ORDER BY registered DESC LIMIT 1') or error('Unable to fetch newest registered user', __FILE__, __LINE__, $db->error());
-$stats['last_user'] = $db->fetch_assoc($result);
+	generate_users_info_cache();
+	require FORUM_CACHE_DIR.'cache_users_info.php';
+}
 
 $result = $db->query('SELECT SUM(num_topics), SUM(num_posts) FROM '.$db->prefix.'forums') or error('Unable to fetch topic/post count', __FILE__, __LINE__, $db->error());
 list($stats['total_topics'], $stats['total_posts']) = $db->fetch_row($result);
@@ -190,6 +195,19 @@ else
 
 $s1 = ($stats['total_topics_today']>1) ? 's' : '';
 $s2 = ($stats['total_posts_today']>1) ? 's' : '';
+
+if (!empty($forum_actions))
+{
+
+?>
+<div class="linksb">
+	<div class="inbox crumbsplus">
+		<p class="subscribelink clearb"><?php echo implode(' - ', $forum_actions); ?></p>
+	</div>
+</div>
+<?php
+
+}
 
 ?>
 <div id="brdstats" class="block">
@@ -265,7 +283,6 @@ if ($pun_config['o_users_online'] == '1')
     }
     else
         echo "\t\t\t".'<div class="clearer"></div>'."\n";
-    
 
 }
 else

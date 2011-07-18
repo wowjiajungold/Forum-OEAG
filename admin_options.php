@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2010 FluxBB
+ * Copyright (C) 2008-2011 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -9,7 +9,7 @@
 // Tell header.php to use the admin template
 define('PUN_ADMIN_CONSOLE', 1);
 
-define('PUN_ROOT', './');
+define('PUN_ROOT', dirname(__FILE__).'/');
 require PUN_ROOT.'include/common.php';
 require PUN_ROOT.'include/common_admin.php';
 
@@ -22,9 +22,7 @@ require PUN_ROOT.'lang/'.$admin_language.'/admin_options.php';
 
 if (isset($_POST['form_sent']))
 {
-	// Custom referrer check (so we can output a custom error message)
-	if (!preg_match('#^'.preg_quote(str_replace('www.', '', $pun_config['o_base_url']).'/admin_options.php', '#').'#i', str_replace('www.', '', (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ''))))
-		message($lang_admin_options['Bad HTTP Referer message']);
+	confirm_referrer('admin_options.php', $lang_admin_options['Bad HTTP Referer message']);
 
 	$form = array(
 		'board_title'			=> pun_trim($_POST['form']['board_title']),
@@ -32,8 +30,8 @@ if (isset($_POST['form_sent']))
 		'base_url'				=> pun_trim($_POST['form']['base_url']),
 		'default_timezone'		=> floatval($_POST['form']['default_timezone']),
 		'default_dst'			=> $_POST['form']['default_dst'] != '1' ? '0' : '1',
-		'default_lang'			=> preg_replace('#[\.\\\/]#', '', pun_trim($_POST['form']['default_lang'])),
-		'default_style'			=> preg_replace('#[\.\\\/]#', '', pun_trim($_POST['form']['default_style'])),
+		'default_lang'			=> pun_trim($_POST['form']['default_lang']),
+		'default_style'			=> pun_trim($_POST['form']['default_style']),
 		'time_format'			=> pun_trim($_POST['form']['time_format']),
 		'date_format'			=> pun_trim($_POST['form']['date_format']),
 		'timeout_visit'			=> intval($_POST['form']['timeout_visit']),
@@ -54,6 +52,7 @@ if (isset($_POST['form_sent']))
 		'quickpost'				=> $_POST['form']['quickpost'] != '1' ? '0' : '1',
 		'users_online'			=> $_POST['form']['users_online'] != '1' ? '0' : '1',
 		'censoring'				=> $_POST['form']['censoring'] != '1' ? '0' : '1',
+		'signatures'			=> $_POST['form']['signatures'] != '1' ? '0' : '1',
 		'ranks'					=> $_POST['form']['ranks'] != '1' ? '0' : '1',
 		'show_dot'				=> $_POST['form']['show_dot'] != '1' ? '0' : '1',
 		'topic_views'			=> $_POST['form']['topic_views'] != '1' ? '0' : '1',
@@ -62,23 +61,24 @@ if (isset($_POST['form_sent']))
 		'search_all_forums'		=> $_POST['form']['search_all_forums'] != '1' ? '0' : '1',
 		'additional_navlinks'	=> pun_trim($_POST['form']['additional_navlinks']),
 		'feed_type'				=> intval($_POST['form']['feed_type']),
+		'feed_ttl'				=> intval($_POST['form']['feed_ttl']),
 		'report_method'			=> intval($_POST['form']['report_method']),
 		'mailing_list'			=> pun_trim($_POST['form']['mailing_list']),
-		'avatars'               => $_POST['form']['avatars'] != '1' ? '0' : '1',
-        'avatars_dir'           => pun_trim($_POST['form']['avatars_dir']),
-        'avatars_width'         => intval($_POST['form']['avatars_width']),
-        'avatars_height'        => intval($_POST['form']['avatars_height']),
-        'avatars_size'          => intval($_POST['form']['avatars_size']),
+		'avatars'				=> $_POST['form']['avatars'] != '1' ? '0' : '1',
+		'avatars_dir'			=> pun_trim($_POST['form']['avatars_dir']),
+		'avatars_width'			=> intval($_POST['form']['avatars_width']),
+		'avatars_height'		=> intval($_POST['form']['avatars_height']),
+		'avatars_size'			=> intval($_POST['form']['avatars_size']),
         'signatures'            => $_POST['form']['signatures'] != '1' ? '0' : '1',
         'sig_img_width'      => intval($_POST['form']['signatures_width']),
         'sig_img_height'     => intval($_POST['form']['signatures_height']),
         'sig_img_size'       => intval($_POST['form']['signatures_size']),
 		'admin_email'			=> strtolower(pun_trim($_POST['form']['admin_email'])),
 		'webmaster_email'		=> strtolower(pun_trim($_POST['form']['webmaster_email'])),
-		'subscriptions'			=> $_POST['form']['subscriptions'] != '1' ? '0' : '1',
+		'forum_subscriptions'	=> $_POST['form']['forum_subscriptions'] != '1' ? '0' : '1',
+		'topic_subscriptions'	=> $_POST['form']['topic_subscriptions'] != '1' ? '0' : '1',
 		'smtp_host'				=> pun_trim($_POST['form']['smtp_host']),
 		'smtp_user'				=> pun_trim($_POST['form']['smtp_user']),
-		'smtp_pass'				=> pun_trim($_POST['form']['smtp_pass']),
 		'smtp_ssl'				=> $_POST['form']['smtp_ssl'] != '1' ? '0' : '1',
 		'regs_allow'			=> $_POST['form']['regs_allow'] != '1' ? '0' : '1',
 		'regs_verify'			=> $_POST['form']['regs_verify'] != '1' ? '0' : '1',
@@ -102,9 +102,12 @@ if (isset($_POST['form_sent']))
 	if (substr($form['base_url'], -1) == '/')
 		$form['base_url'] = substr($form['base_url'], 0, -1);
 
-	if (!file_exists(PUN_ROOT.'lang/'.$form['default_lang'].'/common.php'))
+	$languages = forum_list_langs();
+	if (!in_array($form['default_lang'], $languages))
 		message($lang_common['Bad request']);
-	if (!file_exists(PUN_ROOT.'style/'.$form['default_style'].'.css'))
+
+	$styles = forum_list_styles();
+	if (!in_array($form['default_style'], $styles))
 		message($lang_common['Bad request']);
 
 	if ($form['time_format'] == '')
@@ -131,6 +134,18 @@ if (isset($_POST['form_sent']))
 
 	if ($form['additional_navlinks'] != '')
 		$form['additional_navlinks'] = pun_trim(pun_linebreaks($form['additional_navlinks']));
+
+	// Change or enter a SMTP password
+	if (isset($_POST['form']['smtp_change_pass']))
+	{
+		$smtp_pass1 = isset($_POST['form']['smtp_pass1']) ? pun_trim($_POST['form']['smtp_pass1']) : '';
+		$smtp_pass2 = isset($_POST['form']['smtp_pass2']) ? pun_trim($_POST['form']['smtp_pass2']) : '';
+
+		if ($smtp_pass1 == $smtp_pass2)
+			$form['smtp_pass'] = $smtp_pass1;
+		else
+			message($lang_admin_options['SMTP passwords did not match']);
+	}
 
 	if ($form['announcement_message'] != '')
 		$form['announcement_message'] = pun_linebreaks($form['announcement_message']);
@@ -170,6 +185,9 @@ if (isset($_POST['form_sent']))
 	if ($form['feed_type'] < 0 || $form['feed_type'] > 2)
 		message($lang_common['Bad request']);
 
+	if ($form['feed_ttl'] < 0)
+		message($lang_common['Bad request']);
+
 	if ($form['report_method'] < 0 || $form['report_method'] > 2)
 		message($lang_common['Bad request']);
 
@@ -204,6 +222,7 @@ if (isset($_POST['form_sent']))
 		require PUN_ROOT.'include/cache.php';
 
 	generate_config_cache();
+	clear_feed_cache();
 
 	redirect('admin_options.php', $lang_admin_options['Options updated redirect']);
 }
@@ -218,7 +237,7 @@ generate_admin_menu('options');
 	<div class="blockform">
 		<h2><span><?php echo $lang_admin_options['Options head'] ?></span></h2>
 		<div class="box">
-			<form method="post" action="admin_options.php?action=foo">
+			<form method="post" action="admin_options.php">
 				<p class="submittop"><input type="submit" name="save" value="<?php echo $lang_admin_common['Save changes'] ?>" /></p>
 				<div class="inform">
 					<input type="hidden" name="form_sent" value="1" />
@@ -243,7 +262,7 @@ generate_admin_menu('options');
 								<tr>
 									<th scope="row"><?php echo $lang_admin_options['Base URL label'] ?></th>
 									<td>
-										<input type="text" name="form[base_url]" size="50" maxlength="100" value="<?php echo $pun_config['o_base_url'] ?>" />
+										<input type="text" name="form[base_url]" size="50" maxlength="100" value="<?php echo pun_htmlspecialchars($pun_config['o_base_url']) ?>" />
 										<span><?php echo $lang_admin_options['Base URL help'] ?></span>
 									</td>
 								</tr>
@@ -518,6 +537,13 @@ generate_admin_menu('options');
 									</td>
 								</tr>
 								<tr>
+									<th scope="row"><a name="signatures"><?php echo $lang_admin_options['Signatures label'] ?></a></th>
+									<td>
+										<input type="radio" name="form[signatures]" value="1"<?php if ($pun_config['o_signatures'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[signatures]" value="0"<?php if ($pun_config['o_signatures'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
+										<span><?php echo $lang_admin_options['Signatures help'] ?></span>
+									</td>
+								</tr>
+								<tr>
 									<th scope="row"><a name="ranks"><?php echo $lang_admin_options['User ranks label'] ?></a></th>
 									<td>
 										<input type="radio" name="form[ranks]" value="1"<?php if ($pun_config['o_ranks'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[ranks]" value="0"<?php if ($pun_config['o_ranks'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
@@ -566,11 +592,37 @@ generate_admin_menu('options');
 										<span><?php echo $lang_admin_options['Menu items help'] ?></span>
 									</td>
 								</tr>
+							</table>
+						</div>
+					</fieldset>
+				</div>
+				<div class="inform">
+					<fieldset>
+						<legend><?php echo $lang_admin_options['Feed subhead'] ?></legend>
+						<div class="infldset">
+							<table class="aligntop" cellspacing="0">
 								<tr>
 									<th scope="row"><?php echo $lang_admin_options['Default feed label'] ?></th>
 									<td>
 										<input type="radio" name="form[feed_type]" value="0"<?php if ($pun_config['o_feed_type'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_options['None'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[feed_type]" value="1"<?php if ($pun_config['o_feed_type'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_options['RSS'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[feed_type]" value="2"<?php if ($pun_config['o_feed_type'] == '2') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_options['Atom'] ?></strong>
 										<span><?php echo $lang_admin_options['Default feed help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Feed TTL label'] ?></th>
+									<td>
+										<select name="form[feed_ttl]">
+											<option value="0"<?php if ($pun_config['o_feed_ttl'] == '0') echo ' selected="selected"'; ?>><?php echo $lang_admin_options['No cache'] ?></option>
+<?php
+
+		$times = array(5, 15, 30, 60);
+
+		foreach ($times as $time)
+			echo "\t\t\t\t\t\t\t\t\t\t\t".'<option value="'.$time.'"'.($pun_config['o_feed_ttl'] == $time ? ' selected="selected"' : '').'>'.sprintf($lang_admin_options['Minutes'], $time).'</option>'."\n";
+
+?>
+										</select>
+										<span><?php echo $lang_admin_options['Feed TTL help'] ?></span>
 									</td>
 								</tr>
 							</table>
@@ -600,50 +652,50 @@ generate_admin_menu('options');
 						</div>
 					</fieldset>
 				</div>
-                <div class="inform">
-                    <fieldset>
-                        <legend><?php echo $lang_admin_options['Avatars subhead'] ?></legend>
-                        <div class="infldset">
-                            <table class="aligntop" cellspacing="0">
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Use avatars label'] ?></th>
-                                    <td>
-                                        <input type="radio" name="form[avatars]" value="1"<?php if ($pun_config['o_avatars'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[avatars]" value="0"<?php if ($pun_config['o_avatars'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
-                                        <span><?php echo $lang_admin_options['Use avatars help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Upload directory label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[avatars_dir]" size="35" maxlength="50" value="<?php echo pun_htmlspecialchars($pun_config['o_avatars_dir']) ?>" />
-                                        <span><?php echo $lang_admin_options['Upload directory help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Max width label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[avatars_width]" size="5" maxlength="5" value="<?php echo $pun_config['o_avatars_width'] ?>" />
-                                        <span><?php echo $lang_admin_options['Max width help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Max height label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[avatars_height]" size="5" maxlength="5" value="<?php echo $pun_config['o_avatars_height'] ?>" />
-                                        <span><?php echo $lang_admin_options['Max height help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Max size label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[avatars_size]" size="6" maxlength="6" value="<?php echo $pun_config['o_avatars_size'] ?>" />
-                                        <span><?php echo $lang_admin_options['Max size help'] ?></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </fieldset>
-                </div>
+				<div class="inform">
+					<fieldset>
+						<legend><?php echo $lang_admin_options['Avatars subhead'] ?></legend>
+						<div class="infldset">
+							<table class="aligntop" cellspacing="0">
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Use avatars label'] ?></th>
+									<td>
+										<input type="radio" name="form[avatars]" value="1"<?php if ($pun_config['o_avatars'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[avatars]" value="0"<?php if ($pun_config['o_avatars'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
+										<span><?php echo $lang_admin_options['Use avatars help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Upload directory label'] ?></th>
+									<td>
+										<input type="text" name="form[avatars_dir]" size="35" maxlength="50" value="<?php echo pun_htmlspecialchars($pun_config['o_avatars_dir']) ?>" />
+										<span><?php echo $lang_admin_options['Upload directory help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Max width label'] ?></th>
+									<td>
+										<input type="text" name="form[avatars_width]" size="5" maxlength="5" value="<?php echo $pun_config['o_avatars_width'] ?>" />
+										<span><?php echo $lang_admin_options['Max width help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Max height label'] ?></th>
+									<td>
+										<input type="text" name="form[avatars_height]" size="5" maxlength="5" value="<?php echo $pun_config['o_avatars_height'] ?>" />
+										<span><?php echo $lang_admin_options['Max height help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Max size label'] ?></th>
+									<td>
+										<input type="text" name="form[avatars_size]" size="6" maxlength="6" value="<?php echo $pun_config['o_avatars_size'] ?>" />
+										<span><?php echo $lang_admin_options['Max size help'] ?></span>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</fieldset>
+				</div>
                 <div class="inform">
                     <fieldset>
                         <legend><?php echo $lang_admin_options['Signatures subhead'] ?></legend>
@@ -701,10 +753,17 @@ generate_admin_menu('options');
 									</td>
 								</tr>
 								<tr>
-									<th scope="row"><?php echo $lang_admin_options['Subscriptions label'] ?></th>
+									<th scope="row"><?php echo $lang_admin_options['Forum subscriptions label'] ?></th>
 									<td>
-										<input type="radio" name="form[subscriptions]" value="1"<?php if ($pun_config['o_subscriptions'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[subscriptions]" value="0"<?php if ($pun_config['o_subscriptions'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
-										<span><?php echo $lang_admin_options['Subscriptions help'] ?></span>
+										<input type="radio" name="form[forum_subscriptions]" value="1"<?php if ($pun_config['o_forum_subscriptions'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[forum_subscriptions]" value="0"<?php if ($pun_config['o_forum_subscriptions'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
+										<span><?php echo $lang_admin_options['Forum subscriptions help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Topic subscriptions label'] ?></th>
+									<td>
+										<input type="radio" name="form[topic_subscriptions]" value="1"<?php if ($pun_config['o_topic_subscriptions'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[topic_subscriptions]" value="0"<?php if ($pun_config['o_topic_subscriptions'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
+										<span><?php echo $lang_admin_options['Topic subscriptions help'] ?></span>
 									</td>
 								</tr>
 								<tr>
@@ -724,7 +783,10 @@ generate_admin_menu('options');
 								<tr>
 									<th scope="row"><?php echo $lang_admin_options['SMTP password label'] ?></th>
 									<td>
-										<input type="text" name="form[smtp_pass]" size="25" maxlength="50" value="<?php echo pun_htmlspecialchars($pun_config['o_smtp_pass']) ?>" />
+										<span><input type="checkbox" name="form[smtp_change_pass]" value="1" />&#160;&#160;<?php echo $lang_admin_options['SMTP change password help'] ?></span>
+<?php $smtp_pass = !empty($pun_config['o_smtp_pass']) ? random_key(pun_strlen($pun_config['o_smtp_pass']), true) : ''; ?>
+										<input type="password" name="form[smtp_pass1]" size="25" maxlength="50" value="<?php echo $smtp_pass ?>" />
+										<input type="password" name="form[smtp_pass2]" size="25" maxlength="50" value="<?php echo $smtp_pass ?>" />
 										<span><?php echo $lang_admin_options['SMTP password help'] ?></span>
 									</td>
 								</tr>

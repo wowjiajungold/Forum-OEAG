@@ -1,12 +1,20 @@
 <?php
 
 /**
+<<<<<<< HEAD
  * Copyright (C) 2008-2010 FluxBB
+=======
+ * Copyright (C) 2008-2011 FluxBB
+>>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
+<<<<<<< HEAD
 define('PUN_ROOT', './');
+=======
+define('PUN_ROOT', dirname(__FILE__).'/');
+>>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 
@@ -24,12 +32,19 @@ require PUN_ROOT.'lang/'.$pun_user['language'].'/search.php';
 
 // Determine if we are allowed to view post counts
 $show_post_count = ($pun_config['o_show_post_count'] == '1' || $pun_user['is_admmod']) ? true : false;
+<<<<<<< HEAD
 // Determine if we are allowed to view last visits date
 $show_last_visit = ($pun_config['o_show_last_visit'] == '1' || $pun_user['is_admmod']) ? true : false;
 
 $username = isset($_GET['username']) && $pun_user['g_search_users'] == '1' ? pun_trim($_GET['username']) : '';
 $show_group = isset($_GET['show_group']) ? intval($_GET['show_group']) : -1;
 $sort_by = isset($_GET['sort_by']) && (in_array($_GET['sort_by'], array('username', 'registered')) || ($_GET['sort_by'] == 'num_posts' && $show_post_count) || ($_GET['sort_by'] == 'last_visit' && $show_last_visit)) ? $_GET['sort_by'] : 'username';
+=======
+
+$username = isset($_GET['username']) && $pun_user['g_search_users'] == '1' ? pun_trim($_GET['username']) : '';
+$show_group = isset($_GET['show_group']) ? intval($_GET['show_group']) : -1;
+$sort_by = isset($_GET['sort_by']) && (in_array($_GET['sort_by'], array('username', 'registered')) || ($_GET['sort_by'] == 'num_posts' && $show_post_count)) ? $_GET['sort_by'] : 'username';
+>>>>>>> fluxbb-1.4.5
 $sort_dir = isset($_GET['sort_dir']) && $_GET['sort_dir'] == 'DESC' ? 'DESC' : 'ASC';
 
 // Create any SQL for the WHERE clause
@@ -78,6 +93,7 @@ require PUN_ROOT.'header.php';
 							<option value="-1"<?php if ($show_group == -1) echo ' selected="selected"' ?>><?php echo $lang_ul['All users'] ?></option>
 <?php
 
+<<<<<<< HEAD
 if ($pun_user['is_admmod']) {
   $result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups WHERE g_id!='.PUN_GUEST.' ORDER BY g_id') or error('Unable to fetch user group list', __FILE__, __LINE__, $db->error());
 } else {
@@ -90,6 +106,16 @@ while ($cur_group = $db->fetch_assoc($result))
         echo "\t\t\t\t\t\t\t".'<option value="'.$cur_group['g_id'].'" selected="selected">'.pun_htmlspecialchars($cur_group['g_title']).'</option>'."\n";
     else
         echo "\t\t\t\t\t\t\t".'<option value="'.$cur_group['g_id'].'">'.pun_htmlspecialchars($cur_group['g_title']).'</option>'."\n";
+=======
+$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups WHERE g_id!='.PUN_GUEST.' ORDER BY g_id') or error('Unable to fetch user group list', __FILE__, __LINE__, $db->error());
+
+while ($cur_group = $db->fetch_assoc($result))
+{
+	if ($cur_group['g_id'] == $show_group)
+		echo "\t\t\t\t\t\t\t".'<option value="'.$cur_group['g_id'].'" selected="selected">'.pun_htmlspecialchars($cur_group['g_title']).'</option>'."\n";
+	else
+		echo "\t\t\t\t\t\t\t".'<option value="'.$cur_group['g_id'].'">'.pun_htmlspecialchars($cur_group['g_title']).'</option>'."\n";
+>>>>>>> fluxbb-1.4.5
 }
 
 ?>
@@ -99,9 +125,13 @@ while ($cur_group = $db->fetch_assoc($result))
 						<br /><select name="sort_by">
 							<option value="username"<?php if ($sort_by == 'username') echo ' selected="selected"' ?>><?php echo $lang_common['Username'] ?></option>
 							<option value="registered"<?php if ($sort_by == 'registered') echo ' selected="selected"' ?>><?php echo $lang_common['Registered'] ?></option>
+<<<<<<< HEAD
 <?php if ($show_post_count): ?>                         <option value="num_posts"<?php if ($sort_by == 'num_posts') echo ' selected="selected"' ?>><?php echo $lang_ul['No of posts'] ?></option>
 <?php endif; ?>
 <?php if ($show_last_visit): ?>                         <option value="last_visit"<?php if ($sort_by == 'last_visit') echo ' selected="selected"' ?>><?php echo $lang_ul['Last visit'] ?></option>
+=======
+<?php if ($show_post_count): ?>							<option value="num_posts"<?php if ($sort_by == 'num_posts') echo ' selected="selected"' ?>><?php echo $lang_ul['No of posts'] ?></option>
+>>>>>>> fluxbb-1.4.5
 <?php endif; ?>						</select>
 						<br /></label>
 						<label class="conl"><?php echo $lang_search['Sort order']."\n" ?>
@@ -135,9 +165,13 @@ while ($cur_group = $db->fetch_assoc($result))
 					<th class="tcl" scope="col"><?php echo $lang_common['Username'] ?></th>
 					<th class="tc2" scope="col"><?php echo $lang_common['Title'] ?></th>
 <?php if ($show_post_count): ?>					<th class="tc3" scope="col"><?php echo $lang_common['Posts'] ?></th>
+<<<<<<< HEAD
 <?php endif; ?>					<th class="tc4" scope="col"><?php echo $lang_common['Registered'] ?></th>
 <?php if ($show_last_visit): ?>                 <th class="tcr" scope="col"><?php echo $lang_common['Visit'] ?></th>
 <?php endif; ?>
+=======
+<?php endif; ?>					<th class="tcr" scope="col"><?php echo $lang_common['Registered'] ?></th>
+>>>>>>> fluxbb-1.4.5
 				</tr>
 			</thead>
 			<tbody>
@@ -153,7 +187,11 @@ if ($db->num_rows($result))
 		$user_ids[] = $cur_user_id;
 
 	// Grab the users
+<<<<<<< HEAD
 	$result = $db->query('SELECT u.id, u.username, u.title, u.num_posts, u.last_visit, u.registered, g.g_id, g.g_user_title FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id IN('.implode(',', $user_ids).') ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC') or error('Unable to fetch user list', __FILE__, __LINE__, $db->error());
+=======
+	$result = $db->query('SELECT u.id, u.username, u.title, u.num_posts, u.registered, g.g_id, g.g_user_title FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id IN('.implode(',', $user_ids).') ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC') or error('Unable to fetch user list', __FILE__, __LINE__, $db->error());
+>>>>>>> fluxbb-1.4.5
 
 	while ($user_data = $db->fetch_assoc($result))
 	{
@@ -165,9 +203,13 @@ if ($db->num_rows($result))
 					<td class="tc2"><?php echo $user_title_field ?></td>
 <?php if ($show_post_count): ?>					<td class="tc3"><?php echo forum_number_format($user_data['num_posts']) ?></td>
 <?php endif; ?>
+<<<<<<< HEAD
 					<td class="tc4"><?php echo format_time($user_data['registered'], true) ?></td>
 <?php if ($show_last_visit): ?>                 <td class="tcr"><?php echo format_time($user_data['last_visit']) ?></td>
 <?php endif; ?>
+=======
+					<td class="tcr"><?php echo format_time($user_data['registered'], true) ?></td>
+>>>>>>> fluxbb-1.4.5
 				</tr>
 <?php
 

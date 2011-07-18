@@ -16,7 +16,11 @@
 #adminconsole INPUT, #adminconsole SELECT, #adminconsole TEXTAREA {MARGIN-BOTTOM: 0; MARGIN-TOP: 0; FONT-WEIGHT: normal}
 #adminconsole TABLE.aligntop TH, #adminconsole TABLE.aligntop TD {VERTICAL-ALIGN: top}
 #adminconsole TABLE.aligntop TH {PADDING-TOP: 0.7em}
+<<<<<<< HEAD
 #adminconsole TD, #adminconsole TH {BORDER-STYLE: solid; BORDER-WIDTH: 1px 0 1px 0}
+=======
+#adminconsole TD, #adminconsole TH {BORDER-STYLE: solid; BORDER-WIDTH: 3px 0 3px 0}
+>>>>>>> fluxbb-1.4.5
 #adminconsole P {PADDING-BOTTOM: 6px}
 #adminconsole .topspace {PADDING-TOP: 6px}
 #adminconsole P.submittop, #adminconsole P.submitend {TEXT-ALIGN: center}
@@ -37,6 +41,10 @@ TABLE#forumperms .atcl {TEXT-ALIGN: left; WIDTH: 15em; WHITE-SPACE: nowrap}
 
 /*** User/Ban Search Result Tables ***/
 #users2 TH, #bans1 TH {TEXT-ALIGN: left}
+<<<<<<< HEAD
+=======
+#users2 TH.tcmod {TEXT-ALIGN: center}
+>>>>>>> fluxbb-1.4.5
 #users2 .tcl, #users2 .tc3, #users2 .tc5, #bans1 .tcl, #bans1 .tc3, #bans1 .tc5, #bans1 .tc6 {WIDTH: 15%; TEXT-ALIGN: left; PADDING: 4px 6px}
 #users2 .tc2, #bans1 .tc2 {WIDTH: 22%; TEXT-ALIGN: left; PADDING: 4px 6px}
 #users2 .tc4, #bans1 .tc4 {WIDTH: 8%; TEXT-ALIGN: center}
