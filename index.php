@@ -1,20 +1,12 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 
@@ -42,15 +34,12 @@ if ($pun_config['o_feed_type'] == '1')
 else if ($pun_config['o_feed_type'] == '2')
 	$page_head = array('feed' => '<link rel="alternate" type="application/atom+xml" href="extern.php?action=feed&amp;type=atom" title="'.$lang_common['Atom active topics feed'].'" />');
 
-<<<<<<< HEAD
-=======
 $forum_actions = array();
 
 // Display a "mark all as read" link
 if (!$pun_user['is_guest'])
 	$forum_actions[] = '<a href="misc.php?action=markread">'.$lang_common['Mark all as read'].'</a>';
 
->>>>>>> fluxbb-1.4.5
 $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']));
 define('PUN_ALLOW_INDEX', 1);
 define('PUN_ACTIVE_PAGE', 'index');
@@ -100,11 +89,7 @@ while ($cur_forum = $db->fetch_assoc($result))
 	$icon_type = 'icon';
 
 	// Are there new posts since our last visit?
-<<<<<<< HEAD
-	if (!$pun_user['is_guest'] && $cur_forum['last_post'] > $pun_user['last_visit'] && (empty($tracked_topics['forums'][$cur_forum['fid']]) || $cur_forum['last_post'] > $tracked_topics['forums'][$cur_forum['fid']]) && $new_topics[$cur_forum['fid']])
-=======
 	if (!$pun_user['is_guest'] && $cur_forum['last_post'] > $pun_user['last_visit'] && (empty($tracked_topics['forums'][$cur_forum['fid']]) || $cur_forum['last_post'] > $tracked_topics['forums'][$cur_forum['fid']]))
->>>>>>> fluxbb-1.4.5
 	{
 		// There are new posts in this forum, but have we read all of them already?
 		foreach ($new_topics[$cur_forum['fid']] as $check_topic_id => $check_last_post)
@@ -159,12 +144,8 @@ while ($cur_forum = $db->fetch_assoc($result))
 				$moderators[] = pun_htmlspecialchars($mod_username);
 		}
 
-<<<<<<< HEAD
-		//$moderators = "\t\t\t\t\t\t\t\t".'<p class="modlist">(<em>'.$lang_common['Moderated by'].'</em> '.implode(', ', $moderators).')</p>'."\n";
-        $moderators = "";
-=======
 		$moderators = "\t\t\t\t\t\t\t\t".'<p class="modlist">(<em>'.$lang_common['Moderated by'].'</em> '.implode(', ', $moderators).')</p>'."\n";
->>>>>>> fluxbb-1.4.5
+		$moderators= "";
 	}
 
 ?>
@@ -191,21 +172,6 @@ if ($cur_category > 0)
 else
 	echo '<div id="idx0" class="block"><div class="box"><div class="inbox"><p>'.$lang_index['Empty board'].'</p></div></div></div>';
 
-<<<<<<< HEAD
-
-// Collect some statistics from the database
-$result = $db->query('SELECT COUNT(id)-1 FROM '.$db->prefix.'users WHERE group_id!='.PUN_UNVERIFIED) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
-$stats['total_users'] = $db->result($result);
-
-$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'posts WHERE posted >= '.strtotime(date('Y-m-d'))) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
-$stats['total_posts_today'] = $db->result($result);
-
-$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'topics WHERE posted >= '.strtotime(date('Y-m-d'))) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
-$stats['total_topics_today'] = $db->result($result);
-
-$result = $db->query('SELECT id, username FROM '.$db->prefix.'users WHERE group_id!='.PUN_UNVERIFIED.' ORDER BY registered DESC LIMIT 1') or error('Unable to fetch newest registered user', __FILE__, __LINE__, $db->error());
-$stats['last_user'] = $db->fetch_assoc($result);
-=======
 // Collect some statistics from the database
 if (file_exists(FORUM_CACHE_DIR.'cache_users_info.php'))
 	include FORUM_CACHE_DIR.'cache_users_info.php';
@@ -218,7 +184,6 @@ if (!defined('PUN_USERS_INFO_LOADED'))
 	generate_users_info_cache();
 	require FORUM_CACHE_DIR.'cache_users_info.php';
 }
->>>>>>> fluxbb-1.4.5
 
 $result = $db->query('SELECT SUM(num_topics), SUM(num_posts) FROM '.$db->prefix.'forums') or error('Unable to fetch topic/post count', __FILE__, __LINE__, $db->error());
 list($stats['total_topics'], $stats['total_posts']) = $db->fetch_row($result);
@@ -228,10 +193,9 @@ if ($pun_user['g_view_users'] == '1')
 else
 	$stats['newest_user'] = pun_htmlspecialchars($stats['last_user']['username']);
 
-<<<<<<< HEAD
 $s1 = ($stats['total_topics_today']>1) ? 's' : '';
 $s2 = ($stats['total_posts_today']>1) ? 's' : '';
-=======
+
 if (!empty($forum_actions))
 {
 
@@ -244,7 +208,6 @@ if (!empty($forum_actions))
 <?php
 
 }
->>>>>>> fluxbb-1.4.5
 
 ?>
 <div id="brdstats" class="block">
@@ -256,10 +219,7 @@ if (!empty($forum_actions))
 				<dd><span><?php printf($lang_index['No of users'], '<strong>'.forum_number_format($stats['total_users']).'</strong>') ?></span></dd>
 				<dd><span><?php printf($lang_index['No of topics'], '<strong>'.forum_number_format($stats['total_topics']).'</strong>') ?></span></dd>
 				<dd><span><?php printf($lang_index['No of posts'], '<strong>'.forum_number_format($stats['total_posts']).'</strong>') ?></span></dd>
-<<<<<<< HEAD
                 <dd><span><?php printf($lang_index['Today'], '<strong>'.forum_number_format($stats['total_topics_today']).'</strong>', $s1, '<strong>'.forum_number_format($stats['total_posts_today']).'</strong>', $s2) ?></span></dd>
-=======
->>>>>>> fluxbb-1.4.5
 			</dl>
 			<dl class="conl">
 				<dt><strong><?php echo $lang_index['User info'] ?></strong></dt>
@@ -271,11 +231,7 @@ if ($pun_config['o_users_online'] == '1')
 	// Fetch users online info and generate strings for output
 	$num_guests = 0;
 	$users = array();
-<<<<<<< HEAD
 	$result = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 AND user_id!=3 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
-=======
-	$result = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
 
 	while ($pun_user_online = $db->fetch_assoc($result))
 	{
@@ -291,7 +247,6 @@ if ($pun_config['o_users_online'] == '1')
 	}
 
 	$num_users = count($users);
-<<<<<<< HEAD
 	
 	 // utilisateurs en ligne aujourd'hui
     $todaystamp = strtotime(date('Y-m-d'));
@@ -302,16 +257,11 @@ if ($pun_config['o_users_online'] == '1')
 	echo "\n\t\t\t\t".'<dd><span>'.sprintf($lang_index['Guests online'], '<strong>'.forum_number_format($num_guests).'</strong>').'</span></dd>';
 	echo "\n\t\t\t\t".'<dd><span>'.sprintf($lang_index['Members online today'], '<strong>'.forum_number_format($users_today[0]).'</strong>').'</span></dd>';
 	echo "\n\t\t\t".'</dl>'."\n";
-=======
-	echo "\t\t\t\t".'<dd><span>'.sprintf($lang_index['Users online'], '<strong>'.forum_number_format($num_users).'</strong>').'</span></dd>'."\n\t\t\t\t".'<dd><span>'.sprintf($lang_index['Guests online'], '<strong>'.forum_number_format($num_guests).'</strong>').'</span></dd>'."\n\t\t\t".'</dl>'."\n";
-
->>>>>>> fluxbb-1.4.5
 
 	if ($num_users > 0)
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt><strong>'.$lang_index['Online'].' </strong></dt>'."\t\t\t\t".implode(',</dd> ', $users).'</dd>'."\n\t\t\t".'</dl>'."\n";
 	else
 		echo "\t\t\t".'<div class="clearer"></div>'."\n";
-<<<<<<< HEAD
      
     $todaystamp = date('j/n');
     $limitstamp = strtotime(date('Y-m-d'))-7776000;
@@ -333,9 +283,6 @@ if ($pun_config['o_users_online'] == '1')
     }
     else
         echo "\t\t\t".'<div class="clearer"></div>'."\n";
-    
-=======
->>>>>>> fluxbb-1.4.5
 
 }
 else

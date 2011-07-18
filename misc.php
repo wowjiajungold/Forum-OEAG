@@ -1,11 +1,7 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -13,11 +9,7 @@
 if (isset($_GET['action']))
 	define('PUN_QUIET_VISIT', 1);
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 
@@ -34,7 +26,6 @@ if ($action == 'rules')
 
 	// Load the register.php language file
 	require PUN_ROOT.'lang/'.$pun_user['language'].'/register.php';
-<<<<<<< HEAD
     
     $rules_text = $pun_config['o_rules_message'];
     $rules_text = str_replace("<avatars_size>", ($pun_config['o_avatars_size']/1000), $rules_text);
@@ -43,8 +34,6 @@ if ($action == 'rules')
     $rules_text = str_replace("<avatars_width>", $pun_config['o_avatars_width'], $rules_text);
     $rules_text = str_replace("<signature_image_height>", $pun_config['o_sig_img_height'], $rules_text);
     $rules_text = str_replace("<signature_image_width>", $pun_config['o_sig_img_width'], $rules_text);
-=======
->>>>>>> fluxbb-1.4.5
 
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_register['Forum rules']);
 	define('PUN_ACTIVE_PAGE', 'rules');
@@ -55,11 +44,7 @@ if ($action == 'rules')
 	<div class="hd"><h2><span><?php echo $lang_register['Forum rules'] ?></span></h2></div>
 	<div class="box">
 		<div id="rules-block" class="inbox">
-<<<<<<< HEAD
 			<div class="usercontent"><?php echo $rules_text ?></div>
-=======
-			<div class="usercontent"><?php echo $pun_config['o_rules_message'] ?></div>
->>>>>>> fluxbb-1.4.5
 		</div>
 	</div>
 </div>
@@ -161,9 +146,6 @@ else if (isset($_GET['email']))
 
 
 	// Try to determine if the data in HTTP_REFERER is valid (if not, we redirect to the users profile after the email is sent)
-<<<<<<< HEAD
-	$redirect_url = (isset($_SERVER['HTTP_REFERER']) && preg_match('#^'.preg_quote($pun_config['o_base_url']).'/(.*?)\.php#i', $_SERVER['HTTP_REFERER'])) ? htmlspecialchars($_SERVER['HTTP_REFERER']) : 'index.php';
-=======
 	if (!empty($_SERVER['HTTP_REFERER']))
 	{
 		$referrer = parse_url($_SERVER['HTTP_REFERER']);
@@ -182,7 +164,6 @@ else if (isset($_GET['email']))
 
 	if (!isset($redirect_url))
 		$redirect_url = 'profile.php?id='.$recipient_id;
->>>>>>> fluxbb-1.4.5
 
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_misc['Send email to'].' '.pun_htmlspecialchars($recipient));
 	$required_fields = array('req_subject' => $lang_misc['Email subject'], 'req_message' => $lang_misc['Email message']);
@@ -200,11 +181,7 @@ else if (isset($_GET['email']))
 					<legend><?php echo $lang_misc['Write email'] ?></legend>
 					<div class="infldset txtarea">
 						<input type="hidden" name="form_sent" value="1" />
-<<<<<<< HEAD
-						<input type="hidden" name="redirect_url" value="<?php echo $redirect_url ?>" />
-=======
 						<input type="hidden" name="redirect_url" value="<?php echo pun_htmlspecialchars($redirect_url) ?>" />
->>>>>>> fluxbb-1.4.5
 						<label class="required"><strong><?php echo $lang_misc['Email subject'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />
 						<input class="longinput" type="text" name="req_subject" size="75" maxlength="70" tabindex="1" /><br /></label>
 						<label class="required"><strong><?php echo $lang_misc['Email message'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />
@@ -269,11 +246,7 @@ else if (isset($_GET['report']))
 			if ($pun_config['o_mailing_list'] != '')
 			{
 				$mail_subject = sprintf($lang_common['Report notification'], $forum_id, $subject);
-<<<<<<< HEAD
-				$mail_message = sprintf($lang_common['Report message 1'], $pun_user['username'], $pun_config['o_base_url'].'/viewtopic.php?pid='.$post_id.'#p'.$post_id)."\n";
-=======
 				$mail_message = sprintf($lang_common['Report message 1'], $pun_user['username'], get_base_url().'/viewtopic.php?pid='.$post_id.'#p'.$post_id)."\n";
->>>>>>> fluxbb-1.4.5
 				$mail_message .= sprintf($lang_common['Report message 2'], $reason)."\n";
 				$mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
 
@@ -339,48 +312,6 @@ else if (isset($_GET['report']))
 }
 
 
-<<<<<<< HEAD
-else if (isset($_GET['subscribe']))
-{
-	if ($pun_user['is_guest'] || $pun_config['o_subscriptions'] != '1')
-		message($lang_common['No permission']);
-
-	$topic_id = intval($_GET['subscribe']);
-	if ($topic_id < 1)
-		message($lang_common['Bad request']);
-
-	// Make sure the user can view the topic
-	$result = $db->query('SELECT 1 FROM '.$db->prefix.'topics AS t LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND t.id='.$topic_id.' AND t.moved_to IS NULL') or error('Unable to fetch topic info', __FILE__, __LINE__, $db->error());
-	if (!$db->num_rows($result))
-		message($lang_common['Bad request']);
-
-	$result = $db->query('SELECT 1 FROM '.$db->prefix.'subscriptions WHERE user_id='.$pun_user['id'].' AND topic_id='.$topic_id) or error('Unable to fetch subscription info', __FILE__, __LINE__, $db->error());
-	if ($db->num_rows($result))
-		message($lang_misc['Already subscribed']);
-
-	$db->query('INSERT INTO '.$db->prefix.'subscriptions (user_id, topic_id) VALUES('.$pun_user['id'].' ,'.$topic_id.')') or error('Unable to add subscription', __FILE__, __LINE__, $db->error());
-
-	redirect('viewtopic.php?id='.$topic_id, $lang_misc['Subscribe redirect']);
-}
-
-
-else if (isset($_GET['unsubscribe']))
-{
-	if ($pun_user['is_guest'] || $pun_config['o_subscriptions'] != '1')
-		message($lang_common['No permission']);
-
-	$topic_id = intval($_GET['unsubscribe']);
-	if ($topic_id < 1)
-		message($lang_common['Bad request']);
-
-	$result = $db->query('SELECT 1 FROM '.$db->prefix.'subscriptions WHERE user_id='.$pun_user['id'].' AND topic_id='.$topic_id) or error('Unable to fetch subscription info', __FILE__, __LINE__, $db->error());
-	if (!$db->num_rows($result))
-		message($lang_misc['Not subscribed']);
-
-	$db->query('DELETE FROM '.$db->prefix.'subscriptions WHERE user_id='.$pun_user['id'].' AND topic_id='.$topic_id) or error('Unable to remove subscription', __FILE__, __LINE__, $db->error());
-
-	redirect('viewtopic.php?id='.$topic_id, $lang_misc['Unsubscribe redirect']);
-=======
 else if ($action == 'subscribe')
 {
 	if ($pun_user['is_guest'])
@@ -468,7 +399,6 @@ else if ($action == 'unsubscribe')
 
 		redirect('viewforum.php?id='.$forum_id, $lang_misc['Unsubscribe redirect']);
 	}
->>>>>>> fluxbb-1.4.5
 }
 
 

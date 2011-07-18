@@ -27,10 +27,7 @@ $lang_help = array(
 'Links info'			=>	'You can create links to other documents or to email addresses using the following tags:',
 'My email address'		=>	'My email address',
 'Images info'			=>	'If you want to display an image you can use the img tag. The text appearing after the "=" sign in the opening tag is used for the alt attribute and should be included whenever possible.',
-<<<<<<< HEAD
-=======
 'FluxBB bbcode test'	=>	'FluxBB bbcode test',
->>>>>>> fluxbb-1.4.5
 
 'Quotes'				=>	'Quotes',
 'Quotes info'			=>	'If you want to quote someone, you should use the quote tag.',

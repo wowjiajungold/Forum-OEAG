@@ -1,11 +1,7 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -13,11 +9,7 @@
 // Tell header.php to use the help template
 define('PUN_HELP', 1);
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 
@@ -47,8 +39,7 @@ require PUN_ROOT.'header.php';
 		<p><?php echo $lang_help['Text style info'] ?></p>
 		<p><code>[b]<?php echo $lang_help['Bold text'] ?>[/b]</code> <?php echo $lang_help['produces'] ?> <samp><strong><?php echo $lang_help['Bold text'] ?></strong></samp></p>
 		<p><code>[u]<?php echo $lang_help['Underlined text'] ?>[/u]</code> <?php echo $lang_help['produces'] ?> <samp><span class="bbu"><?php echo $lang_help['Underlined text'] ?></span></samp></p>
-<<<<<<< HEAD
-		<p><code>[i]<?php echo $lang_help['Italic text'] ?>[/i]</code> <?php echo $lang_help['produces'] ?> <samp><i><?php echo $lang_help['Italic text'] ?></i></samp></p>
+		<p><code>[i]<?php echo $lang_help['Italic text'] ?>[/i]</code> <?php echo $lang_help['produces'] ?> <samp><em><?php echo $lang_help['Italic text'] ?></em></samp></p>
 		<p><code>[s]<?php echo $lang_help['Strike-through text'] ?>[/s]</code> <?php echo $lang_help['produces'] ?> <samp><span class="bbs"><?php echo $lang_help['Strike-through text'] ?></span></samp></p>
 		<p><code>[del]<?php echo $lang_help['Deleted text'] ?>[/del]</code> <?php echo $lang_help['produces'] ?> <samp><del><?php echo $lang_help['Deleted text'] ?></del></samp></p>
 		<p><code>[ins]<?php echo $lang_help['Inserted text'] ?>[/ins]</code> <?php echo $lang_help['produces'] ?> <samp><ins><?php echo $lang_help['Inserted text'] ?></ins></samp></p>
@@ -57,39 +48,20 @@ require PUN_ROOT.'header.php';
 		<p><code>[color=blue]<?php echo $lang_help['Blue text'] ?>[/color]</code> <?php echo $lang_help['produces'] ?> <samp><span style="color: blue"><?php echo $lang_help['Blue text'] ?></span></samp></p>
 		<p><code>[h]<?php echo $lang_help['Heading text'] ?>[/h]</code> <?php echo $lang_help['produces'] ?></p> <div class="postmsg"><h5><?php echo $lang_help['Heading text'] ?></h5></div>
         <p><code>[size=28]<?php echo $lang_help['Heading text'] ?>[/size]</code> <?php echo $lang_help['produces'] ?><span style="font-size:24px;"><?php echo $lang_help['Heading text'] ?></span></p>
-=======
-		<p><code>[i]<?php echo $lang_help['Italic text'] ?>[/i]</code> <?php echo $lang_help['produces'] ?> <samp><em><?php echo $lang_help['Italic text'] ?></em></samp></p>
-		<p><code>[s]<?php echo $lang_help['Strike-through text'] ?>[/s]</code> <?php echo $lang_help['produces'] ?> <samp><span class="bbs"><?php echo $lang_help['Strike-through text'] ?></span></samp></p>
-		<p><code>[del]<?php echo $lang_help['Deleted text'] ?>[/del]</code> <?php echo $lang_help['produces'] ?> <samp><del><?php echo $lang_help['Deleted text'] ?></del></samp></p>
-		<p><code>[ins]<?php echo $lang_help['Inserted text'] ?>[/ins]</code> <?php echo $lang_help['produces'] ?> <samp><ins><?php echo $lang_help['Inserted text'] ?></ins></samp></p>
-		<p><code>[em]<?php echo $lang_help['Emphasised text'] ?>[/em]</code> <?php echo $lang_help['produces'] ?> <samp><em><?php echo $lang_help['Emphasised text'] ?></em></samp></p>
-		<p><code>[color=#FF0000]<?php echo $lang_help['Red text'] ?>[/color]</code> <?php echo $lang_help['produces'] ?> <samp><span style="color: #ff0000"><?php echo $lang_help['Red text'] ?></span></samp></p>
-		<p><code>[color=blue]<?php echo $lang_help['Blue text'] ?>[/color]</code> <?php echo $lang_help['produces'] ?> <samp><span style="color: blue"><?php echo $lang_help['Blue text'] ?></span></samp></p>
-		<p><code>[h]<?php echo $lang_help['Heading text'] ?>[/h]</code> <?php echo $lang_help['produces'] ?></p> <div class="postmsg"><h5><?php echo $lang_help['Heading text'] ?></h5></div>
->>>>>>> fluxbb-1.4.5
 	</div>
 </div>
 <h2><span><?php echo $lang_help['Links and images'] ?></span></h2>
 <div class="box">
 	<div class="inbox">
 		<p><?php echo $lang_help['Links info'] ?></p>
-<<<<<<< HEAD
-		<p><code>[url=<?php echo $pun_config['o_base_url'].'/' ?>]<?php echo pun_htmlspecialchars($pun_config['o_board_title']) ?>[/url]</code> <?php echo $lang_help['produces'] ?> <samp><a href="<?php echo $pun_config['o_base_url'].'/' ?>"><?php echo pun_htmlspecialchars($pun_config['o_board_title']) ?></a></samp></p>
-		<p><code>[url]<?php echo $pun_config['o_base_url'].'/' ?>[/url]</code> <?php echo $lang_help['produces'] ?> <samp><a href="<?php echo $pun_config['o_base_url'] ?>"><?php echo $pun_config['o_base_url'].'/' ?></a></samp></p>
-=======
 		<p><code>[url=<?php echo pun_htmlspecialchars(get_base_url(true).'/') ?>]<?php echo pun_htmlspecialchars($pun_config['o_board_title']) ?>[/url]</code> <?php echo $lang_help['produces'] ?> <samp><a href="<?php echo pun_htmlspecialchars(get_base_url(true).'/') ?>"><?php echo pun_htmlspecialchars($pun_config['o_board_title']) ?></a></samp></p>
 		<p><code>[url]<?php echo pun_htmlspecialchars(get_base_url(true).'/') ?>[/url]</code> <?php echo $lang_help['produces'] ?> <samp><a href="<?php echo pun_htmlspecialchars(get_base_url(true).'/') ?>"><?php echo pun_htmlspecialchars(get_base_url(true).'/') ?></a></samp></p>
->>>>>>> fluxbb-1.4.5
 		<p><code>[email]myname@mydomain.com[/email]</code> <?php echo $lang_help['produces'] ?> <samp><a href="mailto:myname@mydomain.com">myname@mydomain.com</a></samp></p>
 		<p><code>[email=myname@mydomain.com]<?php echo $lang_help['My email address'] ?>[/email]</code> <?php echo $lang_help['produces'] ?> <samp><a href="mailto:myname@mydomain.com"><?php echo $lang_help['My email address'] ?></a></samp></p>
 	</div>
 	<div class="inbox">
 		<p><a name="img"></a><?php echo $lang_help['Images info'] ?></p>
-<<<<<<< HEAD
-		<p><code>[img=FluxBB bbcode test]<?php echo $pun_config['o_base_url'].'/' ?>img/test.png[/img]</code> <?php echo $lang_help['produces'] ?> <samp><img src="<?php echo $pun_config['o_base_url'].'/' ?>img/test.png" alt="FluxBB bbcode test" /></samp></p>
-=======
 		<p><code>[img=<?php echo $lang_help['FluxBB bbcode test'] ?>]<?php echo pun_htmlspecialchars(get_base_url(true)) ?>/img/test.png[/img]</code> <?php echo $lang_help['produces'] ?> <samp><img src="<?php echo pun_htmlspecialchars(get_base_url(true)) ?>/img/test.png" alt="<?php echo $lang_help['FluxBB bbcode test'] ?>" /></samp></p>
->>>>>>> fluxbb-1.4.5
 	</div>
 </div>
 <h2><span><?php echo $lang_help['Quotes'] ?></span></h2>
@@ -128,29 +100,17 @@ require PUN_ROOT.'header.php';
 		<p><code>[list][*]<?php echo $lang_help['List text 1'] ?>[/*][*]<?php echo $lang_help['List text 2'] ?>[/*][*]<?php echo $lang_help['List text 3'] ?>[/*][/list]</code>
 		<br /><span><?php echo $lang_help['produces list'] ?></span></p>
 		<div class="postmsg">
-<<<<<<< HEAD
-			<ul><li><?php echo $lang_help['List text 1'] ?></li><li><?php echo $lang_help['List text 2'] ?></li><li><?php echo $lang_help['List text 3'] ?></li></ul>
-=======
 			<ul><li><p><?php echo $lang_help['List text 1'] ?></p></li><li><p><?php echo $lang_help['List text 2'] ?></p></li><li><p><?php echo $lang_help['List text 3'] ?></p></li></ul>
->>>>>>> fluxbb-1.4.5
 		</div>
 		<p><code>[list=1][*]<?php echo $lang_help['List text 1'] ?>[/*][*]<?php echo $lang_help['List text 2'] ?>[/*][*]<?php echo $lang_help['List text 3'] ?>[/*][/list]</code>
 		<br /><span><?php echo $lang_help['produces decimal list'] ?></span></p>
 		<div class="postmsg">
-<<<<<<< HEAD
-			<ol class="decimal"><li><?php echo $lang_help['List text 1'] ?></li><li><?php echo $lang_help['List text 2'] ?></li><li><?php echo $lang_help['List text 3'] ?></li></ol>
-=======
 			<ol class="decimal"><li><p><?php echo $lang_help['List text 1'] ?></p></li><li><p><?php echo $lang_help['List text 2'] ?></p></li><li><p><?php echo $lang_help['List text 3'] ?></p></li></ol>
->>>>>>> fluxbb-1.4.5
 		</div>
 		<p><code>[list=a][*]<?php echo $lang_help['List text 1'] ?>[/*][*]<?php echo $lang_help['List text 2'] ?>[/*][*]<?php echo $lang_help['List text 3'] ?>[/*][/list]</code>
 		<br /><span><?php echo $lang_help['produces alpha list'] ?></span></p>
 		<div class="postmsg">
-<<<<<<< HEAD
-			<ol class="alpha"><li><?php echo $lang_help['List text 1'] ?></li><li><?php echo $lang_help['List text 2'] ?></li><li><?php echo $lang_help['List text 3'] ?></li></ol>
-=======
 			<ol class="alpha"><li><p><?php echo $lang_help['List text 1'] ?></p></li><li><p><?php echo $lang_help['List text 2'] ?></p></li><li><p><?php echo $lang_help['List text 3'] ?></p></li></ol>
->>>>>>> fluxbb-1.4.5
 		</div>
 	</div>
 </div>
@@ -176,12 +136,8 @@ foreach ($smilies as $smiley_text => $smiley_img)
 	$smiley_groups[$smiley_img][] = $smiley_text;
 
 foreach ($smiley_groups as $smiley_img => $smiley_texts)
-<<<<<<< HEAD
-	echo "\t\t".'<p><code>'.implode('</code> '.$lang_common['and'].' <code>', $smiley_texts).'</code> <span>'.$lang_help['produces'].'</span> <samp><img src="'.$pun_config['o_base_url'].'/img/smilies/'.$smiley_img.'" alt="'.$smiley_texts[0].'" /></samp></p>'."\n";
-=======
 	echo "\t\t".'<p><code>'.implode('</code> '.$lang_common['and'].' <code>', $smiley_texts).'</code> <span>'.$lang_help['produces'].'</span> <samp><img src="'.pun_htmlspecialchars(get_base_url(true)).'/img/smilies/'.$smiley_img.'" width="15" height="15" alt="'.$smiley_texts[0].'" /></samp></p>'."\n";
 
->>>>>>> fluxbb-1.4.5
 ?>
 	</div>
 </div>

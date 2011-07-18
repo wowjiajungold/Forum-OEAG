@@ -1,11 +1,7 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -14,19 +10,11 @@ if (!defined('PUN_ROOT'))
 	exit('The constant PUN_ROOT must be defined and point to a valid FluxBB installation root directory.');
 
 // Define the version and database revision that this code was written for
-<<<<<<< HEAD
-define('FORUM_VERSION', '1.4.2');
-
-define('FORUM_DB_REVISION', 8);
-define('FORUM_SI_REVISION', 1);
-define('FORUM_PARSER_REVISION', 1);
-=======
 define('FORUM_VERSION', '1.4.5');
 
 define('FORUM_DB_REVISION', 11);
 define('FORUM_SI_REVISION', 2);
 define('FORUM_PARSER_REVISION', 2);
->>>>>>> fluxbb-1.4.5
 
 // Block prefetch requests
 if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
@@ -50,13 +38,6 @@ if (file_exists(PUN_ROOT.'config.php'))
 if (defined('FORUM'))
 	define('PUN', FORUM);
 
-<<<<<<< HEAD
-// If PUN isn't defined, config.php is missing or corrupt
-if (!defined('PUN'))
-	exit('The file \'config.php\' doesn\'t exist or is corrupt. Please run <a href="install.php">install.php</a> to install FluxBB first.');
-
-=======
->>>>>>> fluxbb-1.4.5
 // Load the functions script
 require PUN_ROOT.'include/functions.php';
 
@@ -69,8 +50,6 @@ forum_remove_bad_characters();
 // Reverse the effect of register_globals
 forum_unregister_globals();
 
-<<<<<<< HEAD
-=======
 // If PUN isn't defined, config.php is missing or corrupt
 if (!defined('PUN'))
 {
@@ -78,7 +57,6 @@ if (!defined('PUN'))
 	exit;
 }
 
->>>>>>> fluxbb-1.4.5
 // Record the start time (will be used to calculate the generation time for the page)
 $pun_start = get_microtime();
 
@@ -145,14 +123,10 @@ if (!isset($pun_config['o_database_revision']) || $pun_config['o_database_revisi
 		!isset($pun_config['o_searchindex_revision']) || $pun_config['o_searchindex_revision'] < FORUM_SI_REVISION ||
 		!isset($pun_config['o_parser_revision']) || $pun_config['o_parser_revision'] < FORUM_PARSER_REVISION ||
 		version_compare($pun_config['o_cur_version'], FORUM_VERSION, '<'))
-<<<<<<< HEAD
-	exit('Your FluxBB database is out-of-date and must be upgraded in order to continue. Please run <a href="'.PUN_ROOT.'db_update.php">db_update.php</a> in order to complete the upgrade process.');
-=======
 	{
 		header('Location: db_update.php');
 		exit;
 	}
->>>>>>> fluxbb-1.4.5
 
 // Enable output buffering
 if (!defined('PUN_DISABLE_BUFFERING'))
@@ -178,15 +152,12 @@ if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/common.php'))
 else
 	error('There is no valid language pack \''.pun_htmlspecialchars($pun_user['language']).'\' installed. Please reinstall a language of that name');
 
-<<<<<<< HEAD
 // PMS
 if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/pms.php'))
        require PUN_ROOT.'lang/'.$pun_user['language'].'/pms.php';
 else
        require PUN_ROOT.'lang/English/pms.php';
 
-=======
->>>>>>> fluxbb-1.4.5
 // Check if we are to display a maintenance message
 if ($pun_config['o_maintenance'] && $pun_user['g_id'] > PUN_ADMIN && !defined('PUN_TURN_OFF_MAINT'))
 	maintenance_message();
@@ -222,9 +193,5 @@ if (!defined('PUN_SEARCH_MIN_WORD'))
 	define('PUN_SEARCH_MIN_WORD', 3);
 if (!defined('PUN_SEARCH_MAX_WORD'))
 	define('PUN_SEARCH_MAX_WORD', 20);
-<<<<<<< HEAD
-=======
-
 if (!defined('FORUM_MAX_COOKIE_SIZE'))
 	define('FORUM_MAX_COOKIE_SIZE', 4048);
->>>>>>> fluxbb-1.4.5

@@ -67,69 +67,6 @@ if (isset($footer_style) && ($footer_style == 'viewforum' || $footer_style == 'v
 		<div id="brdfooternav" class="inbox">
 <?php
 
-<<<<<<< HEAD
-// If no footer style has been specified, we use the default (only copyright/debug info)
-$footer_style = isset($footer_style) ? $footer_style : NULL;
-
-if ($footer_style == 'index' || $footer_style == 'search')
-{
-	echo "\t\t\t".'<div class="conl">'."\n";
-
-	if (!$pun_user['is_guest'] && $pun_user['g_search'] == '1')
-	{
-		echo "\t\t\t\t".'<dl id="searchlinks">'."\n";
-		echo "\t\t\t\t\t".'<dt><strong>'.$lang_common['Search links'].'</strong></dt>'."\n";
-
-		echo "\t\t\t\t\t".'<dd><span><a href="search.php?action=show_24h">'.$lang_common['Show recent posts'].'</a></span></dd>'."\n";
-		echo "\t\t\t\t\t".'<dd><span><a href="search.php?action=show_unanswered">'.$lang_common['Show unanswered posts'].'</a></span></dd>'."\n";
-
-		if ($pun_config['o_subscriptions'] == '1')
-			echo "\t\t\t\t\t".'<dd><span><a href="search.php?action=show_subscriptions">'.$lang_common['Show subscriptions'].'</a></span></dd>'."\n";
-
-		echo "\t\t\t\t\t".'<dd><span><a href="search.php?action=show_user&amp;user_id='.$pun_user['id'].'">'.$lang_common['Show your posts'].'</a></span></dd>'."\n";
-
-		echo "\t\t\t\t".'</dl>'."\n";
-	}
-	else
-	{
-		if ($pun_user['g_search'] == '1')
-		{
-			echo "\t\t\t\t".'<dl id="searchlinks">'."\n";
-			echo "\t\t\t\t\t".'<dt><strong>'.$lang_common['Search links'].'</strong></dt>'."\n";
-
-			echo "\t\t\t\t\t".'<dd><span><a href="search.php?action=show_24h">'.$lang_common['Show recent posts'].'</a></span></dd>'."\n";
-			echo "\t\t\t\t\t".'<dd><span><a href="search.php?action=show_unanswered">'.$lang_common['Show unanswered posts'].'</a></span></dd>'."\n";
-
-			echo "\t\t\t\t".'</dl>'."\n";
-		}
-	}
-
-	echo "\t\t\t".'</div>'."\n";
-}
-else if ($footer_style == 'viewforum' || $footer_style == 'viewtopic')
-{
-	echo "\t\t\t".'<div class="conl">'."\n";
-
-	// Display the "Jump to" drop list
-	if ($pun_config['o_quickjump'] == '1')
-	{
-		// Load cached quick jump
-		if (file_exists(FORUM_CACHE_DIR.'cache_quickjump_'.$pun_user['g_id'].'.php'))
-			include FORUM_CACHE_DIR.'cache_quickjump_'.$pun_user['g_id'].'.php';
-
-		if (!defined('PUN_QJ_LOADED'))
-		{
-			if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
-				require PUN_ROOT.'include/cache.php';
-
-			generate_quickjump_cache($pun_user['g_id']);
-			require FORUM_CACHE_DIR.'cache_quickjump_'.$pun_user['g_id'].'.php';
-		}
-	}
-
-	echo "\t\t\t".'</div>'."\n";
-}
-=======
 echo "\t\t\t".'<div class="conl">'."\n";
 
 // Display the "Jump to" drop list
@@ -150,18 +87,14 @@ if ($pun_config['o_quickjump'] == '1')
 }
 
 echo "\t\t\t".'</div>'."\n";
->>>>>>> fluxbb-1.4.5
 
 ?>
 			<div class="conr">
 <?php
 
-<<<<<<< HEAD
-=======
 // If no footer style has been specified, we use the default (only copyright/debug info)
 $footer_style = isset($footer_style) ? $footer_style : NULL;
 
->>>>>>> fluxbb-1.4.5
 if ($footer_style == 'index')
 {
 	if ($pun_config['o_feed_type'] == '1')
@@ -174,11 +107,7 @@ else if ($footer_style == 'viewforum')
 	if ($pun_config['o_feed_type'] == '1')
 		echo "\t\t\t\t".'<p id="feedlinks"><span class="rss"><a href="extern.php?action=feed&amp;fid='.$forum_id.'&amp;type=rss">'.$lang_common['RSS forum feed'].'</a></span></p>'."\n";
 	else if ($pun_config['o_feed_type'] == '2')
-<<<<<<< HEAD
-		echo "\t\t\t\t".'<p id="feedlinks" class="actions"><span class="atom"><a href="extern.php?action=feed&amp;fid='.$forum_id.'&amp;type=atom">'.$lang_common['Atom forum feed'].'</a></span></p>'."\n";
-=======
 		echo "\t\t\t\t".'<p id="feedlinks"><span class="atom"><a href="extern.php?action=feed&amp;fid='.$forum_id.'&amp;type=atom">'.$lang_common['Atom forum feed'].'</a></span></p>'."\n";
->>>>>>> fluxbb-1.4.5
 }
 else if ($footer_style == 'viewtopic')
 {

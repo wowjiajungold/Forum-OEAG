@@ -1,25 +1,12 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
 // The FluxBB version this script updates to
-<<<<<<< HEAD
-define('UPDATE_TO', '1.4.2');
-
-define('UPDATE_TO_DB_REVISION', 8);
-define('UPDATE_TO_SI_REVISION', 1);
-define('UPDATE_TO_PARSER_REVISION', 1);
-
-define('MIN_PHP_VERSION', '4.3.0');
-=======
 define('UPDATE_TO', '1.4.5');
 
 define('UPDATE_TO_DB_REVISION', 11);
@@ -27,7 +14,6 @@ define('UPDATE_TO_SI_REVISION', 2);
 define('UPDATE_TO_PARSER_REVISION', 2);
 
 define('MIN_PHP_VERSION', '4.4.0');
->>>>>>> fluxbb-1.4.5
 define('MIN_MYSQL_VERSION', '4.1.2');
 define('MIN_PGSQL_VERSION', '7.0.0');
 define('PUN_SEARCH_MIN_WORD', 3);
@@ -48,11 +34,7 @@ define('FORUM_NO_SET_NAMES', 1);
 if (!function_exists('version_compare') || version_compare(PHP_VERSION, MIN_PHP_VERSION, '<'))
 	exit('You are running PHP version '.PHP_VERSION.'. FluxBB '.UPDATE_TO.' requires at least PHP '.MIN_PHP_VERSION.' to run properly. You must upgrade your PHP installation before you can continue.');
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 
 // Attempt to load the configuration file config.php
 if (file_exists(PUN_ROOT.'config.php'))
@@ -62,18 +44,12 @@ if (file_exists(PUN_ROOT.'config.php'))
 if (defined('FORUM'))
 	define('PUN', FORUM);
 
-<<<<<<< HEAD
-// If PUN isn't defined, config.php is missing or corrupt or we are outside the root directory
-if (!defined('PUN'))
-	exit('This file must be run from the forum root directory.');
-=======
 // If PUN isn't defined, config.php is missing or corrupt
 if (!defined('PUN'))
 {
 	header('Location: install.php');
 	exit;
 }
->>>>>>> fluxbb-1.4.5
 
 // Enable debug mode
 if (!defined('PUN_DEBUG'))
@@ -142,14 +118,6 @@ $old_connection_charset = defined('FORUM_DEFAULT_CHARSET') ? FORUM_DEFAULT_CHARS
 // Set the connection to UTF-8 now
 $db->set_names('utf8');
 
-<<<<<<< HEAD
-// Check current version
-$result = $db->query('SELECT conf_value FROM '.$db->prefix.'config WHERE conf_name=\'o_cur_version\'') or error('Unable to fetch version info.', __FILE__, __LINE__, $db->error());
-$cur_version = $db->result($result);
-
-if (version_compare($cur_version, '1.2', '<'))
-	exit('Version mismatch. The database \''.$db_name.'\' doesn\'t seem to be running a FluxBB database schema supported by this update script.');
-=======
 // Get the forum config
 $result = $db->query('SELECT * FROM '.$db->prefix.'config') or error('Unable to fetch config.', __FILE__, __LINE__, $db->error());
 while ($cur_config_item = $db->fetch_row($result))
@@ -168,7 +136,6 @@ $cur_version = $pun_config['o_cur_version'];
 
 if (version_compare($cur_version, '1.2', '<'))
 	error(sprintf($lang_update['Version mismatch error'], $db_name));
->>>>>>> fluxbb-1.4.5
 
 // Do some DB type specific checks
 $mysql = false;
@@ -180,11 +147,7 @@ switch ($db_type)
 	case 'mysqli_innodb':
 		$mysql_info = $db->get_version();
 		if (version_compare($mysql_info['version'], MIN_MYSQL_VERSION, '<'))
-<<<<<<< HEAD
-			error('You are running MySQL version '.$mysql_info['version'].'. FluxBB '.UPDATE_TO.' requires at least MySQL '.MIN_MYSQL_VERSION.' to run properly. You must upgrade your MySQL installation before you can continue.');
-=======
 			error(sprintf($lang_update['You are running error'], 'MySQL', $mysql_info['version'], UPDATE_TO, MIN_MYSQL_VERSION));
->>>>>>> fluxbb-1.4.5
 
 		$mysql = true;
 		break;
@@ -192,34 +155,17 @@ switch ($db_type)
 	case 'pgsql':
 		$pgsql_info = $db->get_version();
 		if (version_compare($pgsql_info['version'], MIN_PGSQL_VERSION, '<'))
-<<<<<<< HEAD
-			error('You are running PostgreSQL version '.$pgsql_info['version'].'. FluxBB '.UPDATE_TO.' requires at least PostgreSQL '.MIN_PGSQL_VERSION.' to run properly. You must upgrade your PostgreSQL installation before you can continue.');
-=======
 			error(sprintf($lang_update['You are running error'], 'PostgreSQL', $pgsql_info['version'], UPDATE_TO, MIN_PGSQL_VERSION));
->>>>>>> fluxbb-1.4.5
 
 		break;
 }
 
-<<<<<<< HEAD
-// Get the forum config
-$result = $db->query('SELECT * FROM '.$db->prefix.'config') or error('Unable to fetch config.', __FILE__, __LINE__, $db->error());
-while ($cur_config_item = $db->fetch_row($result))
-	$pun_config[$cur_config_item[0]] = $cur_config_item[1];
-
-// Check the database revision and the current version
-=======
 // Check the database, search index and parser revision and the current version
->>>>>>> fluxbb-1.4.5
 if (isset($pun_config['o_database_revision']) && $pun_config['o_database_revision'] >= UPDATE_TO_DB_REVISION &&
 		isset($pun_config['o_searchindex_revision']) && $pun_config['o_searchindex_revision'] >= UPDATE_TO_SI_REVISION &&
 		isset($pun_config['o_parser_revision']) && $pun_config['o_parser_revision'] >= UPDATE_TO_PARSER_REVISION &&
 		version_compare($pun_config['o_cur_version'], UPDATE_TO, '>='))
-<<<<<<< HEAD
-	exit('Your database is already as up-to-date as this script can make it.');
-=======
 	error($lang_update['No update error']);
->>>>>>> fluxbb-1.4.5
 
 $default_style = $pun_config['o_default_style'];
 if (!file_exists(PUN_ROOT.'style/'.$default_style.'.css'))
@@ -228,12 +174,6 @@ if (!file_exists(PUN_ROOT.'style/'.$default_style.'.css'))
 // Start a session, used to queue up errors if duplicate users occur when converting from FluxBB v1.2.
 session_start();
 
-<<<<<<< HEAD
-if (!isset($_SESSION['dupe_users']))
-	$_SESSION['dupe_users'] = array();
-
-=======
->>>>>>> fluxbb-1.4.5
 //
 // Determines whether $str is UTF-8 encoded or not
 //
@@ -511,17 +451,6 @@ header('Content-type: text/html; charset=utf-8');
 while (@ob_end_clean());
 
 
-<<<<<<< HEAD
-$stage = isset($_GET['stage']) ? $_GET['stage'] : '';
-$old_charset = isset($_GET['req_old_charset']) ? str_replace('ISO8859', 'ISO-8859', strtoupper($_GET['req_old_charset'])) : 'ISO-8859-1';
-$start_at = isset($_GET['start_at']) ? intval($_GET['start_at']) : 0;
-$query_str = '';
-
-switch ($stage)
-{
-	// Show form
-	case '':
-=======
 $stage = isset($_REQUEST['stage']) ? $_REQUEST['stage'] : '';
 $old_charset = isset($_REQUEST['req_old_charset']) ? str_replace('ISO8859', 'ISO-8859', strtoupper($_REQUEST['req_old_charset'])) : 'ISO-8859-1';
 $start_at = isset($_REQUEST['start_at']) ? intval($_REQUEST['start_at']) : 0;
@@ -530,7 +459,6 @@ $query_str = '';
 // Show form
 if (empty($stage))
 {
->>>>>>> fluxbb-1.4.5
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -538,45 +466,15 @@ if (empty($stage))
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<<<<<<< HEAD
-<title>FluxBB Database Update</title>
-<link rel="stylesheet" type="text/css" href="style/<?php echo $default_style ?>.css" />
-</head>
-<body>
-=======
 <title><?php echo $lang_update['Update'] ?></title>
 <link rel="stylesheet" type="text/css" href="style/<?php echo $default_style ?>.css" />
 </head>
 <body onload="document.getElementById('install').req_db_type.focus();document.getElementById('install').start.disabled=false;">
->>>>>>> fluxbb-1.4.5
 
 <div id="pundb_update" class="pun">
 <div class="top-box"><div><!-- Top Corners --></div></div>
 <div class="punwrap">
 
-<<<<<<< HEAD
-<div class="blockform">
-	<h2><span>FluxBB Update</span></h2>
-	<div class="box">
-		<form method="get" action="<?php echo pun_htmlspecialchars($_SERVER['REQUEST_URI']) ?>" onsubmit="this.start.disabled=true">
-		<input type="hidden" name="stage" value="start" />
-			<div class="inform">
-				<div class="forminfo">
-					<p style="font-size: 1.1em">This script will update your forum database. The update procedure might take anything from a second to hours depending on the speed of the server and the size of the forum database. Don't forget to make a backup of the database before continuing.</p>
-					<p style="font-size: 1.1em">Did you read the update instructions in the documentation? If not, start there.</p>
-<?php
-
-if (strpos($cur_version, '1.2') === 0)
-{
-	if (!function_exists('iconv') && !function_exists('mb_convert_encoding'))
-	{
-
-?>
-					<p style="font-size: 1.1em"><strong>IMPORTANT!</strong> FluxBB has detected that this PHP environment does not have support for the encoding mechanisms required to do UTF-8 conversion from character sets other than ISO-8859-1. What this means is that if the current character set is not ISO-8859-1, FluxBB won't be able to convert your forum database to UTF-8 and you will have to do it manually. Instructions for doing manual charset conversion can be found in the update instructions.</p>
-<?php
-
-	}
-=======
 <div id="brdheader" class="block">
 	<div class="box">
 		<div id="brdtitle" class="inbox">
@@ -618,26 +516,12 @@ if (strpos($cur_version, '1.2') === 0)
 <?php
 
 		}
->>>>>>> fluxbb-1.4.5
 
 ?>
 				</div>
 			</div>
 			<div class="inform">
 				<div class="forminfo">
-<<<<<<< HEAD
-					<p style="font-size: 1.1em"><strong>Enable conversion:</strong> When enabled this update script will, after it has made the required structural changes to the database, convert all text in the database from the current character set to UTF-8. This conversion is required if you're upgrading from version 1.2.</p>
-					<p style="font-size: 1.1em"><strong>Current character set:</strong> If the primary language in your forum is English, you can leave this at the default value. However, if your forum is non-English, you should enter the character set of the primary language pack used in the forum. <i>Getting this wrong can corrupt your database so don't just guess!</i> Note: This is required even if the old database is UTF-8.</p>
-				</div>
-				<fieldset>
-					<legend>Charset conversion</legend>
-					<div class="infldset">
-						<div class="rbox">
-							<label><input type="checkbox" name="convert_charset" value="1" checked="checked" /><strong>Enable conversion</strong> (perform database charset conversion).<br /></label>
-						</div>
-						<label>
-							<strong>Current character set</strong><br />Accept default for English forums otherwise the character set of the primary language pack.<br />
-=======
 					<p><?php echo $lang_update['Enable conversion'] ?></p>
 					<p><?php echo $lang_update['Current character set'] ?></p>
 				</div>
@@ -649,25 +533,12 @@ if (strpos($cur_version, '1.2') === 0)
 						</div>
 						<label>
 							<strong><?php echo $lang_update['Current character set label'] ?></strong><br /><?php echo $lang_update['Current character set info'] ?><br />
->>>>>>> fluxbb-1.4.5
 							<input type="text" name="req_old_charset" size="12" maxlength="20" value="<?php echo $old_charset ?>" /><br />
 						</label>
 					</div>
 				</fieldset>
 <?php
 
-<<<<<<< HEAD
-}
-else
-	echo "\t\t\t\t".'</div>'."\n";
-
-?>
-			</div>
-			<p class="buttons"><input type="submit" name="start" value="Start update" /></p>
-		</form>
-	</div>
-</div>
-=======
 	}
 	else
 		echo "\t\t\t\t".'</div>'."\n";
@@ -679,7 +550,6 @@ else
 	</div>
 </div>
 </div>
->>>>>>> fluxbb-1.4.5
 
 </div>
 <div class="end-box"><div><!-- Bottom Corners --></div></div>
@@ -689,11 +559,6 @@ else
 </html>
 <?php
 
-<<<<<<< HEAD
-		break;
-
-
-=======
 	$db->end_transaction();
 	$db->close();
 	exit;
@@ -754,7 +619,6 @@ if ($lock_error)
 
 switch ($stage)
 {
->>>>>>> fluxbb-1.4.5
 	// Start by updating the database structure
 	case 'start':
 		$query_str = '?stage=preparse_posts';
@@ -843,13 +707,10 @@ switch ($stage)
 		if (!array_key_exists('o_feed_type', $pun_config))
 			$db->query('INSERT INTO '.$db->prefix.'config (conf_name, conf_value) VALUES (\'o_feed_type\', \'2\')') or error('Unable to insert config value \'o_feed_type\'', __FILE__, __LINE__, $db->error());
 
-<<<<<<< HEAD
-=======
 		// Insert new config option o_feed_ttl
 		if (!array_key_exists('o_feed_ttl', $pun_config))
 			$db->query('INSERT INTO '.$db->prefix.'config (conf_name, conf_value) VALUES (\'o_feed_ttl\', \'0\')') or error('Unable to insert config value \'o_feed_ttl\'', __FILE__, __LINE__, $db->error());
 
->>>>>>> fluxbb-1.4.5
 		// Insert config option o_base_url which was removed in 1.3
 		if (!array_key_exists('o_base_url', $pun_config))
 		{
@@ -1188,8 +1049,6 @@ switch ($stage)
 			$db->create_table('search_words', $schema);
 		}
 
-<<<<<<< HEAD
-=======
 		// Rename the subscription table
 		$db->rename_table('subscriptions', 'topic_subscriptions');
 
@@ -1223,17 +1082,12 @@ switch ($stage)
 		if (!array_key_exists('o_topic_subscriptions', $pun_config))
 			$db->query('UPDATE '.$db->prefix.'config SET conf_name=\'o_topic_subscriptions\' WHERE conf_name=\'o_subscriptions\'') or error('Unable to rename config value \'o_subscriptions\'', __FILE__, __LINE__, $db->error());
 
->>>>>>> fluxbb-1.4.5
 		// Change the default style if the old doesn't exist anymore
 		if ($pun_config['o_default_style'] != $default_style)
 			$db->query('UPDATE '.$db->prefix.'config SET conf_value = \''.$db->escape($default_style).'\' WHERE conf_name = \'o_default_style\'') or error('Unable to update default style config', __FILE__, __LINE__, $db->error());
 
 		// Should we do charset conversion or not?
-<<<<<<< HEAD
-		if (strpos($cur_version, '1.2') === 0 && isset($_GET['convert_charset']))
-=======
 		if (strpos($cur_version, '1.2') === 0 && isset($_POST['convert_charset']))
->>>>>>> fluxbb-1.4.5
 			$query_str = '?stage=conv_bans&req_old_charset='.$old_charset;
 
 		break;
@@ -1245,13 +1099,9 @@ switch ($stage)
 
 		function _conv_bans($cur_item, $old_charset)
 		{
-<<<<<<< HEAD
-			echo 'Converting ban '.$cur_item['id'].' …<br />'."\n";
-=======
 			global $lang_update;
 
 			echo sprintf($lang_update['Converting item'], $lang_update['ban'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 			convert_to_utf8($cur_item['username'], $old_charset);
 			convert_to_utf8($cur_item['message'], $old_charset);
@@ -1271,11 +1121,7 @@ switch ($stage)
 	case 'conv_categories':
 		$query_str = '?stage=conv_censors&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		echo 'Converting categories …'."<br />\n";
-=======
 		echo sprintf($lang_update['Converting'], $lang_update['categories']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 		function _conv_categories($cur_item, $old_charset)
 		{
@@ -1293,11 +1139,7 @@ switch ($stage)
 	case 'conv_censors':
 		$query_str = '?stage=conv_config&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		echo 'Converting censor words …'."<br />\n";
-=======
 		echo sprintf($lang_update['Converting'], $lang_update['censor words']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 		function _conv_censoring($cur_item, $old_charset)
 		{
@@ -1316,11 +1158,7 @@ switch ($stage)
 	case 'conv_config':
 		$query_str = '?stage=conv_forums&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		echo 'Converting configuration …'."<br />\n";
-=======
 		echo sprintf($lang_update['Converting'], $lang_update['configuration']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 		function _conv_config($cur_item, $old_charset)
 		{
@@ -1338,11 +1176,7 @@ switch ($stage)
 	case 'conv_forums':
 		$query_str = '?stage=conv_perms&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		echo 'Converting forums …'."<br />\n";
-=======
 		echo sprintf($lang_update['Converting'], $lang_update['forums']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 		function _conv_forums($cur_item, $old_charset)
 		{
@@ -1381,11 +1215,7 @@ switch ($stage)
 	case 'conv_groups':
 		$query_str = '?stage=conv_online&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		echo 'Converting groups …'."<br />\n";
-=======
 		echo sprintf($lang_update['Converting'], $lang_update['groups']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 		function _conv_groups($cur_item, $old_charset)
 		{
@@ -1418,13 +1248,9 @@ switch ($stage)
 
 		function _conv_posts($cur_item, $old_charset)
 		{
-<<<<<<< HEAD
-			echo 'Converting post '.$cur_item['id'].' …<br />'."\n";
-=======
 			global $lang_update;
 
 			echo sprintf($lang_update['Converting item'], $lang_update['post'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 			convert_to_utf8($cur_item['poster'], $old_charset);
 			convert_to_utf8($cur_item['message'], $old_charset);
@@ -1445,11 +1271,7 @@ switch ($stage)
 	case 'conv_ranks':
 		$query_str = '?stage=conv_reports&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		echo 'Converting ranks …'."<br />\n";
-=======
 		echo sprintf($lang_update['Converting'], $lang_update['ranks']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 		function _conv_ranks($cur_item, $old_charset)
 		{
@@ -1469,13 +1291,9 @@ switch ($stage)
 
 		function _conv_reports($cur_item, $old_charset)
 		{
-<<<<<<< HEAD
-			echo 'Converting report '.$cur_item['id'].' …<br />'."\n";
-=======
 			global $lang_update;
 
 			echo sprintf($lang_update['Converting item'], $lang_update['report'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 			convert_to_utf8($cur_item['message'], $old_charset);
 
@@ -1545,13 +1363,9 @@ switch ($stage)
 	case 'conv_subscriptions':
 		$query_str = '?stage=conv_topics&req_old_charset='.$old_charset;
 
-<<<<<<< HEAD
-		alter_table_utf8($db->prefix.'subscriptions');
-=======
 		// By this stage we should have already renamed the subscription table
 		alter_table_utf8($db->prefix.'topic_subscriptions');
 		alter_table_utf8($db->prefix.'forum_subscriptions'); // This should actually already be utf8, but for consistency...
->>>>>>> fluxbb-1.4.5
 
 		break;
 
@@ -1562,13 +1376,9 @@ switch ($stage)
 
 		function _conv_topics($cur_item, $old_charset)
 		{
-<<<<<<< HEAD
-			echo 'Converting topic '.$cur_item['id'].' …<br />'."\n";
-=======
 			global $lang_update;
 
 			echo sprintf($lang_update['Converting item'], $lang_update['topic'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 			convert_to_utf8($cur_item['poster'], $old_charset);
 			convert_to_utf8($cur_item['subject'], $old_charset);
@@ -1589,11 +1399,6 @@ switch ($stage)
 	case 'conv_users':
 		$query_str = '?stage=preparse_posts';
 
-<<<<<<< HEAD
-		function _conv_users($cur_item, $old_charset)
-		{
-			echo 'Converting user '.$cur_item['id'].' …<br />'."\n";
-=======
 		if ($start_at == 0)
 			$_SESSION['dupe_users'] = array();
 
@@ -1602,7 +1407,6 @@ switch ($stage)
 			global $lang_update;
 
 			echo sprintf($lang_update['Converting item'], $lang_update['user'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 			convert_to_utf8($cur_item['username'], $old_charset);
 			convert_to_utf8($cur_item['title'], $old_charset);
@@ -1649,21 +1453,6 @@ switch ($stage)
 				$username = pun_trim($_POST['dupe_users'][$id]);
 
 				if (pun_strlen($username) < 2)
-<<<<<<< HEAD
-					$errors[$id][] = 'Usernames must be at least 2 characters long. Please choose another (longer) username.';
-				else if (pun_strlen($username) > 25) // This usually doesn't happen since the form element only accepts 25 characters
-					$errors[$id][] = 'Usernames must not be more than 25 characters long. Please choose another (shorter) username.';
-				else if (!strcasecmp($username, 'Guest'))
-					$errors[$id][] = 'The username guest is reserved. Please choose another username.';
-				else if (preg_match('/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/', $username) || preg_match('/((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))/', $username))
-					$errors[$id][] = 'Usernames may not be in the form of an IP address. Please choose another username.';
-				else if ((strpos($username, '[') !== false || strpos($username, ']') !== false) && strpos($username, '\'') !== false && strpos($username, '"') !== false)
-					$errors[$id][] = 'Usernames may not contain all the characters \', " and [ or ] at once. Please choose another username.';
-				else if (preg_match('/(?:\[\/?(?:b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|\*)\]|\[(?:img|url|quote|list)=)/i', $username))
-					$errors[$id][] = 'Usernames may not contain any of the text formatting tags (BBCode) that the forum uses. Please choose another username.';
-
-				$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE (UPPER(username)=UPPER(\''.$db->escape($username).'\') OR UPPER(username)=UPPER(\''.$db->escape(preg_replace('/[^\w]/', '', $username)).'\')) AND id>1') or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-=======
 					$errors[$id][] = $lang_update['Username too short error'];
 				else if (pun_strlen($username) > 25) // This usually doesn't happen since the form element only accepts 25 characters
 					$errors[$id][] = $lang_update['Username too long error'];
@@ -1677,16 +1466,11 @@ switch ($stage)
 					$errors[$id][] = $lang_update['Username BBCode error'];
 
 				$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE (UPPER(username)=UPPER(\''.$db->escape($username).'\') OR UPPER(username)=UPPER(\''.$db->escape(ucp_preg_replace('/[^\p{L}\p{N}]/u', '', $username)).'\')) AND id>1') or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
 
 				if ($db->num_rows($result))
 				{
 					$busy = $db->result($result);
-<<<<<<< HEAD
-					$errors[$id][] = 'Someone is already registered with the username '.pun_htmlspecialchars($busy).'. The username you entered is too similar. The username must differ from that by at least one alphanumerical character (a-z or 0-9). Please choose a different username.';
-=======
 					$errors[$id][] = sprintf($lang_update['Username duplicate error'], pun_htmlspecialchars($busy));
->>>>>>> fluxbb-1.4.5
 				}
 
 				if (empty($errors[$id]))
@@ -1748,11 +1532,7 @@ switch ($stage)
 					$mail_message = trim(substr($mail_tpl, $first_crlf));
 
 					$mail_subject = str_replace('<board_title>', $pun_config['o_board_title'], $mail_subject);
-<<<<<<< HEAD
-					$mail_message = str_replace('<base_url>', $pun_config['o_base_url'].'/', $mail_message);
-=======
 					$mail_message = str_replace('<base_url>', get_base_url().'/', $mail_message);
->>>>>>> fluxbb-1.4.5
 					$mail_message = str_replace('<old_username>', $old_username, $mail_message);
 					$mail_message = str_replace('<new_username>', $username, $mail_message);
 					$mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'].' Mailer', $mail_message);
@@ -1774,11 +1554,7 @@ switch ($stage)
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<<<<<<< HEAD
-<title>FluxBB Database Update</title>
-=======
 <title><?php echo $lang_update['Update'] ?></title>
->>>>>>> fluxbb-1.4.5
 <link rel="stylesheet" type="text/css" href="style/<?php echo $default_style ?>.css" />
 </head>
 <body>
@@ -1788,16 +1564,6 @@ switch ($stage)
 <div class="punwrap">
 
 <div class="blockform">
-<<<<<<< HEAD
-	<h2><span>Error converting users</span></h2>
-	<div class="box">
-		<form method="post" action="db_update.php?stage=conv_users_dupe">
-			<input type="hidden" name="form_sent" value="1" />
-			<div class="inform">
-				<div class="forminfo">
-						<p style="font-size: 1.1em">There was an error converting some users. This can occur when converting from FluxBB v1.2 if multiple users have registered with very similar usernames, for example "bob" and "böb".</p>
-						<p style="font-size: 1.1em">Below is a list of users who failed to convert. Please choose a new username for each user. Users who are renamed will automatically be sent an email alerting them of the change.</p>
-=======
 	<h2><span><?php echo $lang_update['Error converting users'] ?></span></h2>
 	<div class="box">
 		<form method="post" action="db_update.php?stage=conv_users_dupe&amp;uid=<?php echo $uid ?>">
@@ -1806,7 +1572,6 @@ switch ($stage)
 				<div class="forminfo">
 						<p style="font-size: 1.1em"><?php echo $lang_update['Error info 1'] ?></p>
 						<p style="font-size: 1.1em"><?php echo $lang_update['Error info 2'] ?></p>
->>>>>>> fluxbb-1.4.5
 				</div>
 			</div>
 <?php
@@ -1819,19 +1584,11 @@ switch ($stage)
 				<fieldset>
 					<legend><?php echo pun_htmlspecialchars($cur_user['username']); ?></legend>
 					<div class="infldset">
-<<<<<<< HEAD
-						<label class="required"><strong>New username <span>(required)</span></strong><br /><input type="text" name="<?php echo 'dupe_users['.$id.']'; ?>" value="<?php if (isset($_POST['dupe_users'][$id])) echo pun_htmlspecialchars($_POST['dupe_users'][$id]); ?>" size="25" maxlength="25" /><br /></label>
-					</div>
-				</fieldset>
-<?php if (!empty($errors[$id])): ?>				<div class="forminfo error-info">
-					<h3>The following errors need to be corrected:</h3>
-=======
 						<label class="required"><strong><?php echo $lang_update['New username'] ?> <span><?php echo $lang_update['Required'] ?></span></strong><br /><input type="text" name="<?php echo 'dupe_users['.$id.']'; ?>" value="<?php if (isset($_POST['dupe_users'][$id])) echo pun_htmlspecialchars($_POST['dupe_users'][$id]); ?>" size="25" maxlength="25" /><br /></label>
 					</div>
 				</fieldset>
 <?php if (!empty($errors[$id])): ?>				<div class="forminfo error-info">
 					<h3><?php echo $lang_update['Correct errors'] ?></h3>
->>>>>>> fluxbb-1.4.5
 					<ul class="error-list">
 <?php
 
@@ -1846,11 +1603,7 @@ foreach ($errors[$id] as $cur_error)
 			}
 
 ?>
-<<<<<<< HEAD
-			<p class="buttons"><input type="submit" name="rename" value="Rename users" /></p>
-=======
 			<p class="buttons"><input type="submit" name="rename" value="<?php echo $lang_update['Rename users'] ?>" /></p>
->>>>>>> fluxbb-1.4.5
 		</form>
 	</div>
 </div>
@@ -1885,11 +1638,7 @@ foreach ($errors[$id] as $cur_error)
 		$end_at = 0;
 		while ($cur_item = $db->fetch_assoc($result))
 		{
-<<<<<<< HEAD
-			echo 'Preparsing post '.$cur_item['id'].' …<br />'."\n";
-=======
 			echo sprintf($lang_update['Preparsing item'], $lang_update['post'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 			$db->query('UPDATE '.$db->prefix.'posts SET message = \''.$db->escape(preparse_bbcode($cur_item['message'], $temp)).'\' WHERE id = '.$cur_item['id']) or error('Unable to update post', __FILE__, __LINE__, $db->error());
 
 			$end_at = $cur_item['id'];
@@ -1924,11 +1673,7 @@ foreach ($errors[$id] as $cur_error)
 		$end_at = 0;
 		while ($cur_item = $db->fetch_assoc($result))
 		{
-<<<<<<< HEAD
-			echo 'Preparsing signature '.$cur_item['id'].' …<br />'."\n";
-=======
 			echo sprintf($lang_update['Preparsing item'], $lang_update['signature'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 			$db->query('UPDATE '.$db->prefix.'users SET signature = \''.$db->escape(preparse_bbcode($cur_item['signature'], $temp, true)).'\' WHERE id = '.$cur_item['id']) or error('Unable to update user', __FILE__, __LINE__, $db->error());
 
 			$end_at = $cur_item['id'];
@@ -1984,11 +1729,7 @@ foreach ($errors[$id] as $cur_error)
 		$end_at = 0;
 		while ($cur_item = $db->fetch_assoc($result))
 		{
-<<<<<<< HEAD
-			echo 'Rebuilding index for post '.$cur_item['id'].' …<br />'."\n";
-=======
 			echo sprintf($lang_update['Rebuilding index item'], $lang_update['post'], $cur_item['id']).'<br />'."\n";
->>>>>>> fluxbb-1.4.5
 
 			if ($cur_item['id'] == $cur_item['first_post_id'])
 				update_search_index('post', $cur_item['id'], $cur_item['message'], $cur_item['subject']);
@@ -2041,23 +1782,16 @@ foreach ($errors[$id] as $cur_error)
 		// Empty the PHP cache
 		forum_clear_cache();
 
-<<<<<<< HEAD
-=======
 		// Delete the update lock file
 		@unlink(FORUM_CACHE_DIR.'db_update.lock');
 
->>>>>>> fluxbb-1.4.5
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<<<<<<< HEAD
-<title>FluxBB Database Update</title>
-=======
 <title><?php echo $lang_update['Update'] ?></title>
->>>>>>> fluxbb-1.4.5
 <link rel="stylesheet" type="text/css" href="style/<?php echo $default_style ?>.css" />
 </head>
 <body>
@@ -2067,20 +1801,12 @@ foreach ($errors[$id] as $cur_error)
 <div class="punwrap">
 
 <div class="blockform">
-<<<<<<< HEAD
-	<h2><span>FluxBB Update</span></h2>
-=======
 	<h2><span><?php echo $lang_update['Update'] ?></span></h2>
->>>>>>> fluxbb-1.4.5
 	<div class="box">
 		<div class="fakeform">
 			<div class="inform">
 				<div class="forminfo">
-<<<<<<< HEAD
-					<p style="font-size: 1.1em">Your forum database was successfully updated. You may now <a href="<?php echo PUN_ROOT ?>index.php">go to the forum index</a>.</p>
-=======
 					<p style="font-size: 1.1em"><?php printf($lang_update['Successfully updated'], sprintf('<a href="index.php">%s</a>', $lang_update['go to index'])) ?></p>
->>>>>>> fluxbb-1.4.5
 				</div>
 			</div>
 		</div>
@@ -2102,8 +1828,4 @@ $db->end_transaction();
 $db->close();
 
 if ($query_str != '')
-<<<<<<< HEAD
-	exit('<script type="text/javascript">window.location="db_update.php'.$query_str.'"</script><noscript>JavaScript seems to be disabled. <a href="db_update.php'.$query_str.'">Click here to continue</a>.</noscript>');
-=======
 	exit('<script type="text/javascript">window.location="db_update.php'.$query_str.'&uid='.$uid.'"</script><noscript>'.sprintf($lang_update['JavaScript disabled'], sprintf('<a href="db_update.php'.$query_str.'&uid='.$uid.'">%s</a>', $lang_update['Click here to continue'])).'</noscript>');
->>>>>>> fluxbb-1.4.5
