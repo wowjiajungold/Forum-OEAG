@@ -1,7 +1,11 @@
 <?php
 
 /**
+<<<<<<< HEAD
  * Copyright (C) 2008-2010 FluxBB
+=======
+ * Copyright (C) 2008-2011 FluxBB
+>>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -63,6 +67,7 @@ if (isset($footer_style) && ($footer_style == 'viewforum' || $footer_style == 'v
 		<div id="brdfooternav" class="inbox">
 <?php
 
+<<<<<<< HEAD
 // If no footer style has been specified, we use the default (only copyright/debug info)
 $footer_style = isset($footer_style) ? $footer_style : NULL;
 
@@ -124,11 +129,39 @@ else if ($footer_style == 'viewforum' || $footer_style == 'viewtopic')
 
 	echo "\t\t\t".'</div>'."\n";
 }
+=======
+echo "\t\t\t".'<div class="conl">'."\n";
+
+// Display the "Jump to" drop list
+if ($pun_config['o_quickjump'] == '1')
+{
+	// Load cached quick jump
+	if (file_exists(FORUM_CACHE_DIR.'cache_quickjump_'.$pun_user['g_id'].'.php'))
+		include FORUM_CACHE_DIR.'cache_quickjump_'.$pun_user['g_id'].'.php';
+
+	if (!defined('PUN_QJ_LOADED'))
+	{
+		if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+			require PUN_ROOT.'include/cache.php';
+
+		generate_quickjump_cache($pun_user['g_id']);
+		require FORUM_CACHE_DIR.'cache_quickjump_'.$pun_user['g_id'].'.php';
+	}
+}
+
+echo "\t\t\t".'</div>'."\n";
+>>>>>>> fluxbb-1.4.5
 
 ?>
 			<div class="conr">
 <?php
 
+<<<<<<< HEAD
+=======
+// If no footer style has been specified, we use the default (only copyright/debug info)
+$footer_style = isset($footer_style) ? $footer_style : NULL;
+
+>>>>>>> fluxbb-1.4.5
 if ($footer_style == 'index')
 {
 	if ($pun_config['o_feed_type'] == '1')
@@ -141,7 +174,11 @@ else if ($footer_style == 'viewforum')
 	if ($pun_config['o_feed_type'] == '1')
 		echo "\t\t\t\t".'<p id="feedlinks"><span class="rss"><a href="extern.php?action=feed&amp;fid='.$forum_id.'&amp;type=rss">'.$lang_common['RSS forum feed'].'</a></span></p>'."\n";
 	else if ($pun_config['o_feed_type'] == '2')
+<<<<<<< HEAD
 		echo "\t\t\t\t".'<p id="feedlinks" class="actions"><span class="atom"><a href="extern.php?action=feed&amp;fid='.$forum_id.'&amp;type=atom">'.$lang_common['Atom forum feed'].'</a></span></p>'."\n";
+=======
+		echo "\t\t\t\t".'<p id="feedlinks"><span class="atom"><a href="extern.php?action=feed&amp;fid='.$forum_id.'&amp;type=atom">'.$lang_common['Atom forum feed'].'</a></span></p>'."\n";
+>>>>>>> fluxbb-1.4.5
 }
 else if ($footer_style == 'viewtopic')
 {

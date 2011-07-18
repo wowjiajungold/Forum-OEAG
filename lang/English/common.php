@@ -18,7 +18,10 @@ $lang_common = array(
 'Bad referrer'						=>	'Bad HTTP_REFERER. You were referred to this page from an unauthorized source. If the problem persists please make sure that \'Base URL\' is correctly set in Admin/Options and that you are visiting the forum by navigating to that URL. More information regarding the referrer check can be found in the FluxBB documentation.',
 'No cookie'							=>	'You appear to have logged in successfully, however a cookie has not been set. Please check your settings and if applicable, enable cookies for this website.',
 'Pun include error'					=>	'Unable to process user include %s from template %s. There is no such file in neither the template directory nor in the user include directory.',
+<<<<<<< HEAD
 'Captcha error'                     =>  'The captcha wasn\'t entered correctly. Please try again.',
+=======
+>>>>>>> fluxbb-1.4.5
 
 // Miscellaneous
 'Announcement'						=>	'Announcement',
@@ -70,11 +73,16 @@ $lang_common = array(
 'Write message legend'				=>	'Write your message and submit',
 'Previous'							=>	'Previous',
 'Next'								=>	'Next',
+<<<<<<< HEAD
 'Spacer'							=>	'…', // Ellipsis for paginate
 'Sex'                        => 'Man / Woman',
 'Male'                              => 'Man',
 'Female'                            => 'Woman',
 'Bigg'                              => 'Really big',
+=======
+'Forum index'						=>	'Forum index',
+'Spacer'							=>	'…', // Ellipsis for paginate
+>>>>>>> fluxbb-1.4.5
 
 // Title
 'Title'								=>	'Title',
@@ -106,18 +114,33 @@ $lang_common = array(
 'Logged in as'						=>	'Logged in as',
 'Admin'								=>	'Administration',
 'Last visit'						=>	'Last visit: %s',
+<<<<<<< HEAD
 'Show new posts'					=>	'Show new posts since last visit',
+=======
+'Topic searches'					=>	'Topics:',
+'New posts header'					=>	'New',
+'Active topics'						=>	'Active',
+'Unanswered topics'					=>	'Unanswered',
+'Posted topics'						=>	'Posted',
+'Show new posts'					=>	'Find topics with new posts since your last visit.',
+'Show active topics'				=>	'Find topics with recent posts.',
+'Show unanswered topics'			=>	'Find topics with no replies.',
+'Show posted topics'				=>	'Find topics you have posted to.',
+>>>>>>> fluxbb-1.4.5
 'Mark all as read'					=>	'Mark all topics as read',
 'Mark forum read'					=>	'Mark this forum as read',
 'Title separator'					=>	' / ',
 
 // Stuff for the page footer
 'Board footer'						=>	'Board footer',
+<<<<<<< HEAD
 'Search links'						=>	'Search links',
 'Show recent posts'					=>	'Show recent posts',
 'Show unanswered posts'				=>	'Show unanswered posts',
 'Show your posts'					=>	'Show your posts',
 'Show subscriptions'				=>	'Show your subscribed topics',
+=======
+>>>>>>> fluxbb-1.4.5
 'Jump to'							=>	'Jump to',
 'Go'								=>	' Go ', // Submit button in forum jump
 'Moderate topic'					=>	'Moderate topic',

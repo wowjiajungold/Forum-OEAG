@@ -5,11 +5,22 @@ $lang_post = array(
 
 // Post validation stuff (many are similiar to those in edit.php)
 'No subject'		=>	'Topics must contain a subject.',
+<<<<<<< HEAD
 'Too long subject'	=>	'Subjects cannot be longer than 70 characters.',
 'No message'		=>	'You must enter a message.',
 'Too long message'	=>	'Posts cannot be longer that %s bytes.',
 'All caps subject'	=>	'Subjects cannot contain only capital letters.',
 'All caps message'	=>	'Posts cannot contain only capital letters.',
+=======
+'No subject after censoring'	=>	'Topics must contain a subject. After applying censoring filters, your subject was empty.',
+'Too long subject'	=>	'Subjects cannot be longer than 70 characters.',
+'No message'		=>	'You must enter a message.',
+'No message after censoring'	=>	'You must enter a message. After applying censoring filters, your message was empty.',
+'Too long message'	=>	'Posts cannot be longer that %s bytes.',
+'All caps subject'	=>	'Subjects cannot contain only capital letters.',
+'All caps message'	=>	'Posts cannot contain only capital letters.',
+'Empty after strip'	=>	'It seems your post consisted of empty BBCodes only. It is possible that this happened because e.g. the innermost quote was discarded because of the maximum quote depth level.',
+>>>>>>> fluxbb-1.4.5
 
 // Posting
 'Post errors'		=>	'Post errors',
@@ -26,9 +37,12 @@ $lang_post = array(
 'Flood start'		=>	'At least',
 'flood end'			=>	'seconds have to pass between posts. Please wait a little while and try posting again.',
 'Preview'			=>	'Preview', // submit button to preview message
+<<<<<<< HEAD
 'Post revision'         =>  'Revision',
 'Post revision info'    =>  'A new message has been posted while you were writing yours.<br /><br /> You can read it below the form before posting your message.',
 
+=======
+>>>>>>> fluxbb-1.4.5
 
 // Edit post
 'Edit post legend'	=>	'Edit the post and submit changes',

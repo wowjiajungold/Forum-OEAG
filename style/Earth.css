@@ -31,7 +31,11 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 	font: 81.25%/1.462em Arial, Helvetica, sans-serif;
 }
 
+<<<<<<< HEAD
 .pun table, .pun td, .pun th, .pun input, .pun select, .pun optgroup, .pun textarea {
+=======
+.pun table, .pun td, .pun th, .pun input, .pun select, .pun optgroup, .pun textarea, .pun legend {
+>>>>>>> fluxbb-1.4.5
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 1em;
 }
@@ -301,6 +305,17 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 	padding: 0;
 }
 
+<<<<<<< HEAD
+=======
+#brdwelcome .conl {
+  float: left;
+}
+
+#brdwelcome .conr {
+  float: right;
+}
+
+>>>>>>> fluxbb-1.4.5
 #brdwelcome li span {
 	background: url(Earth/img/bull.png) center left no-repeat;
 	padding-left: 18px;
@@ -499,6 +514,17 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 	top: 33px;
 }
 
+<<<<<<< HEAD
+=======
+#punindex .subscribelink {
+	top: 0px;
+}
+
+#punindex .linksb {
+	height: 12px;
+}
+
+>>>>>>> fluxbb-1.4.5
 /*****************************************************************
 4. MAIN TABLES
 *****************************************************************/
@@ -800,6 +826,10 @@ MAIN POSTS
 .pun .postmsg {
 	width:100%;
 	overflow: hidden;
+<<<<<<< HEAD
+=======
+	word-wrap: break-word;
+>>>>>>> fluxbb-1.4.5
 }
 
 .pun .blockpost .postfootright {
@@ -982,6 +1012,10 @@ MAIN POSTS
 .pun .postmsg .postimg img {
 	max-width: 98%;
 	vertical-align: middle;
+<<<<<<< HEAD
+=======
+	margin: 7px 0.5em 7px 0;
+>>>>>>> fluxbb-1.4.5
 }
 
 .pun .postmsg .postimg a:link img, .pun .postmsg .postimg a:visited img {
@@ -1167,7 +1201,10 @@ MAIN FORMS
 
 .pun #quickpost .txtarea {
 	padding-right: 12px;
+<<<<<<< HEAD
 	padding-left: 200px;
+=======
+>>>>>>> fluxbb-1.4.5
 	position: relative;
 }
 
@@ -1187,6 +1224,7 @@ MAIN FORMS
 }
 
 .pun #quickpost .bblinks {
+<<<<<<< HEAD
 	left: 18px;
 	line-height: 1.75em;
 	position:absolute;
@@ -1196,6 +1234,13 @@ MAIN FORMS
 
 .pun #quickpost .bblinks li {
 	display: block;
+=======
+	padding-top: 0;
+}
+
+.pun #quickpost .bblinks li {
+	display: inline;
+>>>>>>> fluxbb-1.4.5
 }
 
 .pun #login p.clearb {
@@ -1339,6 +1384,17 @@ PROFILES (+ ADMIN MENU)
 	padding: 18px;
 }
 
+<<<<<<< HEAD
+=======
+#adintro li span {
+	display: inline-block;
+	padding-left: 16px;
+	margin-left: 8px;
+	line-height: normal;
+	background: url(Earth/img/bull.png) center left no-repeat;
+}
+
+>>>>>>> fluxbb-1.4.5
 #adstats .inbox, #adintro .inbox {
 	border-style: solid;
 	border-width: 1px;

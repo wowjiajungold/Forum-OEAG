@@ -13,4 +13,8 @@ $lang_delete = array(
 'Post del redirect'		=>	'Post deleted. Redirecting …',
 'Topic del redirect'	=>	'Topic deleted. Redirecting …'
 
+<<<<<<< HEAD
 );
+=======
+);
+>>>>>>> fluxbb-1.4.5

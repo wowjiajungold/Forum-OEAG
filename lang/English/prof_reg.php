@@ -33,9 +33,12 @@ $lang_prof_reg = array(
 'Dupe email'				=>	'Someone else is already registered with that email address. Please choose another email address.',
 'Sig too long'				=>	'Signatures cannot be longer than %1$s characters. Please reduce your signature by %2$s characters.',
 'Sig too many lines'		=>	'Signatures cannot have more than %s lines.',
+<<<<<<< HEAD
 'Sig img too big'           =>  'You\'re using an image that is too big: %sx%s whereas %s authorised.',
 'Sig img too heavy'         =>  'You\'re using an image that is heavy: %s whereas %s authorised.',
 'Sig too much img'          =>  'You can\'t use more than one image in your signature.',
+=======
+>>>>>>> fluxbb-1.4.5
 'Bad ICQ'					=>	'You entered an invalid ICQ UIN. Please go back and correct.',
 
 'UTC-12:00'					=>	'(UTC-12:00) International Date Line West',

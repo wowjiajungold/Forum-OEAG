@@ -15,8 +15,14 @@
 	<div class="box">
 		<div id="brdtitle" class="inbox">
 			<pun_title>
+<<<<<<< HEAD
             <pun_navlinks>
 		</div>
+=======
+			<pun_desc>
+		</div>
+		<pun_navlinks>
+>>>>>>> fluxbb-1.4.5
 		<pun_status>
 	</div>
 </div>

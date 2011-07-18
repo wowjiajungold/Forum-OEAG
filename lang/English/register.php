@@ -33,7 +33,10 @@ $lang_register = array(
 'Pass info'					=>	'Passwords must be at least 4 characters long. Passwords are case sensitive.',
 'Email info'				=>	'You must enter a valid email address as your randomly generated password will be sent to that address.',
 'Confirm email'				=>	'Confirm email address',
+<<<<<<< HEAD
 'Captcha legend'            =>  'reCAPTCHA',
 'Captcha info'              =>  'Please complete the captcha below.',
+=======
+>>>>>>> fluxbb-1.4.5
 
 );

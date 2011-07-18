@@ -1,7 +1,11 @@
 <?php
 
 /**
+<<<<<<< HEAD
  * Copyright (C) 2008-2010 FluxBB
+=======
+ * Copyright (C) 2008-2011 FluxBB
+>>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -17,6 +21,7 @@ function get_microtime()
 }
 
 //
+<<<<<<< HEAD
 // MOD AGE - NEW FUNCTION
 //
 function calculAge($dateNaissance) 
@@ -79,6 +84,8 @@ function check_signature($img,$content)
 }
 
 //
+=======
+>>>>>>> fluxbb-1.4.5
 // Cookie stuff!
 //
 function check_cookie(&$pun_user)
@@ -87,6 +94,7 @@ function check_cookie(&$pun_user)
 
 	$now = time();
 
+<<<<<<< HEAD
 	// We assume it's a guest
 	$cookie = array('user_id' => 1, 'password_hash' => 'Guest', 'expiration_time' => 0);
 
@@ -96,22 +104,59 @@ function check_cookie(&$pun_user)
 
 	if ($cookie['user_id'] > 1)
 	{
+=======
+	// If the cookie is set and it matches the correct pattern, then read the values from it
+	if (isset($_COOKIE[$cookie_name]) && preg_match('/^(\d+)\|([0-9a-fA-F]+)\|(\d+)\|([0-9a-fA-F]+)$/', $_COOKIE[$cookie_name], $matches))
+	{
+		$cookie = array(
+			'user_id'			=> intval($matches[1]),
+			'password_hash' 	=> $matches[2],
+			'expiration_time'	=> intval($matches[3]),
+			'cookie_hash'		=> $matches[4],
+		);
+	}
+
+	// If it has a non-guest user, and hasn't expired
+	if (isset($cookie) && $cookie['user_id'] > 1 && $cookie['expiration_time'] > $now)
+	{
+		// If the cookie has been tampered with
+		if (forum_hmac($cookie['user_id'].'|'.$cookie['expiration_time'], $cookie_seed.'_cookie_hash') != $cookie['cookie_hash'])
+		{
+			$expire = $now + 31536000; // The cookie expires after a year
+			pun_setcookie(1, pun_hash(uniqid(rand(), true)), $expire);
+			set_default_user();
+
+			return;
+		}
+
+>>>>>>> fluxbb-1.4.5
 		// Check if there's a user with the user ID and password hash from the cookie
 		$result = $db->query('SELECT u.*, g.*, o.logged, o.idle FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON u.group_id=g.g_id LEFT JOIN '.$db->prefix.'online AS o ON o.user_id=u.id WHERE u.id='.intval($cookie['user_id'])) or error('Unable to fetch user information', __FILE__, __LINE__, $db->error());
 		$pun_user = $db->fetch_assoc($result);
 
 		// If user authorisation failed
+<<<<<<< HEAD
 		if (!isset($pun_user['id']) || md5($cookie_seed.$pun_user['password']) !== $cookie['password_hash'])
 		{
 			$expire = $now + 31536000; // The cookie expires after a year
 			pun_setcookie(1, md5(uniqid(rand(), true)), $expire);
+=======
+		if (!isset($pun_user['id']) || forum_hmac($pun_user['password'], $cookie_seed.'_password_hash') !== $cookie['password_hash'])
+		{
+			$expire = $now + 31536000; // The cookie expires after a year
+			pun_setcookie(1, pun_hash(uniqid(rand(), true)), $expire);
+>>>>>>> fluxbb-1.4.5
 			set_default_user();
 
 			return;
 		}
 
 		// Send a new, updated cookie with a new expiration timestamp
+<<<<<<< HEAD
 		$expire = (intval($cookie['expiration_time']) > $now + $pun_config['o_timeout_visit']) ? $now + 1209600 : $now + $pun_config['o_timeout_visit'];
+=======
+		$expire = ($cookie['expiration_time'] > $now + $pun_config['o_timeout_visit']) ? $now + 1209600 : $now + $pun_config['o_timeout_visit'];
+>>>>>>> fluxbb-1.4.5
 		pun_setcookie($pun_user['id'], $pun_user['password'], $expire);
 
 		// Set a default language if the user selected language no longer exists
@@ -221,10 +266,17 @@ function authenticate_user($user, $password, $password_is_hash = false)
 //
 function get_current_url($max_length = 0)
 {
+<<<<<<< HEAD
 	$protocol = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) == 'off') ? 'http://' : 'https://';
 	$port = (isset($_SERVER['SERVER_PORT']) && (($_SERVER['SERVER_PORT'] != '80' && $protocol == 'http://') || ($_SERVER['SERVER_PORT'] != '443' && $protocol == 'https://')) && strpos($_SERVER['HTTP_HOST'], ':') === false) ? ':'.$_SERVER['SERVER_PORT'] : '';
 
 	$url = urldecode($protocol.$_SERVER['HTTP_HOST'].$port.$_SERVER['REQUEST_URI']);
+=======
+	$protocol = get_current_protocol();
+	$port = (isset($_SERVER['SERVER_PORT']) && (($_SERVER['SERVER_PORT'] != '80' && $protocol == 'http') || ($_SERVER['SERVER_PORT'] != '443' && $protocol == 'https')) && strpos($_SERVER['HTTP_HOST'], ':') === false) ? ':'.$_SERVER['SERVER_PORT'] : '';
+
+	$url = urldecode($protocol.'://'.$_SERVER['HTTP_HOST'].$port.$_SERVER['REQUEST_URI']);
+>>>>>>> fluxbb-1.4.5
 
 	if (strlen($url) <= $max_length || $max_length == 0)
 		return $url;
@@ -235,6 +287,56 @@ function get_current_url($max_length = 0)
 
 
 //
+<<<<<<< HEAD
+=======
+// Fetch the current protocol in use - http or https
+//
+function get_current_protocol()
+{
+	$protocol = 'http';
+
+	// Check if the server is claiming to using HTTPS
+	if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off')
+		$protocol = 'https';
+
+	// If we are behind a reverse proxy try to decide which protocol it is using
+	if (defined('FORUM_BEHIND_REVERSE_PROXY'))
+	{
+		// Check if we are behind a Microsoft based reverse proxy
+		if (!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) != 'off')
+			$protocol = 'https';
+
+		// Check if we're behind a "proper" reverse proxy, and what protocol it's using
+		if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']))
+			$protocol = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+	}
+
+	return $protocol;
+}
+
+//
+// Fetch the base_url, optionally support HTTPS and HTTP
+//
+function get_base_url($support_https = false)
+{
+	global $pun_config;
+	static $base_url;
+
+	if (!$support_https)
+		return $pun_config['o_base_url'];
+
+	if (!isset($base_url))
+	{
+		// Make sure we are using the correct protocol
+		$base_url = str_replace(array('http://', 'https://'), get_current_protocol().'://', $pun_config['o_base_url']);
+	}
+
+	return $base_url;
+}
+
+
+//
+>>>>>>> fluxbb-1.4.5
 // Fill $pun_user with default values (for guests)
 //
 function set_default_user()
@@ -286,6 +388,44 @@ function set_default_user()
 
 
 //
+<<<<<<< HEAD
+=======
+// SHA1 HMAC with PHP 4 fallback
+//
+function forum_hmac($data, $key, $raw_output = false)
+{
+	if (function_exists('hash_hmac'))
+		return hash_hmac('sha1', $data, $key, $raw_output);
+
+	// If key size more than blocksize then we hash it once
+	if (strlen($key) > 64)
+		$key = pack('H*', sha1($key)); // we have to use raw output here to match the standard
+
+	// Ensure we're padded to exactly one block boundary
+	$key = str_pad($key, 64, chr(0x00));
+
+	$hmac_opad = str_repeat(chr(0x5C), 64);
+	$hmac_ipad = str_repeat(chr(0x36), 64);
+
+	// Do inner and outer padding
+	for ($i = 0;$i < 64;$i++) {
+		$hmac_opad[$i] = $hmac_opad[$i] ^ $key[$i];
+		$hmac_ipad[$i] = $hmac_ipad[$i] ^ $key[$i];
+	}
+
+	// Finally, calculate the HMAC
+	$hash = sha1($hmac_opad.pack('H*', sha1($hmac_ipad.$data)));
+
+	// If we want raw output then we need to pack the final result
+	if ($raw_output)
+		$hash = pack('H*', $hash);
+
+	return $hash;
+}
+
+
+//
+>>>>>>> fluxbb-1.4.5
 // Set a cookie, FluxBB style!
 // Wrapper for forum_setcookie
 //
@@ -293,7 +433,11 @@ function pun_setcookie($user_id, $password_hash, $expire)
 {
 	global $cookie_name, $cookie_seed;
 
+<<<<<<< HEAD
 	forum_setcookie($cookie_name, serialize(array($user_id, md5($cookie_seed.$password_hash), $expire)), $expire);
+=======
+	forum_setcookie($cookie_name, $user_id.'|'.forum_hmac($password_hash, $cookie_seed.'_password_hash').'|'.$expire.'|'.forum_hmac($user_id.'|'.$expire, $cookie_seed.'_cookie_hash'), $expire);
+>>>>>>> fluxbb-1.4.5
 }
 
 
@@ -321,8 +465,13 @@ function check_bans()
 {
 	global $db, $pun_config, $lang_common, $pun_user, $pun_bans;
 
+<<<<<<< HEAD
 	// Admins aren't affected
 	if ($pun_user['g_id'] == PUN_ADMIN || !$pun_bans)
+=======
+	// Admins and moderators aren't affected
+	if ($pun_user['is_admmod'] || !$pun_bans)
+>>>>>>> fluxbb-1.4.5
 		return;
 
 	// Add a dot or a colon (depending on IPv4/IPv6) at the end of the IP address to prevent banned address
@@ -406,6 +555,7 @@ function check_username($username, $exclude_id = null)
 		$errors[] = $lang_prof_reg['Username IP'];
 	else if ((strpos($username, '[') !== false || strpos($username, ']') !== false) && strpos($username, '\'') !== false && strpos($username, '"') !== false)
 		$errors[] = $lang_prof_reg['Username reserved chars'];
+<<<<<<< HEAD
 	else if (preg_match('/(?:\[\/?(?:b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|\*)\]|\[(?:img|url|quote|size|list)=)/i', $username))
 		$errors[] = $lang_prof_reg['Username BBCode'];
 
@@ -419,6 +569,11 @@ function check_username($username, $exclude_id = null)
         require FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_check.php';
     }
 
+=======
+	else if (preg_match('/(?:\[\/?(?:b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|\*)\]|\[(?:img|url|quote|list)=)/i', $username))
+		$errors[] = $lang_prof_reg['Username BBCode'];
+
+>>>>>>> fluxbb-1.4.5
 	// Check username for any censored words
 	if ($pun_config['o_censoring'] == '1' && censor_words($username) != $username)
 		$errors[] = $lang_register['Username censor'];
@@ -426,7 +581,11 @@ function check_username($username, $exclude_id = null)
 	// Check that the username (or a too similar username) is not already registered
 	$query = ($exclude_id) ? ' AND id!='.$exclude_id : '';
 
+<<<<<<< HEAD
 	$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE (UPPER(username)=UPPER(\''.$db->escape($username).'\') OR UPPER(username)=UPPER(\''.$db->escape(preg_replace('/[^\w]/', '', $username)).'\')) AND id>1'.$query) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+=======
+	$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE (UPPER(username)=UPPER(\''.$db->escape($username).'\') OR UPPER(username)=UPPER(\''.$db->escape(ucp_preg_replace('/[^\p{L}\p{N}]/u', '', $username)).'\')) AND id>1'.$query) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+>>>>>>> fluxbb-1.4.5
 
 	if ($db->num_rows($result))
 	{
@@ -478,6 +637,7 @@ function update_users_online()
 
 
 //
+<<<<<<< HEAD
 // Generate the "navigator" that appears at the top of every page
 //
 function generate_navlinks()
@@ -562,6 +722,8 @@ function generate_navlinks()
 
 
 //
+=======
+>>>>>>> fluxbb-1.4.5
 // Display the profile navigation menu
 //
 function generate_profile_menu($page = '')
@@ -607,7 +769,11 @@ function generate_avatar_markup($user_id)
 
 		if (file_exists(PUN_ROOT.$path) && $img_size = getimagesize(PUN_ROOT.$path))
 		{
+<<<<<<< HEAD
 			$avatar_markup = '<img src="'.$pun_config['o_base_url'].'/'.$path.'?m='.filemtime(PUN_ROOT.$path).'" '.$img_size[3].' alt="" />';
+=======
+			$avatar_markup = '<img src="'.pun_htmlspecialchars(get_base_url(true).'/'.$path.'?m='.filemtime(PUN_ROOT.$path)).'" '.$img_size[3].' alt="" />';
+>>>>>>> fluxbb-1.4.5
 			break;
 		}
 	}
@@ -623,7 +789,11 @@ function generate_page_title($page_title, $p = null)
 {
 	global $pun_config, $lang_common;
 
+<<<<<<< HEAD
     $page_title = array_reverse($page_title);
+=======
+	$page_title = array_reverse($page_title);
+>>>>>>> fluxbb-1.4.5
 
 	if ($p != null)
 		$page_title[0] .= ' ('.sprintf($lang_common['Page'], forum_number_format($p)).')';
@@ -654,10 +824,17 @@ function set_tracked_topics($tracked_topics)
 		foreach ($tracked_topics['forums'] as $id => $timestamp)
 			$cookie_data .= 'f'.$id.'='.$timestamp.';';
 
+<<<<<<< HEAD
 		// Enforce a 4048 byte size limit (4096 minus some space for the cookie name)
 		if (strlen($cookie_data) > 4048)
 		{
 			$cookie_data = substr($cookie_data, 0, 4048);
+=======
+		// Enforce a byte size limit (4096 minus some space for the cookie name - defaults to 4048)
+		if (strlen($cookie_data) > FORUM_MAX_COOKIE_SIZE)
+		{
+			$cookie_data = substr($cookie_data, 0, FORUM_MAX_COOKIE_SIZE);
+>>>>>>> fluxbb-1.4.5
 			$cookie_data = substr($cookie_data, 0, strrpos($cookie_data, ';')).';';
 		}
 	}
@@ -765,7 +942,11 @@ function delete_topic($topic_id)
 	}
 
 	// Delete any subscriptions for this topic
+<<<<<<< HEAD
 	$db->query('DELETE FROM '.$db->prefix.'subscriptions WHERE topic_id='.$topic_id) or error('Unable to delete subscriptions', __FILE__, __LINE__, $db->error());
+=======
+	$db->query('DELETE FROM '.$db->prefix.'topic_subscriptions WHERE topic_id='.$topic_id) or error('Unable to delete subscriptions', __FILE__, __LINE__, $db->error());
+>>>>>>> fluxbb-1.4.5
 }
 
 
@@ -831,6 +1012,7 @@ function censor_words($text)
 	// If not already built in a previous call, build an array of censor words and their replacement text
 	if (!isset($search_for))
 	{
+<<<<<<< HEAD
 		$result = $db->query('SELECT search_for, replace_with FROM '.$db->prefix.'censoring') or error('Unable to fetch censor word list', __FILE__, __LINE__, $db->error());
 		$num_words = $db->num_rows($result);
 
@@ -839,11 +1021,27 @@ function censor_words($text)
 		{
 			list($search_for[$i], $replace_with[$i]) = $db->fetch_row($result);
 			$search_for[$i] = '/(?<=\W)('.str_replace('\*', '\w*?', preg_quote($search_for[$i], '/')).')(?=\W)/i';
+=======
+		if (file_exists(FORUM_CACHE_DIR.'cache_censoring.php'))
+			include FORUM_CACHE_DIR.'cache_censoring.php';
+
+		if (!defined('PUN_CENSOR_LOADED'))
+		{
+			if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+				require PUN_ROOT.'include/cache.php';
+
+			generate_censoring_cache();
+			require FORUM_CACHE_DIR.'cache_censoring.php';
+>>>>>>> fluxbb-1.4.5
 		}
 	}
 
 	if (!empty($search_for))
+<<<<<<< HEAD
 		$text = substr(preg_replace($search_for, $replace_with, ' '.$text.' '), 1, -1);
+=======
+		$text = substr(ucp_preg_replace($search_for, $replace_with, ' '.$text.' '), 1, -1);
+>>>>>>> fluxbb-1.4.5
 
 	return $text;
 }
@@ -982,12 +1180,19 @@ function paginate($num_pages, $cur_page, $link)
 //
 function message($message, $no_back_link = false)
 {
+<<<<<<< HEAD
 	global $db, $lang_common, $lang_pms, $pun_config, $pun_start, $tpl_main;
 
 	if (!defined('PUN_HEADER'))
 	{
 		global $pun_user;
 
+=======
+	global $db, $lang_common, $pun_config, $pun_start, $tpl_main, $pun_user;
+
+	if (!defined('PUN_HEADER'))
+	{
+>>>>>>> fluxbb-1.4.5
 		$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Info']);
 		define('PUN_ACTIVE_PAGE', 'index');
 		require PUN_ROOT.'header.php';
@@ -1089,6 +1294,7 @@ function random_key($len, $readable = false, $hash = false)
 
 
 //
+<<<<<<< HEAD
 // If we are running pre PHP 4.3.0, we add our own implementation of file_get_contents
 //
 if (!function_exists('file_get_contents'))
@@ -1117,6 +1323,31 @@ function confirm_referrer($script)
 
 	if (!preg_match('#^'.preg_quote(str_replace('www.', '', $pun_config['o_base_url']).'/'.$script, '#').'#i', str_replace('www.', '', (isset($_SERVER['HTTP_REFERER']) ? urldecode($_SERVER['HTTP_REFERER']) : ''))))
 		message($lang_common['Bad referrer']);
+=======
+// Make sure that HTTP_REFERER matches base_url/script
+//
+function confirm_referrer($script, $error_msg = false)
+{
+	global $pun_config, $lang_common;
+
+	// There is no referrer
+	if (empty($_SERVER['HTTP_REFERER']))
+		message($error_msg ? $error_msg : $lang_common['Bad referrer']);
+
+	$referrer = parse_url(strtolower($_SERVER['HTTP_REFERER']));
+	// Remove www subdomain if it exists
+	if (strpos($referrer['host'], 'www.') === 0)
+		$referrer['host'] = substr($referrer['host'], 4);
+
+	$valid = parse_url(strtolower(get_base_url().'/'.$script));
+	// Remove www subdomain if it exists
+	if (strpos($valid['host'], 'www.') === 0)
+		$valid['host'] = substr($valid['host'], 4);
+
+	// Check the host and path match. Ignore the scheme, port, etc.
+	if ($referrer['host'] != $valid['host'] || $referrer['path'] != $valid['path'])
+		message($error_msg ? $error_msg : $lang_common['Bad referrer']);
+>>>>>>> fluxbb-1.4.5
 }
 
 
@@ -1144,7 +1375,27 @@ function pun_hash($str)
 //
 function get_remote_address()
 {
+<<<<<<< HEAD
 	return $_SERVER['REMOTE_ADDR'];
+=======
+	$remote_addr = $_SERVER['REMOTE_ADDR'];
+
+	// If we are behind a reverse proxy try to find the real users IP
+	if (defined('FORUM_BEHIND_REVERSE_PROXY'))
+	{
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+		{
+			// The general format of the field is:
+			// X-Forwarded-For: client1, proxy1, proxy2
+			// where the value is a comma+space separated list of IP addresses, the left-most being the farthest downstream client,
+			// and each successive proxy that passed the request adding the IP address where it received the request from.
+			$remote_addr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+			$remote_addr = trim($remote_addr[0]);
+		}
+	}
+
+	return $remote_addr;
+>>>>>>> fluxbb-1.4.5
 }
 
 
@@ -1198,9 +1449,15 @@ function pun_linebreaks($str)
 //
 // A wrapper for utf8_trim for compatibility
 //
+<<<<<<< HEAD
 function pun_trim($str)
 {
 	return utf8_trim($str);
+=======
+function pun_trim($str, $charlist = false)
+{
+	return utf8_trim($str, $charlist);
+>>>>>>> fluxbb-1.4.5
 }
 
 //
@@ -1244,12 +1501,27 @@ function maintenance_message()
 {
 	global $db, $pun_config, $lang_common, $pun_user;
 
+<<<<<<< HEAD
+=======
+	// Send no-cache headers
+	header('Expires: Thu, 21 Jul 1977 07:30:00 GMT'); // When yours truly first set eyes on this world! :)
+	header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+	header('Cache-Control: post-check=0, pre-check=0', false);
+	header('Pragma: no-cache'); // For HTTP/1.0 compatibility
+
+	// Send the Content-type header in case the web server is setup to send something else
+	header('Content-type: text/html; charset=utf-8');
+
+>>>>>>> fluxbb-1.4.5
 	// Deal with newlines, tabs and multiple spaces
 	$pattern = array("\t", '  ', '  ');
 	$replace = array('&#160; &#160; ', '&#160; ', ' &#160;');
 	$message = str_replace($pattern, $replace, $pun_config['o_maintenance_message']);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fluxbb-1.4.5
 	if (file_exists(PUN_ROOT.'style/'.$pun_user['style'].'/maintenance.tpl'))
 	{
 		$tpl_file = PUN_ROOT.'style/'.$pun_user['style'].'/maintenance.tpl';
@@ -1349,9 +1621,15 @@ function redirect($destination_url, $message)
 {
 	global $db, $pun_config, $lang_common, $pun_user;
 
+<<<<<<< HEAD
 	// Prefix with o_base_url (unless there's already a valid URI)
 	if (strpos($destination_url, 'http://') !== 0 && strpos($destination_url, 'https://') !== 0 && strpos($destination_url, '/') !== 0)
 		$destination_url = $pun_config['o_base_url'].'/'.$destination_url;
+=======
+	// Prefix with base_url (unless there's already a valid URI)
+	if (strpos($destination_url, 'http://') !== 0 && strpos($destination_url, 'https://') !== 0 && strpos($destination_url, '/') !== 0)
+		$destination_url = get_base_url(true).'/'.$destination_url;
+>>>>>>> fluxbb-1.4.5
 
 	// Do a little spring cleaning
 	$destination_url = preg_replace('/([\r\n])|(%0[ad])|(;\s*data\s*:)/i', '', $destination_url);
@@ -1525,9 +1803,15 @@ function error($message, $file = null, $line = null, $db_error = false)
 <style type="text/css">
 <!--
 BODY {MARGIN: 10% 20% auto 20%; font: 10px Verdana, Arial, Helvetica, sans-serif}
+<<<<<<< HEAD
 #errorbox {BORDER: 1px solid #333}
 H2 {MARGIN: 0; COLOR: #FFFFFF; BACKGROUND-COLOR: #333; FONT-SIZE: 1.1em; PADDING: 5px 4px}
 #errorbox DIV {PADDING: 25px; BACKGROUND-COLOR: #F1F1F1}
+=======
+#errorbox {BORDER: 1px solid #B84623}
+H2 {MARGIN: 0; COLOR: #FFFFFF; BACKGROUND-COLOR: #B84623; FONT-SIZE: 1.1em; PADDING: 5px 4px}
+#errorbox DIV {PADDING: 6px 5px; BACKGROUND-COLOR: #F1F1F1}
+>>>>>>> fluxbb-1.4.5
 -->
 </style>
 </head>
@@ -1645,11 +1929,14 @@ function remove_bad_characters($array)
 			"\xef\xbf\xbb"	=> '',		// INTERLINEAR ANNOTATION TERMINATOR	FFFB	*
 			"\xef\xbf\xbc"	=> '',		// OBJECT REPLACEMENT CHARACTER			FFFC	*
 			"\xef\xbf\xbd"	=> '',		// REPLACEMENT CHARACTER				FFFD	*
+<<<<<<< HEAD
 			"\xc2\xad"		=> '-',		// SOFT HYPHEN							00AD
 			"\xE2\x80\x9C"	=> '"',		// LEFT DOUBLE QUOTATION MARK			201C
 			"\xE2\x80\x9D"	=> '"',		// RIGHT DOUBLE QUOTATION MARK			201D
 			"\xE2\x80\x98"	=> '\'',	// LEFT SINGLE QUOTATION MARK			2018
 			"\xE2\x80\x99"	=> '\'',	// RIGHT SINGLE QUOTATION MARK			2019
+=======
+>>>>>>> fluxbb-1.4.5
 			"\xe2\x80\x80"	=> ' ',		// EN QUAD								2000	*
 			"\xe2\x80\x81"	=> ' ',		// EM QUAD								2001	*
 			"\xe2\x80\x82"	=> ' ',		// EN SPACE								2002	*
@@ -1686,7 +1973,11 @@ function remove_bad_characters($array)
 //
 function file_size($size)
 {
+<<<<<<< HEAD
 	$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB');
+=======
+	$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB');
+>>>>>>> fluxbb-1.4.5
 
 	for ($i = 0; $size > 1024; $i++)
 		$size /= 1024;
@@ -1744,6 +2035,30 @@ function forum_list_langs()
 
 
 //
+<<<<<<< HEAD
+=======
+// Generate a cache ID based on the last modification time for all stopwords files
+//
+function generate_stopwords_cache_id()
+{
+	$files = glob(PUN_ROOT.'lang/*/stopwords.txt');
+	if ($files === false)
+		return 'cache_id_error';
+
+	$hash = array();
+
+	foreach ($files as $file)
+	{
+		$hash[] = $file;
+		$hash[] = filemtime($file);
+	}
+
+	return sha1(implode('|', $hash));
+}
+
+
+//
+>>>>>>> fluxbb-1.4.5
 // Fetch a list of available admin plugins
 //
 function forum_list_plugins($is_admin)
@@ -1767,6 +2082,181 @@ function forum_list_plugins($is_admin)
 	return $plugins;
 }
 
+<<<<<<< HEAD
+=======
+
+//
+// Split text into chunks ($inside contains all text inside $start and $end, and $outside contains all text outside)
+//
+function split_text($text, $start, $end, &$errors, $retab = true)
+{
+	global $pun_config, $lang_common;
+
+	$tokens = explode($start, $text);
+
+	$outside[] = $tokens[0];
+
+	$num_tokens = count($tokens);
+	for ($i = 1; $i < $num_tokens; ++$i)
+	{
+		$temp = explode($end, $tokens[$i]);
+
+		if (count($temp) != 2)
+		{
+			$errors[] = $lang_common['BBCode code problem'];
+			return array(null, array($text));
+		}
+		$inside[] = $temp[0];
+		$outside[] = $temp[1];
+	}
+
+	if ($pun_config['o_indent_num_spaces'] != 8 && $retab)
+	{
+		$spaces = str_repeat(' ', $pun_config['o_indent_num_spaces']);
+		$inside = str_replace("\t", $spaces, $inside);
+	}
+
+	return array($inside, $outside);
+}
+
+//
+// function url_valid($url) {
+//
+// Return associative array of valid URI components, or FALSE if $url is not
+// RFC-3986 compliant. If the passed URL begins with: "www." or "ftp.", then
+// "http://" or "ftp://" is prepended and the corrected full-url is stored in
+// the return array with a key name "url". This value should be used by the caller.
+//
+// Return value: FALSE if $url is not valid, otherwise array of URI components:
+// e.g.
+// Given: "http://www.jmrware.com:80/articles?height=10&width=75#fragone"
+// Array(
+//	  [scheme] => http
+//	  [authority] => www.jmrware.com:80
+//	  [userinfo] =>
+//	  [host] => www.jmrware.com
+//	  [IP_literal] =>
+//	  [IPV6address] =>
+//	  [ls32] =>
+//	  [IPvFuture] =>
+//	  [IPv4address] =>
+//	  [regname] => www.jmrware.com
+//	  [port] => 80
+//	  [path_abempty] => /articles
+//	  [query] => height=10&width=75
+//	  [fragment] => fragone
+//	  [url] => http://www.jmrware.com:80/articles?height=10&width=75#fragone
+// )
+function url_valid($url)
+{
+	if (strpos($url, 'www.') === 0) $url = 'http://'. $url;
+	if (strpos($url, 'ftp.') === 0) $url = 'ftp://'. $url;
+	if (!preg_match('/# Valid absolute URI having a non-empty, valid DNS host.
+		^
+		(?P<scheme>[A-Za-z][A-Za-z0-9+\-.]*):\/\/
+		(?P<authority>
+		  (?:(?P<userinfo>(?:[A-Za-z0-9\-._~!$&\'()*+,;=:]|%[0-9A-Fa-f]{2})*)@)?
+		  (?P<host>
+			(?P<IP_literal>
+			  \[
+			  (?:
+				(?P<IPV6address>
+				  (?:												 (?:[0-9A-Fa-f]{1,4}:){6}
+				  |												   ::(?:[0-9A-Fa-f]{1,4}:){5}
+				  | (?:							 [0-9A-Fa-f]{1,4})?::(?:[0-9A-Fa-f]{1,4}:){4}
+				  | (?:(?:[0-9A-Fa-f]{1,4}:){0,1}[0-9A-Fa-f]{1,4})?::(?:[0-9A-Fa-f]{1,4}:){3}
+				  | (?:(?:[0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})?::(?:[0-9A-Fa-f]{1,4}:){2}
+				  | (?:(?:[0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})?::	[0-9A-Fa-f]{1,4}:
+				  | (?:(?:[0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})?::
+				  )
+				  (?P<ls32>[0-9A-Fa-f]{1,4}:[0-9A-Fa-f]{1,4}
+				  | (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
+					   (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)
+				  )
+				|	(?:(?:[0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})?::	[0-9A-Fa-f]{1,4}
+				|	(?:(?:[0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})?::
+				)
+			  | (?P<IPvFuture>[Vv][0-9A-Fa-f]+\.[A-Za-z0-9\-._~!$&\'()*+,;=:]+)
+			  )
+			  \]
+			)
+		  | (?P<IPv4address>(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
+							   (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))
+		  | (?P<regname>(?:[A-Za-z0-9\-._~!$&\'()*+,;=]|%[0-9A-Fa-f]{2})+)
+		  )
+		  (?::(?P<port>[0-9]*))?
+		)
+		(?P<path_abempty>(?:\/(?:[A-Za-z0-9\-._~!$&\'()*+,;=:@]|%[0-9A-Fa-f]{2})*)*)
+		(?:\?(?P<query>		  (?:[A-Za-z0-9\-._~!$&\'()*+,;=:@\\/?]|%[0-9A-Fa-f]{2})*))?
+		(?:\#(?P<fragment>	  (?:[A-Za-z0-9\-._~!$&\'()*+,;=:@\\/?]|%[0-9A-Fa-f]{2})*))?
+		$
+		/mx', $url, $m)) return FALSE;
+	switch ($m['scheme'])
+	{
+	case 'https':
+	case 'http':
+		if ($m['userinfo']) return FALSE; // HTTP scheme does not allow userinfo.
+		break;
+	case 'ftps':
+	case 'ftp':
+		break;
+	default:
+		return FALSE;	// Unrecognised URI scheme. Default to FALSE.
+	}
+	// Validate host name conforms to DNS "dot-separated-parts".
+	if ($m{'regname'}) // If host regname specified, check for DNS conformance.
+	{
+		if (!preg_match('/# HTTP DNS host name.
+			^					   # Anchor to beginning of string.
+			(?!.{256})			   # Overall host length is less than 256 chars.
+			(?:					   # Group dot separated host part alternatives.
+			  [0-9A-Za-z]\.		   # Either a single alphanum followed by dot
+			|					   # or... part has more than one char (63 chars max).
+			  [0-9A-Za-z]		   # Part first char is alphanum (no dash).
+			  [\-0-9A-Za-z]{0,61}  # Internal chars are alphanum plus dash.
+			  [0-9A-Za-z]		   # Part last char is alphanum (no dash).
+			  \.				   # Each part followed by literal dot.
+			)*					   # One or more parts before top level domain.
+			(?:					   # Explicitly specify top level domains.
+			  com|edu|gov|int|mil|net|org|biz|
+			  info|name|pro|aero|coop|museum|
+			  asia|cat|jobs|mobi|tel|travel|
+			  [A-Za-z]{2})		   # Country codes are exqactly two alpha chars.
+			$					   # Anchor to end of string.
+			/ix', $m['host'])) return FALSE;
+	}
+	$m['url'] = $url;
+	for ($i = 0; isset($m[$i]); ++$i) unset($m[$i]);
+	return $m; // return TRUE == array of useful named $matches plus the valid $url.
+}
+
+//
+// Replace string matching regular expression
+//
+// This function takes care of possibly disabled unicode properties in PCRE builds
+//
+function ucp_preg_replace($pattern, $replace, $subject)
+{
+	$replaced = preg_replace($pattern, $replace, $subject);
+	
+	// If preg_replace() returns false, this probably means unicode support is not built-in, so we need to modify the pattern a little
+	if ($replaced === false)
+	{
+		if (is_array($pattern))
+		{
+			foreach ($pattern as $cur_key => $cur_pattern)
+				$pattern[$cur_key] = str_replace('\p{L}\p{N}', '\w', $cur_pattern);
+			
+			$replaced = preg_replace($pattern, $replace, $subject);
+		}
+		else
+			$replaced = preg_replace(str_replace('\p{L}\p{N}', '\w', $pattern), $replace, $subject);
+	}
+	
+	return $replaced;
+}
+
+>>>>>>> fluxbb-1.4.5
 // DEBUG FUNCTIONS BELOW
 
 //
