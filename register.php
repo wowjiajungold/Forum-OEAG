@@ -1,20 +1,12 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 
@@ -34,12 +26,8 @@ require PUN_ROOT.'lang/'.$pun_user['language'].'/prof_reg.php';
 if ($pun_config['o_regs_allow'] == '0')
 	message($lang_register['No new regs']);
 
-<<<<<<< HEAD
 if ($pun_config['o_captcha_use_registration'] == '1')
     require PUN_ROOT.'include/recaptchalib.php';
-
-=======
->>>>>>> fluxbb-1.4.5
 
 // User pressed the cancel button
 if (isset($_GET['cancel']))
@@ -159,7 +147,6 @@ if (isset($_POST['form_sent']))
 	$email_setting = intval($_POST['email_setting']);
 	if ($email_setting < 0 || $email_setting > 2)
 		$email_setting = $pun_config['o_default_email_setting'];
-<<<<<<< HEAD
     
     if ($pun_config['o_captcha_use_registration'] == '1')
     {
@@ -167,49 +154,19 @@ if (isset($_POST['form_sent']))
         if (!$result->is_valid)
             $errors[] = $lang_common['Captcha error'];
     }
-=======
->>>>>>> fluxbb-1.4.5
 
 	// Did everything go according to plan?
 	if (empty($errors))
 	{
-<<<<<<< HEAD
-        $result = $db->query('SELECT * FROM users_backup WHERE (UPPER(pseudo)=UPPER(\''.$db->escape($username).'\') OR UPPER(pseudo)=UPPER(\''.$db->escape(preg_replace('/[^\w]/', '', $username)).'\') OR pseudo=\''.$db->escape($username).'\') AND id>1') or error('Unable to create user', __FILE__, __LINE__, $db->error());
-        $row = $db->fetch_assoc($result);
-        
-=======
->>>>>>> fluxbb-1.4.5
 		// Insert the new user into the database. We do this now to get the last inserted ID for later use
 		$now = time();
 
 		$intial_group_id = ($pun_config['o_regs_verify'] == '0') ? $pun_config['o_default_user_group'] : PUN_UNVERIFIED;
 		$password_hash = pun_hash($password1);
 
-<<<<<<< HEAD
-        
-		// Add the user
-		if($row) {
-            if($email1==$row['mail']) {
-                $db->query('INSERT INTO '.$db->prefix.'users (id, username, group_id, password, email, email_setting, timezone, dst, language, style, registered, registration_ip, last_visit) VALUES(\''.$row['id'].'\', \''.$db->escape($row['pseudo']).'\', '.$intial_group_id.', \''.$password_hash.'\', \''.$db->escape($email1).'\', '.$email_setting.', '.$timezone.' , '.$dst.', \''.$db->escape($language).'\', \''.$pun_config['o_default_style'].'\', '.$row['date'].', \''.get_remote_address().'\', '.$row['date'].')') or error('Unable to create user', __FILE__, __LINE__, $db->error());
-                
-                $up = $db->query('UPDATE '.$db->prefix.'posts SET poster_id=\''.$row['id'].'\' WHERE poster=\''.$db->escape($row['pseudo']).'\';') or error('Unable to link user\'s posts', __FILE__, __LINE__, $db->error());
-                $total = $db->affected_rows($up);
-                $db->query('UPDATE '.$db->prefix.'users SET num_posts=\''.$total.'\', signature=\''.$row['signature'].'\' WHERE id=\''.$row['id'].'\';') or error('Unable to update posts count', __FILE__, __LINE__, $db->error());
-                $db->query('UPDATE '.$db->prefix.'users SET num_posts=num_posts-'.$total.' WHERE id=\'3\';') or error('Unable to update posts count', __FILE__, __LINE__, $db->error());
-            }
-            else {
-                error("Une erreur c'est produite lors de votre inscription car vous avez tenté d'enregistrer un pseudonyme réservé.<br /><br />".$lang_register['Desc 3'], __FILE__, __LINE__, $db->error());
-            }
-        }
-        else {
-            $db->query('INSERT INTO '.$db->prefix.'users (username, group_id, password, email, email_setting, timezone, dst, language, style, registered, registration_ip, last_visit) VALUES(\''.$db->escape($username).'\', '.$intial_group_id.', \''.$password_hash.'\', \''.$db->escape($email1).'\', '.$email_setting.', '.$timezone.' , '.$dst.', \''.$db->escape($language).'\', \''.$pun_config['o_default_style'].'\', '.$now.', \''.get_remote_address().'\', '.$now.')') or error('Unable to create user', __FILE__, __LINE__, $db->error());
-            $new_uid = $db->insert_id();
-        }
-=======
 		// Add the user
 		$db->query('INSERT INTO '.$db->prefix.'users (username, group_id, password, email, email_setting, timezone, dst, language, style, registered, registration_ip, last_visit) VALUES(\''.$db->escape($username).'\', '.$intial_group_id.', \''.$password_hash.'\', \''.$db->escape($email1).'\', '.$email_setting.', '.$timezone.' , '.$dst.', \''.$db->escape($language).'\', \''.$pun_config['o_default_style'].'\', '.$now.', \''.get_remote_address().'\', '.$now.')') or error('Unable to create user', __FILE__, __LINE__, $db->error());
 		$new_uid = $db->insert_id();
->>>>>>> fluxbb-1.4.5
 
 		// If the mailing list isn't empty, we may need to send out some alerts
 		if ($pun_config['o_mailing_list'] != '')
@@ -219,11 +176,7 @@ if (isset($_POST['form_sent']))
 			{
 				$mail_subject = $lang_common['Banned email notification'];
 				$mail_message = sprintf($lang_common['Banned email register message'], $username, $email1)."\n";
-<<<<<<< HEAD
-				$mail_message .= sprintf($lang_common['User profile'], $pun_config['o_base_url'].'/profile.php?id='.$new_uid)."\n";
-=======
 				$mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$new_uid)."\n";
->>>>>>> fluxbb-1.4.5
 				$mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
 
 				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
@@ -234,11 +187,7 @@ if (isset($_POST['form_sent']))
 			{
 				$mail_subject = $lang_common['Duplicate email notification'];
 				$mail_message = sprintf($lang_common['Duplicate email register message'], $username, implode(', ', $dupe_list))."\n";
-<<<<<<< HEAD
-				$mail_message .= sprintf($lang_common['User profile'], $pun_config['o_base_url'].'/profile.php?id='.$new_uid)."\n";
-=======
 				$mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$new_uid)."\n";
->>>>>>> fluxbb-1.4.5
 				$mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
 
 				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
@@ -248,13 +197,8 @@ if (isset($_POST['form_sent']))
 			if ($pun_config['o_regs_report'] == '1')
 			{
 				$mail_subject = $lang_common['New user notification'];
-<<<<<<< HEAD
-				$mail_message = sprintf($lang_common['New user message'], $username, $pun_config['o_base_url'].'/')."\n";
-				$mail_message .= sprintf($lang_common['User profile'], $pun_config['o_base_url'].'/profile.php?id='.$new_uid)."\n";
-=======
 				$mail_message = sprintf($lang_common['New user message'], $username, get_base_url().'/')."\n";
 				$mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$new_uid)."\n";
->>>>>>> fluxbb-1.4.5
 				$mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
 
 				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
@@ -273,17 +217,10 @@ if (isset($_POST['form_sent']))
 			$mail_message = trim(substr($mail_tpl, $first_crlf));
 
 			$mail_subject = str_replace('<board_title>', $pun_config['o_board_title'], $mail_subject);
-<<<<<<< HEAD
-			$mail_message = str_replace('<base_url>', $pun_config['o_base_url'].'/', $mail_message);
-			$mail_message = str_replace('<username>', $username, $mail_message);
-			$mail_message = str_replace('<password>', $password1, $mail_message);
-			$mail_message = str_replace('<login_url>', $pun_config['o_base_url'].'/login.php', $mail_message);
-=======
 			$mail_message = str_replace('<base_url>', get_base_url().'/', $mail_message);
 			$mail_message = str_replace('<username>', $username, $mail_message);
 			$mail_message = str_replace('<password>', $password1, $mail_message);
 			$mail_message = str_replace('<login_url>', get_base_url().'/login.php', $mail_message);
->>>>>>> fluxbb-1.4.5
 			$mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'].' '.$lang_common['Mailer'], $mail_message);
 
 			pun_mail($email1, $mail_subject, $mail_message);
@@ -291,15 +228,12 @@ if (isset($_POST['form_sent']))
 			message($lang_register['Reg email'].' <a href="mailto:'.$pun_config['o_admin_email'].'">'.$pun_config['o_admin_email'].'</a>.', true);
 		}
 
-<<<<<<< HEAD
-=======
 		// Regenerate the users info cache
 		if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 			require PUN_ROOT.'include/cache.php';
 
 		generate_users_info_cache();
 
->>>>>>> fluxbb-1.4.5
 		pun_setcookie($new_uid, $password_hash, time() + $pun_config['o_timeout_visit']);
 
 		redirect('index.php', $lang_register['Reg complete']);
@@ -354,10 +288,6 @@ if (!empty($errors))
 					<h3><?php echo $lang_common['Important information'] ?></h3>
 					<p><?php echo $lang_register['Desc 1'] ?></p>
 					<p><?php echo $lang_register['Desc 2'] ?></p>
-<<<<<<< HEAD
-          <p><?php echo $lang_register['Desc 3'] ?></p>
-=======
->>>>>>> fluxbb-1.4.5
 				</div>
 			</div>
 			<div class="inform">
@@ -487,7 +417,6 @@ if (!empty($errors))
 					</div>
 				</fieldset>
 			</div>
-<<<<<<< HEAD
 <?php if ($pun_config['o_captcha_use_registration'] == '1') : ?>
             <div class="inform">
                 <fieldset>
@@ -503,8 +432,6 @@ if (!empty($errors))
                 </fieldset>
             </div>
 <?php endif; ?>
-=======
->>>>>>> fluxbb-1.4.5
 			<p class="buttons"><input type="submit" name="register" value="<?php echo $lang_register['Register'] ?>" /></p>
 		</form>
 	</div>

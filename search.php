@@ -1,11 +1,7 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -13,11 +9,7 @@
 // The contents of this file are very much inspired by the file search.php
 // from the phpBB Group forum software phpBB2 (http://www.phpbb.com)
 
-<<<<<<< HEAD
-define('PUN_ROOT', './');
-=======
 define('PUN_ROOT', dirname(__FILE__).'/');
->>>>>>> fluxbb-1.4.5
 require PUN_ROOT.'include/common.php';
 
 // Load the search.php language file
@@ -39,15 +31,12 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 	$forum = (isset($_GET['forum'])) ? intval($_GET['forum']) : -1;
 	$sort_dir = (isset($_GET['sort_dir']) && $_GET['sort_dir'] == 'DESC') ? 'DESC' : 'ASC';
 
-<<<<<<< HEAD
-=======
 	// Allow the old action names for backwards compatibility reasons
 	if ($action == 'show_user')
 		$action = 'show_user_posts';
 	else if ($action == 'show_24h')
 		$action = 'show_recent';
 
->>>>>>> fluxbb-1.4.5
 	// If a search_id was supplied
 	if (isset($_GET['search_id']))
 	{
@@ -78,19 +67,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 		$search_in = (!isset($_GET['search_in']) || $_GET['search_in'] == 'all') ? 0 : (($_GET['search_in'] == 'message') ? 1 : -1);
 	}
 	// If it's a user search (by ID)
-<<<<<<< HEAD
-	else if ($action == 'show_user')
-	{
-		$user_id = (isset($_GET['user_id'])) ? intval($_GET['user_id']) : 0;
-		if ($user_id < 2)
-			message($lang_common['Bad request']);
-	}
-	else
-	{
-		if ($action != 'show_new' && $action != 'show_24h' && $action != 'show_unanswered' && $action != 'show_subscriptions')
-			message($lang_common['Bad request']);
-	}
-=======
 	else if ($action == 'show_user_posts' || $action == 'show_user_topics' || $action == 'show_subscriptions')
 	{
 		$user_id = (isset($_GET['user_id'])) ? intval($_GET['user_id']) : $pun_user['id'];
@@ -110,7 +86,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 	}
 	else if ($action != 'show_new' && $action != 'show_unanswered')
 		message($lang_common['Bad request']);
->>>>>>> fluxbb-1.4.5
 
 
 	// If a valid search_id was supplied we attempt to fetch the search results from the db
@@ -128,10 +103,7 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 			$sort_by = $temp['sort_by'];
 			$sort_dir = $temp['sort_dir'];
 			$show_as = $temp['show_as'];
-<<<<<<< HEAD
-=======
 			$search_type = $temp['search_type'];
->>>>>>> fluxbb-1.4.5
 
 			unset($temp);
 		}
@@ -309,13 +281,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 
 			// If we searched for both keywords and author name we want the intersection between the results
 			if ($author && $keywords)
-<<<<<<< HEAD
-				$search_ids = array_intersect_assoc($keyword_results, $author_results);
-			else if ($keywords)
-				$search_ids = $keyword_results;
-			else
-				$search_ids = $author_results;
-=======
 			{
 				$search_ids = array_intersect_assoc($keyword_results, $author_results);
 				$search_type = array('both', array($keywords, pun_trim($_GET['author'])), $forum, isset($_GET['search_in']) ? $_GET['search_in'] : '');
@@ -330,7 +295,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 				$search_ids = $author_results;
 				$search_type = array('author', pun_trim($_GET['author']), $forum, isset($_GET['search_in']) ? $_GET['search_in'] : '');
 			}
->>>>>>> fluxbb-1.4.5
 
 			unset($keyword_results, $author_results);
 
@@ -345,11 +309,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 			if (!$num_hits)
 				message($lang_search['No hits']);
 		}
-<<<<<<< HEAD
-		else if ($action == 'show_new' || $action == 'show_24h' || $action == 'show_user' || $action == 'show_subscriptions' || $action == 'show_unanswered')
-		{
-			// If it's a search for new posts
-=======
 		else if ($action == 'show_new' || $action == 'show_recent' || $action == 'show_replies' || $action == 'show_user_posts' || $action == 'show_user_topics' || $action == 'show_subscriptions' || $action == 'show_unanswered')
 		{
 			$search_type = array('action', $action);
@@ -359,7 +318,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 			$sort_dir = 'DESC';
 
 			// If it's a search for new posts since last visit
->>>>>>> fluxbb-1.4.5
 			if ($action == 'show_new')
 			{
 				if ($pun_user['is_guest'])
@@ -371,28 +329,15 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 				if (!$num_hits)
 					message($lang_search['No new posts']);
 			}
-<<<<<<< HEAD
-			// If it's a search for todays posts
-			else if ($action == 'show_24h')
-			{
-				$result = $db->query('SELECT t.id FROM '.$db->prefix.'topics AS t LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND t.last_post>'.(time() - 86400).' AND t.moved_to IS NULL ORDER BY t.last_post DESC') or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
-=======
 			// If it's a search for recent posts (in a certain time interval)
 			else if ($action == 'show_recent')
 			{
 				$result = $db->query('SELECT t.id FROM '.$db->prefix.'topics AS t LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND t.last_post>'.(time() - $interval).' AND t.moved_to IS NULL'.(isset($_GET['fid']) ? ' AND t.forum_id='.intval($_GET['fid']) : '').' ORDER BY t.last_post DESC') or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
 				$num_hits = $db->num_rows($result);
 
 				if (!$num_hits)
 					message($lang_search['No recent posts']);
 			}
-<<<<<<< HEAD
-			// If it's a search for posts by a specific user ID
-			else if ($action == 'show_user')
-			{
-				$result = $db->query('SELECT t.id FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'posts AS p ON t.id=p.topic_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND p.poster_id='.$user_id.' GROUP BY t.id ORDER BY t.last_post DESC') or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
-=======
 			// If it's a search for topics in which the user has posted
 			else if ($action == 'show_replies')
 			{
@@ -408,13 +353,10 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 				$show_as = 'posts';
 
 				$result = $db->query('SELECT p.id FROM '.$db->prefix.'posts AS p INNER JOIN '.$db->prefix.'topics AS t ON p.topic_id=t.id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND p.poster_id='.$user_id.' ORDER BY p.posted DESC') or error('Unable to fetch user posts', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
 				$num_hits = $db->num_rows($result);
 
 				if (!$num_hits)
 					message($lang_search['No user posts']);
-<<<<<<< HEAD
-=======
 
 				// Pass on the user ID so that we can later know whos posts we're searching for
 				$search_type[2] = $user_id;
@@ -430,7 +372,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 
 				// Pass on the user ID so that we can later know whos topics we're searching for
 				$search_type[2] = $user_id;
->>>>>>> fluxbb-1.4.5
 			}
 			// If it's a search for subscribed topics
 			else if ($action == 'show_subscriptions')
@@ -438,21 +379,14 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 				if ($pun_user['is_guest'])
 					message($lang_common['Bad request']);
 
-<<<<<<< HEAD
-				$result = $db->query('SELECT t.id FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'subscriptions AS s ON (t.id=s.topic_id AND s.user_id='.$pun_user['id'].') LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) ORDER BY t.last_post DESC') or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
-=======
 				$result = $db->query('SELECT t.id FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'topic_subscriptions AS s ON (t.id=s.topic_id AND s.user_id='.$user_id.') LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=t.forum_id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) ORDER BY t.last_post DESC') or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
->>>>>>> fluxbb-1.4.5
 				$num_hits = $db->num_rows($result);
 
 				if (!$num_hits)
 					message($lang_search['No subscriptions']);
-<<<<<<< HEAD
-=======
 
 				// Pass on user ID so that we can later know whose subscriptions we're searching for
 				$search_type[2] = $user_id;
->>>>>>> fluxbb-1.4.5
 			}
 			// If it's a search for unanswered posts
 			else
@@ -464,23 +398,11 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 					message($lang_search['No unanswered']);
 			}
 
-<<<<<<< HEAD
-			// We want to sort things after last post
-			$sort_by = 4;
-			$sort_dir = 'DESC';
-
-=======
->>>>>>> fluxbb-1.4.5
 			$search_ids = array();
 			while ($row = $db->fetch_row($result))
 				$search_ids[] = $row[0];
 
 			$db->free_result($result);
-<<<<<<< HEAD
-
-			$show_as = 'topics';
-=======
->>>>>>> fluxbb-1.4.5
 		}
 		else
 			message($lang_common['Bad request']);
@@ -505,10 +427,7 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 			'sort_by'			=> $sort_by,
 			'sort_dir'			=> $sort_dir,
 			'show_as'			=> $show_as,
-<<<<<<< HEAD
-=======
 			'search_type'		=> $search_type
->>>>>>> fluxbb-1.4.5
 		));
 		$search_id = mt_rand(1, 2147483647);
 
@@ -516,11 +435,7 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 
 		$db->query('INSERT INTO '.$db->prefix.'search_cache (id, ident, search_data) VALUES('.$search_id.', \''.$db->escape($ident).'\', \''.$db->escape($temp).'\')') or error('Unable to insert search results', __FILE__, __LINE__, $db->error());
 
-<<<<<<< HEAD
-		if ($action != 'show_new' && $action != 'show_24h')
-=======
 		if ($search_type[0] != 'action')
->>>>>>> fluxbb-1.4.5
 		{
 			$db->end_transaction();
 			$db->close();
@@ -531,14 +446,11 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 		}
 	}
 
-<<<<<<< HEAD
-=======
 	$forum_actions = array();
 
 	// If we're on the new posts search, display a "mark all as read" link
 	if (!$pun_user['is_guest'] && $search_type[0] == 'action' && $search_type[1] == 'show_new')
 		$forum_actions[] = '<a href="misc.php?action=markread">'.$lang_common['Mark all as read'].'</a>';
->>>>>>> fluxbb-1.4.5
 
 	// Fetch results to display
 	if (!empty($search_ids))
@@ -557,13 +469,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 				$sort_by_sql = 't.forum_id';
 				break;
 
-<<<<<<< HEAD
-			case 4:
-				$sort_by_sql = 't.last_post';
-				break;
-
-=======
->>>>>>> fluxbb-1.4.5
 			default:
 				$sort_by_sql = ($show_as == 'topics') ? 't.last_post' : 'p.posted';
 				break;
@@ -582,8 +487,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 		// throw away the first $start_from of $search_ids, only keep the top $per_page of $search_ids
 		$search_ids = array_slice($search_ids, $start_from, $per_page);
 
-<<<<<<< HEAD
-=======
 		// Run the query and fetch the results
 		if ($show_as == 'posts')
 			$result = $db->query('SELECT p.id AS pid, p.poster AS pposter, p.posted AS pposted, p.poster_id, p.message, p.hide_smilies, t.id AS tid, t.poster, t.subject, t.first_post_id, t.last_post, t.last_post_id, t.last_poster, t.num_replies, t.forum_id, f.forum_name FROM '.$db->prefix.'posts AS p INNER JOIN '.$db->prefix.'topics AS t ON t.id=p.topic_id INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id WHERE p.id IN('.implode(',', $search_ids).') ORDER BY '.$sort_by_sql.' '.$sort_dir) or error('Unable to fetch search results', __FILE__, __LINE__, $db->error());
@@ -642,18 +545,10 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 			$crumbs_text['search_type'] = '<a href="search.php?action=search&amp;keywords='.pun_htmlspecialchars($keywords).'&amp;author='.pun_htmlspecialchars($author).'&amp;forum='.pun_htmlspecialchars($search_type[2]).'&amp;search_in='.pun_htmlspecialchars($search_type[3]).'&amp;sort_by='.pun_htmlspecialchars($sort_by).'&amp;sort_dir='.pun_htmlspecialchars($sort_dir).'&amp;show_as='.pun_htmlspecialchars($show_as).'">'.$crumbs_text['search_type'].'</a>';
 		}
 
->>>>>>> fluxbb-1.4.5
 		$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_search['Search results']);
 		define('PUN_ACTIVE_PAGE', 'search');
 		require PUN_ROOT.'header.php';
 
-<<<<<<< HEAD
-
-?>
-<div class="linkst">
-	<div class="inbox">
-		<p class="pagelink"><?php echo $paging_links ?></p>
-=======
 ?>
 <div class="linkst">
 	<div class="inbox crumbsplus">
@@ -665,7 +560,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 		<div class="pagepost">
 			<p class="pagelink"><?php echo $paging_links ?></p>
 		</div>
->>>>>>> fluxbb-1.4.5
 		<div class="clearer"></div>
 	</div>
 </div>
@@ -678,11 +572,7 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 
 ?>
 <div id="vf" class="blocktable">
-<<<<<<< HEAD
-	<h2><span>      <?php echo $lang_search['Search results'] ?></span></h2>
-=======
 	<h2><span><?php echo $lang_search['Search results'] ?></span></h2>
->>>>>>> fluxbb-1.4.5
 	<div class="box">
 		<div class="inbox">
 			<table cellspacing="0">
@@ -711,16 +601,7 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 		if (!$pun_user['is_guest'])
 			$tracked_topics = get_tracked_topics();
 
-<<<<<<< HEAD
-		if ($show_as == 'posts')
-			$result = $db->query('SELECT p.id AS pid, p.poster AS pposter, p.posted AS pposted, p.poster_id, p.message, p.hide_smilies, t.id AS tid, t.poster, t.subject, t.first_post_id, t.last_post, t.last_post_id, t.last_poster, t.num_replies, t.forum_id, f.forum_name FROM '.$db->prefix.'posts AS p INNER JOIN '.$db->prefix.'topics AS t ON t.id=p.topic_id INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id WHERE p.id IN('.implode(',', $search_ids).') ORDER BY '.$sort_by_sql.' '.$sort_dir) or error('Unable to fetch search results', __FILE__, __LINE__, $db->error());
-		else
-			$result = $db->query('SELECT t.id AS tid, t.poster, t.subject, t.last_post, t.last_post_id, t.last_poster, t.num_replies, t.closed, t.sticky, t.forum_id, f.forum_name FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id WHERE t.id IN('.implode(',', $search_ids).') ORDER BY '.$sort_by_sql.' '.$sort_dir) or error('Unable to fetch search results', __FILE__, __LINE__, $db->error());
-
-		while ($cur_search = $db->fetch_assoc($result))
-=======
 		foreach ($search_set as $cur_search)
->>>>>>> fluxbb-1.4.5
 		{
 			$forum = '<a href="viewforum.php?id='.$cur_search['forum_id'].'">'.pun_htmlspecialchars($cur_search['forum_name']).'</a>';
 
@@ -768,12 +649,8 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 				<div class="postleft">
 					<dl>
 						<dt><?php echo $pposter ?></dt>
-<<<<<<< HEAD
-						<dd><span><?php echo $lang_topic['Replies'].' '.forum_number_format($cur_search['num_replies']) ?></span></dd>
-=======
 <?php if ($cur_search['pid'] == $cur_search['first_post_id']) : ?>						<dd><span><?php echo $lang_topic['Replies'].' '.forum_number_format($cur_search['num_replies']) ?></span></dd>
 <?php endif; ?>
->>>>>>> fluxbb-1.4.5
 						<dd><div class="<?php echo $icon_type ?>"><div class="nosize"><?php echo $icon_text ?></div></div></dd>
 					</dl>
 				</div>
@@ -872,10 +749,6 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 
 ?>
 <div class="<?php echo ($show_as == 'topics') ? 'linksb' : 'postlinksb'; ?>">
-<<<<<<< HEAD
-	<div class="inbox">
-		<p class="pagelink"><?php echo $paging_links ?></p>
-=======
 	<div class="inbox crumbsplus">
 		<div class="pagepost">
 			<p class="pagelink"><?php echo $paging_links ?></p>
@@ -886,16 +759,10 @@ if (isset($_GET['action']) || isset($_GET['search_id']))
 			<li><span>»&#160;</span><strong><?php echo $crumbs_text['search_type'] ?></strong></li>
 		</ul>
 <?php echo (!empty($forum_actions) ? "\t\t".'<p class="subscribelink clearb">'.implode(' - ', $forum_actions).'</p>'."\n" : '') ?>
->>>>>>> fluxbb-1.4.5
 		<div class="clearer"></div>
 	</div>
 </div>
 <?php
-
-<<<<<<< HEAD
-		$footer_style = 'search';
-=======
->>>>>>> fluxbb-1.4.5
 		require PUN_ROOT.'footer.php';
 	}
 	else

@@ -1,11 +1,7 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -254,11 +250,7 @@ class DBLayer
 		$result = $this->query('SHOW INDEX FROM '.($no_prefix ? '' : $this->prefix).$table_name);
 		while ($cur_index = $this->fetch_assoc($result))
 		{
-<<<<<<< HEAD
-			if ($cur_index['Key_name'] == ($no_prefix ? '' : $this->prefix).$table_name.'_'.$index_name)
-=======
 			if (strtolower($cur_index['Key_name']) == strtolower(($no_prefix ? '' : $this->prefix).$table_name.'_'.$index_name))
->>>>>>> fluxbb-1.4.5
 			{
 				$exists = true;
 				break;
@@ -329,8 +321,6 @@ class DBLayer
 	}
 
 
-<<<<<<< HEAD
-=======
 	function rename_table($old_table, $new_table, $no_prefix = false)
 	{
 		// If there new table exists and the old one doesn't, then we're happy
@@ -341,7 +331,6 @@ class DBLayer
 	}
 
 
->>>>>>> fluxbb-1.4.5
 	function add_field($table_name, $field_name, $field_type, $allow_null, $default_value = null, $after_field = null, $no_prefix = false)
 	{
 		if ($this->field_exists($table_name, $field_name, $no_prefix))

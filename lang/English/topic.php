@@ -26,11 +26,7 @@ $lang_topic = array(
 'Quick post'		=>	'Quick post',
 'Mod controls'		=>	'Moderator controls',
 'New icon'			=>	'New post',
-<<<<<<< HEAD
-'Re'				=>	'Re:'
-=======
 'Re'				=>	'Re:',
 'Preview'			=>	'Preview'
->>>>>>> fluxbb-1.4.5
 
 );

@@ -1,11 +1,7 @@
 <?php
 
 /**
-<<<<<<< HEAD
- * Copyright (C) 2008-2010 FluxBB
-=======
  * Copyright (C) 2008-2011 FluxBB
->>>>>>> fluxbb-1.4.5
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -186,11 +182,7 @@ class DBLayer
 
 	function affected_rows()
 	{
-<<<<<<< HEAD
-		return ($this->query_result) ? @sqlite_changes($this->query_result) : false;
-=======
 		return ($this->link_id) ? @sqlite_changes($this->link_id) : false;
->>>>>>> fluxbb-1.4.5
 	}
 
 
@@ -357,8 +349,6 @@ class DBLayer
 	}
 
 
-<<<<<<< HEAD
-=======
 	function rename_table($old_name, $new_name, $no_prefix = false)
 	{
 		// If there new table exists and the old one doesn't, then we're happy
@@ -388,7 +378,6 @@ class DBLayer
 	}
 
 
->>>>>>> fluxbb-1.4.5
 	function get_table_info($table_name, $no_prefix = false)
 	{
 		// Grab table info

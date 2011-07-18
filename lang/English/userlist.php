@@ -8,10 +8,7 @@ $lang_ul = array(
 'User sort info'	=>	'Sort users by name, date registered or number of posts and in ascending/descending order.',
 'User group'		=>	'User group',
 'No of posts'		=>	'Number of posts',
-<<<<<<< HEAD
 'Last visit'        =>  'Last connection',
-=======
->>>>>>> fluxbb-1.4.5
 'All users'			=>	'All'
 
 );
