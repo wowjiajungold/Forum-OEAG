@@ -666,7 +666,7 @@ else if (isset($_POST['form_sent']))
 		($pun_user['g_id'] != PUN_ADMIN &&															// or we aren't an admin and ...
 		($pun_user['g_mod_edit_users'] == '0' ||													// mods aren't allowed to edit users
 		$group_id == PUN_ADMIN ||																	// or the user is an admin
-		$is_moderator))))
+		$is_moderator))))																			// or the user is another mod
 		message($lang_common['No permission']);
 
 	if ($pun_user['is_admmod'])
@@ -881,23 +881,22 @@ else if (isset($_POST['form_sent']))
 
 			break;
 		}
-        
-        // PMS
-        case 'privacy':
-        {
-            $form = array(
+
+		case 'privacy':
+		{
+			$form = array(
 				'email_setting'			=> intval($_POST['form']['email_setting']),
 				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
 				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
                 'use_pm'                => isset($_POST['form']['use_pm']) ? '1' : '0',
                 'notify_pm'             => isset($_POST['form']['notify_pm']) ? '1' : '0',
-            );
+			);
 
-            if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
-                $form['email_setting'] = $pun_config['o_default_email_setting'];
+			if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
+				$form['email_setting'] = $pun_config['o_default_email_setting'];
 
-            break;
-        }
+			break;
+		}
 
 		default:
 			message($lang_common['Bad request']);
@@ -934,6 +933,7 @@ else if (isset($_POST['form_sent']))
         $db->query('UPDATE '.$db->prefix.'messages SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
         $db->query('UPDATE '.$db->prefix.'contacts SET contact_name=\''.$db->escape($form['username']).'\' WHERE contact_name=\''.$db->escape($old_username).'\'') or error('Unable to update contacts', __FILE__, __LINE__, $db->error());
         $db->query('UPDATE '.$db->prefix.'messages SET receiver=REPLACE(receiver,\''.$db->escape($old_username).'\',\''.$db->escape($form['username']).'\') WHERE receiver LIKE \'%'.$db->escape($old_username).'%\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
+
 
 		// If the user is a moderator or an administrator we have to update the moderator lists
 		$result = $db->query('SELECT group_id FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
@@ -987,7 +987,7 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 	($pun_user['g_id'] != PUN_ADMIN &&															// or we aren't an admin and ...
 	($pun_user['g_mod_edit_users'] == '0' ||													// mods aren't allowed to edit users
 	$user['g_id'] == PUN_ADMIN ||																// or the user is an admin
-	$user['g_moderator'] == '1'))))
+	$user['g_moderator'] == '1'))))																// or the user is another mod
 {
 	$user_personal = array();
 
@@ -1239,7 +1239,6 @@ else
             // PMS
             if ($user['use_pm'] == '1')
                 $email_field .= '<p><a href="pms_send.php?uid='.$id.'">'.$lang_pms['Quick message'].'</a> - <a href="pms_contacts.php?add='.$id.'">'.$lang_pms['Add to contacts'].'</a></p>'."\n";
-
 		}
 		else
 		{
@@ -1269,6 +1268,7 @@ else
 		}
 
 		$posts_field .= (!empty($posts_actions) ? '<p class="actions">'.implode(' - ', $posts_actions).'</p>' : '')."\n";
+
 
 		$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Profile'], $lang_profile['Section essentials']);
 		$required_fields = array('req_username' => $lang_common['Username'], 'req_email' => $lang_common['Email']);
@@ -1462,16 +1462,15 @@ else
 							<input type="hidden" name="form_sent" value="1" />
 							<label><?php echo $lang_profile['Realname'] ?><br /><input type="text" name="form[realname]" value="<?php echo pun_htmlspecialchars($user['realname']) ?>" size="40" maxlength="40" /><br /></label>
 <?php if (isset($title_field)): ?>							<?php echo $title_field ?>
-<?php endif; ?>
-							<label><?php echo $lang_common['Sex'] ?><br /></label>
+<?php endif; ?>							<label><?php echo $lang_profile['Location'] ?><br /><input type="text" name="form[location]" value="<?php echo pun_htmlspecialchars($user['location']) ?>" size="30" maxlength="30" /><br /></label>
+							<label><?php echo $lang_profile['Website'] ?><br /><input type="text" name="form[url]" value="<?php echo pun_htmlspecialchars($user['url']) ?>" size="50" maxlength="80" /><br /></label>
+							<label><?php echo $lang_common['Sex'] ?><br />
                             <select name="form[sex]">
                               <option value=""<?= ($user['sex']==null) ? " selected=\"selected\"" : ""; ?>>--</option>
                               <option value="0"<?= ($user['sex']=="0") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Male'] ?></option>
                               <option value="1"<?= ($user['sex']=="1") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Female'] ?></option>
                               <option value="2"<?= ($user['sex']=="2") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Bigg'] ?></option>
-                            </select>
-                            <label><?php echo $lang_profile['Location'] ?><br /><input type="text" name="form[location]" value="<?php echo pun_htmlspecialchars($user['location']) ?>" size="30" maxlength="30" /><br /></label>
-							<label><?php echo $lang_profile['Website'] ?><br /><input type="text" name="form[url]" value="<?php echo pun_htmlspecialchars($user['url']) ?>" size="50" maxlength="80" /><br /></label>
+                            </select></label>
 							<label><?php echo $lang_profile['Birthdate'].' (<em>'.$lang_profile['Age profile use'].'</em>)';
     if(!empty($user['birthdate'])) {
     $tempdate = explode("/", $user['birthdate']);
@@ -1482,8 +1481,8 @@ else
     $jour = '';
     $mois = '';
     $annee = '';
-    } ?></label>
-                            
+    } ?>
+                            <br />
                          <select name="form[birthd]">
                           <option value="0">--</option>
 <?php for($i=1;$i<32;$i++) { ?>
@@ -1502,8 +1501,7 @@ else
                           for($i=($thisyear-100);$i<($thisyear-2);$i++) { ?>
                           <option value="<?php echo $i ?>"<?php if ($annee==$i) echo ' selected="selected"' ?>><?php echo $i ?></option>
 <?php } ?>
-                        </select>
-                        <br />
+                        </select></label>
 						</div>
 					</fieldset>
 				</div>
@@ -1601,6 +1599,7 @@ else
 							<ul class="bblinks">
 								<li><span><a href="help.php#bbcode" onclick="window.open(this.href); return false;"><?php echo $lang_common['BBCode'] ?></a> <?php echo ($pun_config['p_sig_bbcode'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
 								<li><span><a href="help.php#img" onclick="window.open(this.href); return false;"><?php echo $lang_common['img tag'] ?></a> <?php echo ($pun_config['p_sig_img_tag'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
+								<li><span><a href="help.php#img" onclick="window.open(this.href); return false;"><?php echo $lang_common['img tag'] ?></a> <?php echo ($pun_config['p_sig_bbcode'] == '1' && $pun_config['p_sig_img_tag'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
 								<li><span><a href="help.php#smilies" onclick="window.open(this.href); return false;"><?php echo $lang_common['Smilies'] ?></a> <?php echo ($pun_config['o_smilies_sig'] == '1') ? $lang_common['on'] : $lang_common['off']; ?></span></li>
 							</ul>
 							<?php echo $signature_preview ?>
@@ -1676,8 +1675,6 @@ else
 <?php if ($pun_config['o_smilies'] == '1' || $pun_config['o_smilies_sig'] == '1'): ?>								<label><input type="checkbox" name="form[show_smilies]" value="1"<?php if ($user['show_smilies'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show smilies'] ?><br /></label>
 <?php endif; if ($pun_config['o_signatures'] == '1'): ?>								<label><input type="checkbox" name="form[show_sig]" value="1"<?php if ($user['show_sig'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show sigs'] ?><br /></label>
 <?php endif; if ($pun_config['o_avatars'] == '1'): ?>								<label><input type="checkbox" name="form[show_avatars]" value="1"<?php if ($user['show_avatars'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show avatars'] ?><br /></label>
-<?php endif; if ($pun_config['p_message_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img]" value="1"<?php if ($user['show_img'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images'] ?><br /></label>
-<?php endif; if ($pun_config['p_sig_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img_sig]" value="1"<?php if ($user['show_img_sig'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images sigs'] ?><br /></label>
 <?php endif; if ($pun_config['p_message_bbcode'] == '1' && $pun_config['p_message_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img]" value="1"<?php if ($user['show_img'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images'] ?><br /></label>
 <?php endif; if ($pun_config['o_signatures'] == '1' && $pun_config['p_sig_bbcode'] == '1' && $pun_config['p_sig_img_tag'] == '1'): ?>								<label><input type="checkbox" name="form[show_img_sig]" value="1"<?php if ($user['show_img_sig'] == '1') echo ' checked="checked"' ?> /><?php echo $lang_profile['Show images sigs'] ?><br /></label>
 <?php endif; ?>
@@ -1742,7 +1739,9 @@ else
 						</div>
 					</fieldset>
 				</div>
-<?php if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1') { ?>
+<?php endif; ?>
+                <?php
+                if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1') : ?>
                 <script type="text/javascript">
                 //<![CDATA[
                 function switchEtatByCheck(id_element, id_from_element)
@@ -1780,11 +1779,13 @@ else
                         </div>
                     </fieldset>
                 </div>
+                <?php endif; ?>
 				<p class="buttons"><input type="submit" name="update" value="<?php echo $lang_common['Submit'] ?>" /> <?php echo $lang_profile['Instructions'] ?></p>
 			</form>
 		</div>
 	</div>
 <?php
+
 	}
 	else if ($section == 'admin')
 	{
@@ -1921,5 +1922,6 @@ else
 	<div class="clearer"></div>
 </div>
 <?php
-}
+
 	require PUN_ROOT.'footer.php';
+}
