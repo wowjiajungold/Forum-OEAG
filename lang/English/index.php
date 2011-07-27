@@ -9,6 +9,7 @@ $lang_index = array(
 'Newest user'	=>	'Newest registered user: %s',
 'Users online'	=>	'Registered users online: %s',
 'Guests online'	=>	'Guests online: %s',
+'Members online today'  =>  'Members online today: %s',
 'No of users'	=>	'Total number of registered users: %s',
 'No of topics'	=>	'Total number of topics: %s',
 'No of posts'	=>	'Total number of posts: %s',

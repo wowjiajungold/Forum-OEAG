@@ -1,6 +1,6 @@
-Subject: Reply to topic: '<topic_subject>'
+Subject: New topic in forum: '<forum_name>'
 
-<replier> has replied to the topic '<topic_subject>' to which you are subscribed. There may be more new replies, but this is the only notification you will receive until you visit the board again.
+<poster> has posted a new topic '<topic_subject>' in the forum '<forum_name>', to which you are subscribed.
 
 The message reads as follows:
 -----------------------------------------------------------------------
@@ -9,7 +9,7 @@ The message reads as follows:
 
 -----------------------------------------------------------------------
 
-The post is located at <post_url>
+The topic is located at <topic_url>
 
 You can unsubscribe by going to <unsubscribe_url>
 

@@ -1,7 +1,6 @@
 <?php
 
 // Language definitions used by the Automatic Image Upload with Thumbnails-mod
-// French language by Super_baloo8
 $lang_uploadimg = array(
 
 //Upload main
