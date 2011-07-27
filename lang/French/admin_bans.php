@@ -6,6 +6,7 @@ $lang_admin_bans = array(
 'No user message'			=>	'Aucun utilisateur enregistré sous ce nom d\'utilisateur. Si vous souhaitez ajouter un bannissement n\'étant pas associé à un nom d\'utilisateur veuillez laisser le champ du nom d\'utilisateur vide.',
 'No user ID message'			=>	'Aucun utilisateur inscrit avec cet ID.',
 'User is admin message'			=>	'L\'utilisateur %s est un administrateur et ne peut être banni. Si vous souhaitez bannir un administrateur, vous devez d\'abord le rétrograder au rôle de modérateur ou d\'utilisateur.',
+'User is mod message'		=>	'L\'utilisateur %s est un modérateur et ne peut être banni. Si vous souhaitez bannir un administrateur, vous devez d\'abord le rétrograder au rôle de modérateur ou d\'utilisateur.',
 'Must enter message'			=>	'Vous devez indiquer, au minimum, soit un nom d\'utilisateur, soit une adresse IP, soit une adresse électronique.',
 'Cannot ban guest message'		=>	'Un visiteur ne peut être banni.',
 'Invalid IP message'			=>	'Vous avez indiqué une IP/plage d\'IP invalide.',
