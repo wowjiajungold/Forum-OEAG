@@ -940,7 +940,7 @@ function do_smilies($text)
 		if (strpos($text, $smiley_text) !== false) {
             $img = pun_htmlspecialchars(get_base_url(true).'/img/smilies/'.$smiley_img);
             $img_size = getimagesize($img);
-			$text = ucp_reg_replace('#(?<=[>\s])'.preg_quote($smiley_text, '#').'(?=[^\p{L}\p{N}])#um', '<img src="'.$img.'" class="smile" '.$img_size[3].' alt="'.substr($smiley_img, 0, strrpos($smiley_img, '.')).'" />', $text);
+			$text = ucp_preg_replace('#(?<=[>\s])'.preg_quote($smiley_text, '#').'(?=[^\p{L}\p{N}])#um', '<img src="'.$img.'" class="smile" '.$img_size[3].' alt="'.substr($smiley_img, 0, strrpos($smiley_img, '.')).'" />', $text);
             $img_size = '';
         }
 	}

@@ -188,6 +188,12 @@ if (!defined('PUN_USERS_INFO_LOADED'))
 $result = $db->query('SELECT SUM(num_topics), SUM(num_posts) FROM '.$db->prefix.'forums') or error('Unable to fetch topic/post count', __FILE__, __LINE__, $db->error());
 list($stats['total_topics'], $stats['total_posts']) = $db->fetch_row($result);
 
+$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'posts WHERE posted >= '.strtotime(date('Y-m-d'))) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
+$stats['total_posts_today'] = $db->result($result);
+
+$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'topics WHERE posted >= '.strtotime(date('Y-m-d'))) or error('Unable to fetch total user count', __FILE__, __LINE__, $db->error());
+$stats['total_topics_today'] = $db->result($result);
+
 if ($pun_user['g_view_users'] == '1')
 	$stats['newest_user'] = '<a href="profile.php?id='.$stats['last_user']['id'].'">'.pun_htmlspecialchars($stats['last_user']['username']).'</a>';
 else
