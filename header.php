@@ -85,6 +85,8 @@ if (!defined('PUN_ALLOW_INDEX'))
 ?>
 <title><?php echo generate_page_title($page_title, $p) ?></title>
 <link rel="stylesheet" type="text/css" href="style/<?php echo $pun_user['style'].'.css' ?>" />
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="include/custom.js"></script>
 <?php
 
 if (defined('PUN_ADMIN_CONSOLE'))
@@ -171,7 +173,7 @@ $tpl_main = str_replace('<pun_page>', htmlspecialchars(basename($_SERVER['PHP_SE
 
 // START SUBST - <pun_title>
 //$tpl_main = str_replace('<pun_title>', '<h1><a href="index.php">'.pun_htmlspecialchars($pun_config['o_board_title']).'</a></h1>', $tpl_main);
-$tpl_main = str_replace('<pun_title>', '<img src="img/title.png" alt="On en a gros !" />', $tpl_main);
+$tpl_main = str_replace('<pun_title>', '<img src="img/logo.png" alt="On en a gros !" />', $tpl_main);
 // END SUBST - <pun_title>
 
 

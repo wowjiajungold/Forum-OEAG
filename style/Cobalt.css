@@ -74,11 +74,7 @@
 	font: 68.75%/1.4545em Verdana, Helvetica, Arial, sans-serif;
 	}
 
-<<<<<<< HEAD
-.pun table, .pun td, .pun th, .pun input, .pun select, .pun optgroup, .pun textarea, .pun samp {
-=======
 .pun table, .pun td, .pun th, .pun input, .pun select, .pun optgroup, .pun textarea, .pun samp, .pun legend {
->>>>>>> fluxbb-1.4.5
 	font-size: 1em;
 	font-family: verdana, helvetica, arial, sans-serif;
 	}
@@ -377,12 +373,9 @@
 	text-decoration: underline;
 	}
 
-<<<<<<< HEAD
-=======
 #punindex .subscribelink {
 	margin-top: 6px;
 	}
->>>>>>> fluxbb-1.4.5
 
 /* Board Footer
 ----------------------------------------------------------------*/
@@ -724,15 +717,12 @@
 	margin-left: 1em
 	}
 
-<<<<<<< HEAD
-=======
 #adintro ul {
 	list-style-type: disc;
 	margin-left: 8px;
 	padding-left: 16px;
 	}
 
->>>>>>> fluxbb-1.4.5
 /*****************************************************************
 8. MAIN POSTS
 *****************************************************************/
@@ -812,10 +802,7 @@
 	width:98%;
 	overflow: hidden;
 	padding-bottom: 6px;
-<<<<<<< HEAD
-=======
 	word-wrap: break-word;
->>>>>>> fluxbb-1.4.5
 	}
 
 .pun .postfootright ul, .pun .postfootright div, .pun .postfootright p,
@@ -900,10 +887,7 @@
 .pun .postmsg .postimg img {
 	max-width: 98%;
 	vertical-align: middle;
-<<<<<<< HEAD
-=======
 	margin: 7px 0.5em 7px 0;
->>>>>>> fluxbb-1.4.5
 }
 
 .pun .postmsg .postimg a:link img, .pun .postmsg .postimg a:visited img {

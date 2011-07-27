@@ -416,7 +416,7 @@ body {
 .pun .postlink {
 	font-size: 1.1em;
 	font-weight: bold;
-	white-space: wrap;
+	white-space: normal;
 	text-decoration: none;
 	}
 
