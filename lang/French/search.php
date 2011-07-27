@@ -36,12 +36,12 @@ $lang_search = array(
  
 // Results
 'Search results'					=>	'Résultats de la recherche',
-'Search topics'						=>	'Recherche par sujet',
-'Search posts'						=>	'Recherche par message',
-'Quick search show_new'				=>	'Nouveau',
-'Quick search show_recent'			=>	'Actif',
+'Search topics'						=>	'Discussions de la recherche',
+'Search posts'						=>	'Messages de la recherche',
+'Quick search show_new'				=>	'Nouveaux messages',
+'Quick search show_recent'			=>	'Discussions actives',
 'Quick search show_unanswered'		=>	'Sans réponse',
-'Quick search show_replies'			=>	'Posté',
+'Quick search show_replies'			=>	'Vos messages',
 'Quick search show_user_topics'		=>	'Par %s',
 'Quick search show_user_posts'		=>	'Par %s',
 'Quick search show_subscriptions'	=>	'Abonné : %s',
