@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (C)2010 adaur
- * Another Private Messaging System v2.1.1
+ * Another Private Messaging System v2.1.4
  * Based on work from Vincent Garnier, Connorhd and David 'Chacmool' Djurback
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -12,7 +12,7 @@ if (!defined('PUN'))
 
 // Tell admin_loader.php that this is indeed a plugin and that it is loaded
 define('PUN_PLUGIN_LOADED', 1);
-define('PLUGIN_VERSION', '2.1.1');
+define('PLUGIN_VERSION', '2.1.4');
 define('PLUGIN_URL', 'admin_loader.php?plugin=AP_Private_messaging.php');
 
 // Load language file
@@ -34,6 +34,9 @@ if (isset($_POST['form_sent']))
 		{
 			if ($pun_config['o_'.$key] != $input)
 			{
+				if ($key == 'pms_max_receiver')
+					$input = $input+1;
+				
 				if ($input != '' || is_int($input))
 					$value = '\''.$db->escape($input).'\'';
 				else
@@ -64,8 +67,10 @@ else
 {
 	// Display the admin navigation menu
 	generate_admin_menu($plugin);
+	
+	$pms_max_receiver = $pun_config['o_pms_max_receiver'] - 1;
 ?>
-	<div class="plugin blockform">
+	<div id="exampleplugin" class="plugin blockform">
 		<h2><span><?php echo $lang_plugin_pms['Private Messages'] ?> v<?php echo PLUGIN_VERSION ?></span></h2>
 		<div class="box">
 			<div class="inbox">
@@ -98,16 +103,9 @@ else
 								</td>
 							</tr>
 							<tr>
-								<th scope="row"><?php echo $lang_plugin_pms['Messages per page'] ?></th>
-								<td>
-									<input type="text" name="form[pms_mess_per_page]" size="5" maxlength="10" value="<?php echo $pun_config['o_pms_mess_per_page'] ?>" />
-									<span><?php echo $lang_plugin_pms['Number messages per page'] ?></span>
-								</td>
-							</tr>
-							<tr>
 								<th scope="row"><?php echo $lang_plugin_pms['Number receivers'] ?></th>
 								<td>
-									<input type="text" name="form[pms_max_receiver]" size="5" maxlength="5" value="<?php echo $pun_config['o_pms_max_receiver'] ?>" />
+									<input type="text" name="form[pms_max_receiver]" size="5" maxlength="5" value="<?php echo $pms_max_receiver ?>" />
 									<span><?php echo $lang_plugin_pms['Number max receivers'] ?></span>
 								</td>
 							</tr>

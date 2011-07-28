@@ -1,4 +1,4 @@
-Sujet:   Vous avez reçu un nouveau message privé sur <board_title>
+Sujet : Vous avez reçu un nouveau message privé sur <board_title>
 
 <sender> vous a envoyé un message privé.
 
