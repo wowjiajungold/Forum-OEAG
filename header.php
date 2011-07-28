@@ -207,9 +207,6 @@ else
 {
 	$links[] = '<li id="navprofile"'.((PUN_ACTIVE_PAGE == 'profile') ? ' class="isactive"' : '').'><a href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></li>';
 
-	//if ($pun_user['use_pm'])
-	//	$links[] = '<li id="navpms"'.((PUN_ACTIVE_PAGE == 'pms_inbox') ? ' class="isactive"' : '').'><a href="pms_inbox.php">MP</a></li>';
-
 	if ($pun_user['is_admmod'])
 		$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
 

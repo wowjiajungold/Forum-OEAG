@@ -606,12 +606,6 @@ else if (isset($_POST['delete_user']) || isset($_POST['delete_user_comply']))
 		// Delete user avatar
 		delete_avatar($id);
 
-        // PMS
-        $db->query('DELETE FROM '.$db->prefix.'messages WHERE owner='.$id) or error('Unable to delete user\'s messages', __FILE__, __LINE__, $db->error());
-        $db->query('DELETE FROM '.$db->prefix.'messages WHERE sender_id='.$id) or error('Unable to delete user\'s messages', __FILE__, __LINE__, $db->error());
-        $db->query('DELETE FROM '.$db->prefix.'contacts WHERE user_id='.$id) or error('Unable to delete user\'s contacts', __FILE__, __LINE__, $db->error());
-        $db->query('DELETE FROM '.$db->prefix.'contacts WHERE contact_id='.$id) or error('Unable to delete user\'s contacts', __FILE__, __LINE__, $db->error());
-
 		// Regenerate the users info cache
 		if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 			require PUN_ROOT.'include/cache.php';
@@ -888,8 +882,6 @@ else if (isset($_POST['form_sent']))
 				'email_setting'			=> intval($_POST['form']['email_setting']),
 				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
 				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
-                'use_pm'                => isset($_POST['form']['use_pm']) ? '1' : '0',
-                'notify_pm'             => isset($_POST['form']['notify_pm']) ? '1' : '0',
 			);
 
 			if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
@@ -928,13 +920,6 @@ else if (isset($_POST['form_sent']))
 		$db->query('UPDATE '.$db->prefix.'forums SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update forums', __FILE__, __LINE__, $db->error());
 		$db->query('UPDATE '.$db->prefix.'online SET ident=\''.$db->escape($form['username']).'\' WHERE ident=\''.$db->escape($old_username).'\'') or error('Unable to update online list', __FILE__, __LINE__, $db->error());
 
-        // PMS
-        $db->query('UPDATE '.$db->prefix.'messages SET sender=\''.$db->escape($form['username']).'\' WHERE sender=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'messages SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'contacts SET contact_name=\''.$db->escape($form['username']).'\' WHERE contact_name=\''.$db->escape($old_username).'\'') or error('Unable to update contacts', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'messages SET receiver=REPLACE(receiver,\''.$db->escape($old_username).'\',\''.$db->escape($form['username']).'\') WHERE receiver LIKE \'%'.$db->escape($old_username).'%\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
-
-
 		// If the user is a moderator or an administrator we have to update the moderator lists
 		$result = $db->query('SELECT group_id FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 		$group_id = $db->result($result);
@@ -966,7 +951,7 @@ else if (isset($_POST['form_sent']))
 }
 
 
-$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.signature, u.sex, u.birthdate, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.notify_pm, u.use_pm, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.last_visit, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.signature, u.sex, u.birthdate, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.last_visit, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 if (!$db->num_rows($result))
 	message($lang_common['Bad request']);
 
@@ -1044,29 +1029,6 @@ if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. edit
 		$user_personal[] = '<dt>'.$lang_common['Email'].'</dt>';
 		$user_personal[] = '<dd><span class="email">'.$email_field.'</span></dd>';
 	}
-	
-	// PMS    
-    if ($pun_config['o_pms_enabled'] == '1' && !$pun_user['is_guest'] && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1' && $user['use_pm'] == '1')
-        $pm_send_field = '<a href="pms_send.php?uid='.$id.'">'.$lang_pms['Quick message'].'</a>';   
-    else
-        $pm_send_field = '';
-        
-    if ($pm_send_field != '')
-    {
-        $user_personal[] = '<dt>'.$lang_pms['PM'].'</dt>';
-        $user_personal[] = '<dd><span class="email">'.$pm_send_field.'</span></dd>';
-    }
-    
-    if ($pun_config['o_pms_enabled'] == '1' && !$pun_user['is_guest'] && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1' && $user['use_pm'] == '1')
-        $pm_add_field = '<a href="pms_contacts.php?add='.$id.'">'.$lang_pms['Add to contacts'].'</a>';  
-    else
-        $pm_add_field = '';
-        
-    if ($pm_add_field != '')
-    {
-        $user_personal[] = '<dt>'.$lang_pms['Contacts'].'</dt>';
-        $user_personal[] = '<dd>'.$pm_add_field.'</span></dd>';
-    }
 
 	$user_messaging = array();
 
@@ -1235,10 +1197,6 @@ else
 				$username_field = '<p>'.sprintf($lang_profile['Username info'], pun_htmlspecialchars($user['username'])).'</p>'."\n";
 
 			$email_field = '<label class="required"><strong>'.$lang_common['Email'].' <span>'.$lang_common['Required'].'</span></strong><br /><input type="text" name="req_email" value="'.$user['email'].'" size="40" maxlength="80" /><br /></label><p><span class="email"><a href="misc.php?email='.$id.'">'.$lang_common['Send email'].'</a></span></p>'."\n";
-
-            // PMS
-            if ($user['use_pm'] == '1')
-                $email_field .= '<p><a href="pms_send.php?uid='.$id.'">'.$lang_pms['Quick message'].'</a> - <a href="pms_contacts.php?add='.$id.'">'.$lang_pms['Add to contacts'].'</a></p>'."\n";
 		}
 		else
 		{
@@ -1740,46 +1698,6 @@ else
 					</fieldset>
 				</div>
 <?php endif; ?>
-                <?php
-                if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1') : ?>
-                <script type="text/javascript">
-                //<![CDATA[
-                function switchEtatByCheck(id_element, id_from_element)
-                {
-                    if (!document.getElementById) { return; }
-                    
-                    var element = document.getElementById(id_element);
-                    
-                    if (document.getElementById(id_from_element).checked==false) {
-                        element.blur();
-                        element.disabled = true;
-                    }
-                    else {
-                        element.disabled = false;
-                        element.focus();
-                    }
-                }
-                //]]>
-                </script>
-                <div class="inform">
-                    <fieldset>
-                        <legend><?php echo $lang_pms['Private Messages'] ?></legend>
-                        <div class="infldset">
-                            <div class="rbox">
-                                <label><input type="checkbox" id="use_pm" name="form[use_pm]" value="1"<?php if ($user['use_pm'] == 1) echo ' checked="checked"' ?> onclick="switchEtatByCheck('notify_pm', this.id);switchEtatByCheck('popup_pm', this.id);" /><?php echo $lang_pms['use_pm_option'] ?><br /></label>
-                            </div>
-                            <?php if ($pun_config['o_pms_notification'] == '1') : ?>
-                            <p><?php echo $lang_pms['email_option_infos'] ?></p>
-                            <div class="rbox">
-                                <label><input type="checkbox" id="notify_pm" name="form[notify_pm]" value="1"<?php if ($user['notify_pm'] == 1) echo ' checked="checked"' ?> /><?php echo $lang_pms['email_option'] ?><br /></label>
-                            </div>
-                            <?php else : ?>
-                            <input type="hidden" id="notify_pm" name="form[notify_pm]" value="0" />
-                            <?php endif; ?>
-                        </div>
-                    </fieldset>
-                </div>
-                <?php endif; ?>
 				<p class="buttons"><input type="submit" name="update" value="<?php echo $lang_common['Submit'] ?>" /> <?php echo $lang_profile['Instructions'] ?></p>
 			</form>
 		</div>
