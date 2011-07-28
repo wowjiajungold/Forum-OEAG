@@ -417,6 +417,7 @@ while ($cur_post = $db->fetch_assoc($result))
 </div>
 
 <?php
+}
 
 }
 
@@ -502,8 +503,6 @@ else
 	</div>
 </div>
 <?php
-
-}
 
 }
 
