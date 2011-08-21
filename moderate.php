@@ -484,6 +484,10 @@ if (isset($_REQUEST['move_topics']) || isset($_POST['move_topics_to']))
 		$action = 'single';
 	}
 
+	$result = $db->query('SELECT c.id AS cid, c.cat_name, f.id AS fid, f.forum_name FROM '.$db->prefix.'categories AS c INNER JOIN '.$db->prefix.'forums AS f ON c.id=f.cat_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.post_topics IS NULL OR fp.post_topics=1) AND f.redirect_url IS NULL ORDER BY c.disp_position, c.id, f.disp_position') or error('Unable to fetch category/forum list', __FILE__, __LINE__, $db->error());
+	if ($db->num_rows($result) < 2)
+		message($lang_misc['Nowhere to move']);
+
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_misc['Moderate']);
 	define('PUN_ACTIVE_PAGE', 'index');
 	require PUN_ROOT.'header.php';
@@ -501,10 +505,6 @@ if (isset($_REQUEST['move_topics']) || isset($_POST['move_topics_to']))
 						<label><?php echo $lang_misc['Move to'] ?>
 						<br /><select name="move_to_forum">
 <?php
-
-	$result = $db->query('SELECT c.id AS cid, c.cat_name, f.id AS fid, f.forum_name FROM '.$db->prefix.'categories AS c INNER JOIN '.$db->prefix.'forums AS f ON c.id=f.cat_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.post_topics IS NULL OR fp.post_topics=1) AND f.redirect_url IS NULL ORDER BY c.disp_position, c.id, f.disp_position') or error('Unable to fetch category/forum list', __FILE__, __LINE__, $db->error());
-	if ($db->num_rows($result) < 2)
-		message($lang_misc['Nowhere to move']);
 
 	$cur_category = 0;
 	while ($cur_forum = $db->fetch_assoc($result))

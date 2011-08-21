@@ -59,6 +59,7 @@ foreach ($pun_includes as $cur_include)
 	$tpl_main = str_replace($cur_include[0], $tpl_temp, $tpl_main);
 	ob_end_clean();
 }
+
 // END SUBST - <pun_include "*">
 
 
@@ -313,10 +314,10 @@ if ($pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
         <span>Derniers articles sur le site :</span><br />
         <ul>
 <?php
-$result = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 3;");
+$result_wp = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 3;");
 $first = true;
 
-while($assoc = $db->fetch_assoc($result)) {
+while($assoc = $db->fetch_assoc($result_wp)) {
     $post_date = substr($assoc['post_date'],8,2)."/".substr($assoc['post_date'],5,2);
     $post_title = $assoc['post_title'];
     $url = "http://www.onenagros.org/".substr($assoc['post_date'],0,10)."-".$assoc['post_name'].".html";
