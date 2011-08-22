@@ -145,6 +145,11 @@ function process_form(the_form)
 // JavaScript tricks for IE6 and older
 echo '<!--[if lte IE 6]><script type="text/javascript" src="style/imports/minmax.js"></script><![endif]-->'."\n";
 
+if (file_exists(PUN_ROOT.'style/'.$pun_user['style'].'/pms.css'))
+	echo '<link rel="stylesheet" type="text/css" href="style/'.$pun_user['style'].'/pms.css" />';
+else
+	echo '<link rel="stylesheet" type="text/css" href="style/imports/pms.css" />';
+
 if (!isset($page_head))
 	$page_head = array();
 
@@ -207,6 +212,9 @@ if ($pun_user['is_guest'])
 else
 {
 	$links[] = '<li id="navprofile"'.((PUN_ACTIVE_PAGE == 'profile') ? ' class="isactive"' : '').'><a href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></li>';
+	
+	if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1')
+		$links[] = '<li id="navpm"'.((PUN_ACTIVE_PAGE == 'pm') ? ' class="isactive"' : '').'><a href="pms_inbox.php">'.$lang_pms['PM'].'</a></li>';
 
 	if ($pun_user['is_admmod'])
 		$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
@@ -253,6 +261,33 @@ else
 
 		if ($pun_config['o_maintenance'] == '1')
 			$page_statusinfo[] = '<li class="maintenancelink"><span><strong><a href="admin_options.php#maintenance">'.$lang_common['Maintenance mode enabled'].'</a></strong></span></li>';
+	}
+
+	$num_new_pm = 0;
+	if ($pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1' && $pun_config['o_pms_enabled'] == '1')
+	{
+		// Boxes status
+		$pm_boxes_full = ($pun_user['num_pms'] >= $pun_user['g_pm_limit']) ? true : false;
+		$pm_boxes_empty = ($pun_user['num_pms'] <= '0') ? true : false;
+		if ($pun_user['g_pm_limit'] != '0' && !$pun_user['is_admmod'])
+		{
+			if ($pm_boxes_empty)
+				$page_statusinfo[] = '<li><span>'.$lang_pms['Empty boxes'].'</span></li>';
+			elseif ($pm_boxes_full)
+				$page_statusinfo[] = '<li><span><a href="pms_inbox.php"><strong>'.$lang_pms['Full boxes'].'</strong></a></span></li>';
+			else
+			{
+				$per_cent_box = ceil($pun_user['num_pms'] / $pun_user['g_pm_limit'] * '100');
+				$page_statusinfo[] = '<li><span>'.sprintf($lang_pms['Full to'],$per_cent_box.'%').' <div id="mp_bar_ext"><div id="mp_bar_int" style="width:'.$per_cent_box.'px;"><!-- --></div></div></span></li>';
+			}
+		}
+		
+		// Check for new messages
+		$result_messages = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'messages WHERE showed=0 AND show_message=1 AND owner='.$pun_user['id']) or error('Unable to check the availibility of new messages', __FILE__, __LINE__, $db->error());
+		$num_new_pm = $db->result($result_messages);
+		
+		if ($num_new_pm > 0)
+			$page_statusinfo[] = '<li><span><a href="pms_inbox.php"><strong>'.($num_new_pm == '1' ? $lang_pms['New message'] : sprintf($lang_pms['New messages'],$num_new_pm)).'</strong></a></span></li>';		
 	}
 
 	if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
