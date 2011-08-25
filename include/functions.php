@@ -515,6 +515,18 @@ function check_username($username, $exclude_id = null)
         generate_ftb_cache('tags');
         require FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_check.php';
     }
+    
+	// Check username against array/list of reserved usernames
+	$r = $db->query('SELECT conf_value FROM '.$db->prefix.'config WHERE conf_name="o_censored_usernames"') or error('Unable to get censored usernames', __FILE__, __LINE__, $db->error());
+	while($users = $db->fetch_assoc($r)) {
+		$reserved_usernames = explode(", ",$users['conf_value']);
+	}
+	
+	$user = utf8_strtolower(strtr(utf8_decode($username), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), utf8_decode('aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY')));
+	
+	if(in_array($user, $reserved_usernames)){
+		$errors[] = sprintf($lang_prof_reg['Username reserved'], $username);
+	}
 
     // Check username for any censored words
     if ($pun_config['o_censoring'] == '1' && censor_words($username) != $username)

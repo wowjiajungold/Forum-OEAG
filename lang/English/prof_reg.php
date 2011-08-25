@@ -23,6 +23,7 @@ $lang_prof_reg = array(
 'Username too short'		=>	'Usernames must be at least 2 characters long. Please choose another (longer) username.',
 'Username too long'			=>	'Usernames must not be more than 25 characters long. Please choose another (shorter) username.',
 'Username guest'			=>	'The username guest is reserved. Please choose another username.',
+'Username reserved'     	=>	'The username you chose, "%s" is reserved. You seem to have chosen some unquaint name, too close from an existing name or nickname used in the show... Eventualy some people will have the same idea, making the board a mess. Please be a bit more imaginative and find yourself more personnal another username!',
 'Username IP'				=>	'Usernames may not be in the form of an IP address. Please choose another username.',
 'Username reserved chars'	=>	'Usernames may not contain all the characters \', " and [ or ] at once. Please choose another username.',
 'Username BBCode'			=>	'Usernames may not contain any of the text formatting tags (BBCode) that the forum uses. Please choose another username.',

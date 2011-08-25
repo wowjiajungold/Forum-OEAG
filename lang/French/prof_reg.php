@@ -23,6 +23,7 @@ $lang_prof_reg = array(
 'Username too short'		=>	'Les noms d\'utilisateur doivent comporter au moins 2 caractères. Veuillez choisir un autre nom d\'utilisateur.',
 'Username too long'		=>	'Les noms d\'utilisateur ne doivent pas comporter plus de 25 caractères. Veuillez choisir un autre nom d\'utilisateur.',
 'Username guest'		=>	'Le nom d\'utilisateur «&#160;invité&#160;» est réservé. Veuillez choisir un autre nom d\'utilisateur.',
+'Username reserved'     =>	'Le nom d\'utilisateur que vous avez choisi, « %s », est interdit. Vous avez vraisemblablement choisi un pseudo peu original, trop proche d\'un nom de personnage de la série... Plusieurs personnes ont eu ou auront un jour la même idée que vous, ce qui nuit à la lisibilité du forum. Merci de réfléchir un peu plus et choisir un autre nom !',
 'Username IP'			=>	'Les noms d\'utilisateur ne peuvent pas être au format d\'une adresse IP. Veuillez choisir un autre nom d\'utilisateur.',
 'Username reserved chars'	=>	'Les noms d\'utilisateurs ne peuvent pas contenir les caractères \', " et [ ou ]. Veuillez choisir un autre nom d\'utilisateur.',
 'Username BBCode'		=>	'Les noms d\'utilisateur ne peuvent pas contenir de balises (BBCode). Veuillez choisir un autre nom d\'utilisateur.',

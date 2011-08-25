@@ -41,6 +41,25 @@ if (isset($_POST['add_word']))
 	redirect('admin_censoring.php', $lang_admin_censoring['Word added redirect']);
 }
 
+// Update a censored username word
+else if (isset($_POST['add_username']))
+{
+	confirm_referrer('admin_censoring.php');
+
+	$list = pun_trim($_POST['usernames']);
+
+	if ($list != '')
+		$db->query('UPDATE '.$db->prefix.'config SET conf_value=\''.$db->escape($list).'\' WHERE conf_name="o_censored_usernames"') or error('Unable to update censored usernames word', __FILE__, __LINE__, $db->error());
+
+	// Regenerate the censoring cache
+	if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+		require PUN_ROOT.'include/cache.php';
+
+	generate_censoring_cache();
+
+	redirect('admin_censoring.php', $lang_admin_censoring['Usernames updated redirect']);
+}
+
 // Update a censor word
 else if (isset($_POST['update']))
 {
@@ -91,6 +110,33 @@ require PUN_ROOT.'header.php';
 generate_admin_menu('censoring');
 
 ?>
+	<div class="blockform">
+		<h2><span><?php echo $lang_admin_censoring['Censoring username'] ?></span></h2>
+		<div class="box">
+			<form id="user_censoring" method="post" action="admin_censoring.php">
+				<div class="inform">
+					<fieldset>
+						<legend><?php echo $lang_admin_censoring['censored usernames'] ?></legend>
+						<div class="infldset">
+							<p><?php echo $lang_admin_censoring['censored usernames info'] ?></p>
+							<textarea name="usernames" id="usernames" rows="6" cols="100">
+<?php
+$result = $db->query('SELECT conf_value FROM '.$db->prefix.'config WHERE conf_name="o_censored_usernames"') or error('Unable to get censored usernames', __FILE__, __LINE__, $db->error());
+if($db->num_rows($result)) {
+	while($username = $db->fetch_assoc($result)) {
+		echo $username['conf_value'];
+	}
+}
+
+?></textarea><br />
+							<input type="submit" name="add_username" value="<?php echo $lang_admin_common['Update'] ?>" tabindex="3" />
+						</div>
+					</fieldset>
+				</div>
+			</form>
+		</div>
+	</div>
+	
 	<div class="blockform">
 		<h2><span><?php echo $lang_admin_censoring['Censoring head'] ?></span></h2>
 		<div class="box">
