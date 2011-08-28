@@ -83,6 +83,7 @@ function check_signature($img,$content)
 //
 function check_cookie(&$pun_user)
 {
+<<<<<<< HEAD
     global $db, $db_type, $pun_config, $cookie_name, $cookie_seed;
 
     $now = time();
@@ -197,6 +198,122 @@ function check_cookie(&$pun_user)
     }
     else
         set_default_user();
+=======
+	global $db, $db_type, $pun_config, $cookie_name, $cookie_seed;
+
+	$now = time();
+
+	// If the cookie is set and it matches the correct pattern, then read the values from it
+	if (isset($_COOKIE[$cookie_name]) && preg_match('%^(\d+)\|([0-9a-fA-F]+)\|(\d+)\|([0-9a-fA-F]+)$%', $_COOKIE[$cookie_name], $matches))
+	{
+		$cookie = array(
+			'user_id'			=> intval($matches[1]),
+			'password_hash' 	=> $matches[2],
+			'expiration_time'	=> intval($matches[3]),
+			'cookie_hash'		=> $matches[4],
+		);
+	}
+
+	// If it has a non-guest user, and hasn't expired
+	if (isset($cookie) && $cookie['user_id'] > 1 && $cookie['expiration_time'] > $now)
+	{
+		// If the cookie has been tampered with
+		if (forum_hmac($cookie['user_id'].'|'.$cookie['expiration_time'], $cookie_seed.'_cookie_hash') != $cookie['cookie_hash'])
+		{
+			$expire = $now + 31536000; // The cookie expires after a year
+			pun_setcookie(1, pun_hash(uniqid(rand(), true)), $expire);
+			set_default_user();
+
+			return;
+		}
+
+		// Check if there's a user with the user ID and password hash from the cookie
+		$result = $db->query('SELECT u.*, g.*, o.logged, o.idle FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON u.group_id=g.g_id LEFT JOIN '.$db->prefix.'online AS o ON o.user_id=u.id WHERE u.id='.intval($cookie['user_id'])) or error('Unable to fetch user information', __FILE__, __LINE__, $db->error());
+		$pun_user = $db->fetch_assoc($result);
+
+		// If user authorisation failed
+		if (!isset($pun_user['id']) || forum_hmac($pun_user['password'], $cookie_seed.'_password_hash') !== $cookie['password_hash'])
+		{
+			$expire = $now + 31536000; // The cookie expires after a year
+			pun_setcookie(1, pun_hash(uniqid(rand(), true)), $expire);
+			set_default_user();
+
+			return;
+		}
+
+		// Send a new, updated cookie with a new expiration timestamp
+		$expire = ($cookie['expiration_time'] > $now + $pun_config['o_timeout_visit']) ? $now + 1209600 : $now + $pun_config['o_timeout_visit'];
+		pun_setcookie($pun_user['id'], $pun_user['password'], $expire);
+
+		// Set a default language if the user selected language no longer exists
+		if (!file_exists(PUN_ROOT.'lang/'.$pun_user['language']))
+			$pun_user['language'] = $pun_config['o_default_lang'];
+
+		// Set a default style if the user selected style no longer exists
+		if (!file_exists(PUN_ROOT.'style/'.$pun_user['style'].'.css'))
+			$pun_user['style'] = $pun_config['o_default_style'];
+
+		if (!$pun_user['disp_topics'])
+			$pun_user['disp_topics'] = $pun_config['o_disp_topics_default'];
+		if (!$pun_user['disp_posts'])
+			$pun_user['disp_posts'] = $pun_config['o_disp_posts_default'];
+
+		// Define this if you want this visit to affect the online list and the users last visit data
+		if (!defined('PUN_QUIET_VISIT'))
+		{
+			// Update the online list
+			if (!$pun_user['logged'])
+			{
+				$pun_user['logged'] = $now;
+
+				// With MySQL/MySQLi/SQLite, REPLACE INTO avoids a user having two rows in the online table
+				switch ($db_type)
+				{
+					case 'mysql':
+					case 'mysqli':
+					case 'mysql_innodb':
+					case 'mysqli_innodb':
+					case 'sqlite':
+						$db->query('REPLACE INTO '.$db->prefix.'online (user_id, ident, logged) VALUES('.$pun_user['id'].', \''.$db->escape($pun_user['username']).'\', '.$pun_user['logged'].')') or error('Unable to insert into online list', __FILE__, __LINE__, $db->error());
+						break;
+
+					default:
+						$db->query('INSERT INTO '.$db->prefix.'online (user_id, ident, logged) SELECT '.$pun_user['id'].', \''.$db->escape($pun_user['username']).'\', '.$pun_user['logged'].' WHERE NOT EXISTS (SELECT 1 FROM '.$db->prefix.'online WHERE user_id='.$pun_user['id'].')') or error('Unable to insert into online list', __FILE__, __LINE__, $db->error());
+						break;
+				}
+
+				// Reset tracked topics
+				set_tracked_topics(null);
+			}
+			else
+			{
+				// Special case: We've timed out, but no other user has browsed the forums since we timed out
+				if ($pun_user['logged'] < ($now-$pun_config['o_timeout_visit']))
+				{
+					$db->query('UPDATE '.$db->prefix.'users SET last_visit='.$pun_user['logged'].' WHERE id='.$pun_user['id']) or error('Unable to update user visit data', __FILE__, __LINE__, $db->error());
+					$pun_user['last_visit'] = $pun_user['logged'];
+				}
+
+				$idle_sql = ($pun_user['idle'] == '1') ? ', idle=0' : '';
+				$db->query('UPDATE '.$db->prefix.'online SET logged='.$now.$idle_sql.' WHERE user_id='.$pun_user['id']) or error('Unable to update online list', __FILE__, __LINE__, $db->error());
+
+				// Update tracked topics with the current expire time
+				if (isset($_COOKIE[$cookie_name.'_track']))
+					forum_setcookie($cookie_name.'_track', $_COOKIE[$cookie_name.'_track'], $now + $pun_config['o_timeout_visit']);
+			}
+		}
+		else
+		{
+			if (!$pun_user['logged'])
+				$pun_user['logged'] = $pun_user['last_visit'];
+		}
+
+		$pun_user['is_guest'] = false;
+		$pun_user['is_admmod'] = $pun_user['g_id'] == PUN_ADMIN || $pun_user['g_moderator'] == '1';
+	}
+	else
+		set_default_user();
+>>>>>>> tags/fluxbb-1.4.6
 }
 
 
@@ -301,6 +418,7 @@ function get_base_url($support_https = false)
 //
 function set_default_user()
 {
+<<<<<<< HEAD
     global $db, $db_type, $pun_user, $pun_config;
 
     $remote_addr = get_remote_address();
@@ -344,6 +462,51 @@ function set_default_user()
     $pun_user['style'] = $pun_config['o_default_style'];
     $pun_user['is_guest'] = true;
     $pun_user['is_admmod'] = false;
+=======
+	global $db, $db_type, $pun_user, $pun_config;
+
+	$remote_addr = get_remote_address();
+
+	// Fetch guest user
+	$result = $db->query('SELECT u.*, g.*, o.logged, o.last_post, o.last_search FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON u.group_id=g.g_id LEFT JOIN '.$db->prefix.'online AS o ON o.ident=\''.$remote_addr.'\' WHERE u.id=1') or error('Unable to fetch guest information', __FILE__, __LINE__, $db->error());
+	if (!$db->num_rows($result))
+		exit('Unable to fetch guest information. Your database must contain both a guest user and a guest user group.');
+
+	$pun_user = $db->fetch_assoc($result);
+
+	// Update online list
+	if (!$pun_user['logged'])
+	{
+		$pun_user['logged'] = time();
+
+		// With MySQL/MySQLi/SQLite, REPLACE INTO avoids a user having two rows in the online table
+		switch ($db_type)
+		{
+			case 'mysql':
+			case 'mysqli':
+			case 'mysql_innodb':
+			case 'mysqli_innodb':
+			case 'sqlite':
+				$db->query('REPLACE INTO '.$db->prefix.'online (user_id, ident, logged) VALUES(1, \''.$db->escape($remote_addr).'\', '.$pun_user['logged'].')') or error('Unable to insert into online list', __FILE__, __LINE__, $db->error());
+				break;
+
+			default:
+				$db->query('INSERT INTO '.$db->prefix.'online (user_id, ident, logged) SELECT 1, \''.$db->escape($remote_addr).'\', '.$pun_user['logged'].' WHERE NOT EXISTS (SELECT 1 FROM '.$db->prefix.'online WHERE ident=\''.$db->escape($remote_addr).'\')') or error('Unable to insert into online list', __FILE__, __LINE__, $db->error());
+				break;
+		}
+	}
+	else
+		$db->query('UPDATE '.$db->prefix.'online SET logged='.time().' WHERE ident=\''.$db->escape($remote_addr).'\'') or error('Unable to update online list', __FILE__, __LINE__, $db->error());
+
+	$pun_user['disp_topics'] = $pun_config['o_disp_topics_default'];
+	$pun_user['disp_posts'] = $pun_config['o_disp_posts_default'];
+	$pun_user['timezone'] = $pun_config['o_default_timezone'];
+	$pun_user['dst'] = $pun_config['o_default_dst'];
+	$pun_user['language'] = $pun_config['o_default_lang'];
+	$pun_user['style'] = $pun_config['o_default_style'];
+	$pun_user['is_guest'] = true;
+	$pun_user['is_admmod'] = false;
+>>>>>>> tags/fluxbb-1.4.6
 }
 
 
@@ -487,6 +650,7 @@ function check_bans()
 //
 function check_username($username, $exclude_id = null)
 {
+<<<<<<< HEAD
     global $db, $pun_config, $errors, $lang_prof_reg, $lang_register, $lang_common, $pun_bans;
 
     // Convert multiple whitespace characters into one (to prevent people from registering with indistinguishable usernames)
@@ -520,6 +684,40 @@ function check_username($username, $exclude_id = null)
 	$r = $db->query('SELECT conf_value FROM '.$db->prefix.'config WHERE conf_name="o_censored_usernames"') or error('Unable to get censored usernames', __FILE__, __LINE__, $db->error());
 	while($users = $db->fetch_assoc($r)) {
 		$reserved_usernames = explode(", ",$users['conf_value']);
+=======
+	global $db, $pun_config, $errors, $lang_prof_reg, $lang_register, $lang_common, $pun_bans;
+
+	// Convert multiple whitespace characters into one (to prevent people from registering with indistinguishable usernames)
+	$username = preg_replace('%\s+%s', ' ', $username);
+
+	// Validate username
+	if (pun_strlen($username) < 2)
+		$errors[] = $lang_prof_reg['Username too short'];
+	else if (pun_strlen($username) > 25) // This usually doesn't happen since the form element only accepts 25 characters
+		$errors[] = $lang_prof_reg['Username too long'];
+	else if (!strcasecmp($username, 'Guest') || !strcasecmp($username, $lang_common['Guest']))
+		$errors[] = $lang_prof_reg['Username guest'];
+	else if (preg_match('%[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}%', $username) || preg_match('%((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))%', $username))
+		$errors[] = $lang_prof_reg['Username IP'];
+	else if ((strpos($username, '[') !== false || strpos($username, ']') !== false) && strpos($username, '\'') !== false && strpos($username, '"') !== false)
+		$errors[] = $lang_prof_reg['Username reserved chars'];
+	else if (preg_match('%(?:\[/?(?:b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|\*|topic|post|forum|user)\]|\[(?:img|url|quote|list)=)%i', $username))
+		$errors[] = $lang_prof_reg['Username BBCode'];
+
+	// Check username for any censored words
+	if ($pun_config['o_censoring'] == '1' && censor_words($username) != $username)
+		$errors[] = $lang_register['Username censor'];
+
+	// Check that the username (or a too similar username) is not already registered
+	$query = ($exclude_id) ? ' AND id!='.$exclude_id : '';
+
+	$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE (UPPER(username)=UPPER(\''.$db->escape($username).'\') OR UPPER(username)=UPPER(\''.$db->escape(ucp_preg_replace('%[^\p{L}\p{N}]%u', '', $username)).'\')) AND id>1'.$query) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+
+	if ($db->num_rows($result))
+	{
+		$busy = $db->result($result);
+		$errors[] = $lang_register['Username dupe 1'].' '.pun_htmlspecialchars($busy).'. '.$lang_register['Username dupe 2'];
+>>>>>>> tags/fluxbb-1.4.6
 	}
 	
 	$user = utf8_strtolower(strtr(utf8_decode($username), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), utf8_decode('aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY')));
@@ -1286,8 +1484,13 @@ function maintenance_message()
     header('Cache-Control: post-check=0, pre-check=0', false);
     header('Pragma: no-cache'); // For HTTP/1.0 compatibility
 
+<<<<<<< HEAD
     // Send the Content-type header in case the web server is setup to send something else
     header('Content-type: text/html; charset=utf-8');
+=======
+	// START SUBST - <pun_include "*">
+	preg_match_all('%<pun_include "([^/\\\\]*?)\.(php[45]?|inc|html?|txt)">%i', $tpl_maint, $pun_includes, PREG_SET_ORDER);
+>>>>>>> tags/fluxbb-1.4.6
 
     // Deal with newlines, tabs and multiple spaces
     $pattern = array("\t", '  ', '  ');
@@ -1397,8 +1600,13 @@ function redirect($destination_url, $message)
     if (strpos($destination_url, 'http://') !== 0 && strpos($destination_url, 'https://') !== 0 && strpos($destination_url, '/') !== 0)
         $destination_url = get_base_url(true).'/'.$destination_url;
 
+<<<<<<< HEAD
     // Do a little spring cleaning
     $destination_url = preg_replace('/([\r\n])|(%0[ad])|(;\s*data\s*:)/i', '', $destination_url);
+=======
+	// Do a little spring cleaning
+	$destination_url = preg_replace('%([\r\n])|(\%0[ad])|(;\s*data\s*:)%i', '', $destination_url);
+>>>>>>> tags/fluxbb-1.4.6
 
     // If the delay is 0 seconds, we might as well skip the redirect all together
     if ($pun_config['o_redirect_delay'] == '0')
@@ -1426,8 +1634,13 @@ function redirect($destination_url, $message)
 
     $tpl_redir = file_get_contents($tpl_file);
 
+<<<<<<< HEAD
     // START SUBST - <pun_include "*">
     preg_match_all('#<pun_include "([^/\\\\]*?)\.(php[45]?|inc|html?|txt)">#', $tpl_redir, $pun_includes, PREG_SET_ORDER);
+=======
+	// START SUBST - <pun_include "*">
+	preg_match_all('%<pun_include "([^/\\\\]*?)\.(php[45]?|inc|html?|txt)">%i', $tpl_redir, $pun_includes, PREG_SET_ORDER);
+>>>>>>> tags/fluxbb-1.4.6
 
     foreach ($pun_includes as $cur_include)
     {
@@ -1659,6 +1872,7 @@ function forum_remove_bad_characters()
 //
 function remove_bad_characters($array)
 {
+<<<<<<< HEAD
     static $bad_utf8_chars;
 
     if (!isset($bad_utf8_chars))
@@ -1717,6 +1931,66 @@ function remove_bad_characters($array)
     $array = str_replace(array_keys($bad_utf8_chars), array_values($bad_utf8_chars), $array);
 
     return $array;
+=======
+	static $bad_utf8_chars;
+
+	if (!isset($bad_utf8_chars))
+	{
+		$bad_utf8_chars = array(
+			"\xcc\xb7"		=> '',		// COMBINING SHORT SOLIDUS OVERLAY		0337	*
+			"\xcc\xb8"		=> '',		// COMBINING LONG SOLIDUS OVERLAY		0338	*
+			"\xe1\x85\x9F"	=> '',		// HANGUL CHOSEONG FILLER				115F	*
+			"\xe1\x85\xA0"	=> '',		// HANGUL JUNGSEONG FILLER				1160	*
+			"\xe2\x80\x8b"	=> '',		// ZERO WIDTH SPACE						200B	*
+			"\xe2\x80\x8c"	=> '',		// ZERO WIDTH NON-JOINER				200C
+			"\xe2\x80\x8d"	=> '',		// ZERO WIDTH JOINER					200D
+			"\xe2\x80\x8e"	=> '',		// LEFT-TO-RIGHT MARK					200E
+			"\xe2\x80\x8f"	=> '',		// RIGHT-TO-LEFT MARK					200F
+			"\xe2\x80\xaa"	=> '',		// LEFT-TO-RIGHT EMBEDDING				202A
+			"\xe2\x80\xab"	=> '',		// RIGHT-TO-LEFT EMBEDDING				202B
+			"\xe2\x80\xac"	=> '', 		// POP DIRECTIONAL FORMATTING			202C
+			"\xe2\x80\xad"	=> '',		// LEFT-TO-RIGHT OVERRIDE				202D
+			"\xe2\x80\xae"	=> '',		// RIGHT-TO-LEFT OVERRIDE				202E
+			"\xe2\x80\xaf"	=> '',		// NARROW NO-BREAK SPACE				202F	*
+			"\xe2\x81\x9f"	=> '',		// MEDIUM MATHEMATICAL SPACE			205F	*
+			"\xe2\x81\xa0"	=> '',		// WORD JOINER							2060
+			"\xe3\x85\xa4"	=> '',		// HANGUL FILLER						3164	*
+			"\xef\xbb\xbf"	=> '',		// ZERO WIDTH NO-BREAK SPACE			FEFF
+			"\xef\xbe\xa0"	=> '',		// HALFWIDTH HANGUL FILLER				FFA0	*
+			"\xef\xbf\xb9"	=> '',		// INTERLINEAR ANNOTATION ANCHOR		FFF9	*
+			"\xef\xbf\xba"	=> '',		// INTERLINEAR ANNOTATION SEPARATOR		FFFA	*
+			"\xef\xbf\xbb"	=> '',		// INTERLINEAR ANNOTATION TERMINATOR	FFFB	*
+			"\xef\xbf\xbc"	=> '',		// OBJECT REPLACEMENT CHARACTER			FFFC	*
+			"\xef\xbf\xbd"	=> '',		// REPLACEMENT CHARACTER				FFFD	*
+			"\xe2\x80\x80"	=> ' ',		// EN QUAD								2000	*
+			"\xe2\x80\x81"	=> ' ',		// EM QUAD								2001	*
+			"\xe2\x80\x82"	=> ' ',		// EN SPACE								2002	*
+			"\xe2\x80\x83"	=> ' ',		// EM SPACE								2003	*
+			"\xe2\x80\x84"	=> ' ',		// THREE-PER-EM SPACE					2004	*
+			"\xe2\x80\x85"	=> ' ',		// FOUR-PER-EM SPACE					2005	*
+			"\xe2\x80\x86"	=> ' ',		// SIX-PER-EM SPACE						2006	*
+			"\xe2\x80\x87"	=> ' ',		// FIGURE SPACE							2007	*
+			"\xe2\x80\x88"	=> ' ',		// PUNCTUATION SPACE					2008	*
+			"\xe2\x80\x89"	=> ' ',		// THIN SPACE							2009	*
+			"\xe2\x80\x8a"	=> ' ',		// HAIR SPACE							200A	*
+			"\xE3\x80\x80"	=> ' ',		// IDEOGRAPHIC SPACE					3000	*
+		);
+	}
+
+	if (is_array($array))
+		return array_map('remove_bad_characters', $array);
+
+	// Strip out any invalid characters
+	$array = utf8_bad_strip($array);
+
+	// Remove control characters
+	$array = preg_replace('%[\x{00}-\x{08}\x{0b}-\x{0c}\x{0e}-\x{1f}]%', '', $array);
+
+	// Replace some "bad" characters
+	$array = str_replace(array_keys($bad_utf8_chars), array_values($bad_utf8_chars), $array);
+
+	return $array;
+>>>>>>> tags/fluxbb-1.4.6
 }
 
 
@@ -1725,12 +1999,22 @@ function remove_bad_characters($array)
 //
 function file_size($size)
 {
+<<<<<<< HEAD
     $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB');
+=======
+	global $lang_common;
+
+	$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB');
+>>>>>>> tags/fluxbb-1.4.6
 
     for ($i = 0; $size > 1024; $i++)
         $size /= 1024;
 
+<<<<<<< HEAD
     return round($size, 2).' '.$units[$i];
+=======
+	return sprintf($lang_common['Size unit '.$units[$i]], round($size, 2));;
+>>>>>>> tags/fluxbb-1.4.6
 }
 
 
@@ -1819,12 +2103,23 @@ function forum_list_plugins($is_admin)
         $prefix = substr($entry, 0, strpos($entry, '_'));
         $suffix = substr($entry, strlen($entry) - 4);
 
+<<<<<<< HEAD
         if ($suffix == '.php' && ((!$is_admin && $prefix == 'AMP') || ($is_admin && ($prefix == 'AP' || $prefix == 'AMP'))))
             $plugins[] = array(substr($entry, strpos($entry, '_') + 1, -4), $entry);
     }
     $d->close();
 
     return $plugins;
+=======
+		if ($suffix == '.php' && ((!$is_admin && $prefix == 'AMP') || ($is_admin && ($prefix == 'AP' || $prefix == 'AMP'))))
+			$plugins[$entry] = substr($entry, strpos($entry, '_') + 1, -4);
+	}
+	$d->close();
+
+	natcasesort($plugins);
+
+	return $plugins;
+>>>>>>> tags/fluxbb-1.4.6
 }
 
 //
@@ -1834,6 +2129,7 @@ function split_text($text, $start, $end, &$errors, $retab = true)
 {
     global $pun_config, $lang_common;
 
+<<<<<<< HEAD
     $tokens = explode($start, $text);
 
     $outside[] = $tokens[0];
@@ -1859,7 +2155,84 @@ function split_text($text, $start, $end, &$errors, $retab = true)
     }
 
     return array($inside, $outside);
+=======
+	$result = array(0 => array(), 1 => array()); // 0 = inside, 1 = outside
+
+	// split the text into parts
+	$parts = preg_split('%'.preg_quote($start, '%').'(.*)'.preg_quote($end, '%').'%Us', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+	$num_parts = count($parts);
+
+	// preg_split results in outside parts having even indices, inside parts having odd
+	for ($i = 0;$i < $num_parts;$i++)
+		$result[1 - ($i % 2)][] = $parts[$i];
+
+	if ($pun_config['o_indent_num_spaces'] != 8 && $retab)
+	{
+		$spaces = str_repeat(' ', $pun_config['o_indent_num_spaces']);
+		$result[1] = str_replace("\t", $spaces, $result[1]);
+	}
+
+	return $result;
 }
+
+
+//
+// Extract blocks from a text with a starting and ending string
+// This function always matches the most outer block so nesting is possible
+//
+function extract_blocks($text, $start, $end, &$errors = array(), $retab = true)
+{
+	global $pun_config;
+
+	$code = array();
+	$start_len = strlen($start);
+	$end_len = strlen($end);
+	$regex = '%(?:'.preg_quote($start, '%').'|'.preg_quote($end, '%').')%';
+	$matches = array();
+
+	if (preg_match_all($regex, $text, $matches))
+	{
+		$counter = $offset = 0;
+		$start_pos = $end_pos = false;
+
+		foreach ($matches[0] as $match)
+		{
+			if ($match == $start)
+			{
+				if ($counter == 0)
+					$start_pos = strpos($text, $start);
+				$counter++;
+			}
+			elseif ($match == $end)
+			{
+				$counter--;
+				if ($counter == 0)
+					$end_pos = strpos($text, $end, $offset + 1);
+				$offset = strpos($text, $end, $offset + 1);
+			}
+
+			if ($start_pos !== false && $end_pos !== false)
+			{
+				$code[] = substr($text, $start_pos + $start_len,
+					$end_pos - $start_pos - $start_len);
+				$text = substr_replace($text, "\1", $start_pos,
+					$end_pos - $start_pos + $end_len);
+				$start_pos = $end_pos = false;
+				$offset = 0;
+			}
+		}
+	}
+
+	if ($pun_config['o_indent_num_spaces'] != 8 && $retab)
+	{
+		$spaces = str_repeat(' ', $pun_config['o_indent_num_spaces']);
+		$text = str_replace("\t", $spaces, $text);
+	}
+
+	return array($code, $text);
+>>>>>>> tags/fluxbb-1.4.6
+}
+
 
 //
 // function url_valid($url) {
@@ -1979,6 +2352,7 @@ function url_valid($url)
 //
 function ucp_preg_replace($pattern, $replace, $subject)
 {
+<<<<<<< HEAD
     $replaced = preg_replace($pattern, $replace, $subject);
 
     // If preg_replace() returns false, this probably means unicode support is not built-in, so we need to modify the pattern a little
@@ -1996,6 +2370,25 @@ function ucp_preg_replace($pattern, $replace, $subject)
     }
 
     return $replaced;
+=======
+	$replaced = preg_replace($pattern, $replace, $subject);
+
+	// If preg_replace() returns false, this probably means unicode support is not built-in, so we need to modify the pattern a little
+	if ($replaced === false)
+	{
+		if (is_array($pattern))
+		{
+			foreach ($pattern as $cur_key => $cur_pattern)
+				$pattern[$cur_key] = str_replace('\p{L}\p{N}', '\w', $cur_pattern);
+
+			$replaced = preg_replace($pattern, $replace, $subject);
+		}
+		else
+			$replaced = preg_replace(str_replace('\p{L}\p{N}', '\w', $pattern), $replace, $subject);
+	}
+
+	return $replaced;
+>>>>>>> tags/fluxbb-1.4.6
 }
 
 // DEBUG FUNCTIONS BELOW

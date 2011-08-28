@@ -157,116 +157,132 @@ if ($action == 'change_pass')
 
 else if ($action == 'change_email')
 {
-    // Make sure we are allowed to change this users email
-    if ($pun_user['id'] != $id)
-    {
-        if (!$pun_user['is_admmod']) // A regular user trying to change another users email?
-            message($lang_common['No permission']);
-        else if ($pun_user['g_moderator'] == '1') // A moderator trying to change a users email?
-        {
-            $result = $db->query('SELECT u.group_id, g.g_moderator FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON (g.g_id=u.group_id) WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-            if (!$db->num_rows($result))
-                message($lang_common['Bad request']);
+	// Make sure we are allowed to change this users email
+	if ($pun_user['id'] != $id)
+	{
+		if (!$pun_user['is_admmod']) // A regular user trying to change another users email?
+			message($lang_common['No permission']);
+		else if ($pun_user['g_moderator'] == '1') // A moderator trying to change a users email?
+		{
+			$result = $db->query('SELECT u.group_id, g.g_moderator FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON (g.g_id=u.group_id) WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+			if (!$db->num_rows($result))
+				message($lang_common['Bad request']);
 
-            list($group_id, $is_moderator) = $db->fetch_row($result);
+			list($group_id, $is_moderator) = $db->fetch_row($result);
 
-            if ($pun_user['g_mod_edit_users'] == '0' || $group_id == PUN_ADMIN || $is_moderator == '1')
-                message($lang_common['No permission']);
-        }
-    }
+			if ($pun_user['g_mod_edit_users'] == '0' || $group_id == PUN_ADMIN || $is_moderator == '1')
+				message($lang_common['No permission']);
+		}
+	}
 
-    if (isset($_GET['key']))
-    {
-        $key = $_GET['key'];
+	if (isset($_GET['key']))
+	{
+		$key = $_GET['key'];
 
-        $result = $db->query('SELECT activate_string, activate_key FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch activation data', __FILE__, __LINE__, $db->error());
-        list($new_email, $new_email_key) = $db->fetch_row($result);
+		$result = $db->query('SELECT activate_string, activate_key FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch activation data', __FILE__, __LINE__, $db->error());
+		list($new_email, $new_email_key) = $db->fetch_row($result);
 
-        if ($key == '' || $key != $new_email_key)
-            message($lang_profile['Email key bad'].' <a href="mailto:'.$pun_config['o_admin_email'].'">'.$pun_config['o_admin_email'].'</a>.');
-        else
-        {
-            $db->query('UPDATE '.$db->prefix.'users SET email=activate_string, activate_string=NULL, activate_key=NULL WHERE id='.$id) or error('Unable to update email address', __FILE__, __LINE__, $db->error());
+		if ($key == '' || $key != $new_email_key)
+			message($lang_profile['Email key bad'].' <a href="mailto:'.$pun_config['o_admin_email'].'">'.$pun_config['o_admin_email'].'</a>.');
+		else
+		{
+			$db->query('UPDATE '.$db->prefix.'users SET email=activate_string, activate_string=NULL, activate_key=NULL WHERE id='.$id) or error('Unable to update email address', __FILE__, __LINE__, $db->error());
 
-            message($lang_profile['Email updated'], true);
-        }
-    }
-    else if (isset($_POST['form_sent']))
-    {
-        if (pun_hash($_POST['req_password']) !== $pun_user['password'])
-            message($lang_profile['Wrong pass']);
+			message($lang_profile['Email updated'], true);
+		}
+	}
+	else if (isset($_POST['form_sent']))
+	{
+		if (pun_hash($_POST['req_password']) !== $pun_user['password'])
+			message($lang_profile['Wrong pass']);
 
-        require PUN_ROOT.'include/email.php';
+		require PUN_ROOT.'include/email.php';
 
-        // Validate the email address
-        $new_email = strtolower(trim($_POST['req_new_email']));
-        if (!is_valid_email($new_email))
-            message($lang_common['Invalid email']);
+		// Validate the email address
+		$new_email = strtolower(trim($_POST['req_new_email']));
+		if (!is_valid_email($new_email))
+			message($lang_common['Invalid email']);
 
-        // Check if it's a banned email address
-        if (is_banned_email($new_email))
-        {
-            if ($pun_config['p_allow_banned_email'] == '0')
-                message($lang_prof_reg['Banned email']);
-            else if ($pun_config['o_mailing_list'] != '')
-            {
-                $mail_subject = $lang_common['Banned email notification'];
-                $mail_message = sprintf($lang_common['Banned email change message'], $pun_user['username'], $new_email)."\n";
-                $mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$id)."\n";
-                $mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
+		// Check if it's a banned email address
+		if (is_banned_email($new_email))
+		{
+			if ($pun_config['p_allow_banned_email'] == '0')
+				message($lang_prof_reg['Banned email']);
+			else if ($pun_config['o_mailing_list'] != '')
+			{
+				// Load the "banned email change" template
+				$mail_tpl = trim(file_get_contents(PUN_ROOT.'lang/'.$pun_user['language'].'/mail_templates/banned_email_change.tpl'));
 
-                pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
-            }
-        }
+				// The first row contains the subject
+				$first_crlf = strpos($mail_tpl, "\n");
+				$mail_subject = trim(substr($mail_tpl, 8, $first_crlf-8));
+				$mail_message = trim(substr($mail_tpl, $first_crlf));
 
-        // Check if someone else already has registered with that email address
-        $result = $db->query('SELECT id, username FROM '.$db->prefix.'users WHERE email=\''.$db->escape($new_email).'\'') or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-        if ($db->num_rows($result))
-        {
-            if ($pun_config['p_allow_dupe_email'] == '0')
-                message($lang_prof_reg['Dupe email']);
-            else if ($pun_config['o_mailing_list'] != '')
-            {
-                while ($cur_dupe = $db->fetch_assoc($result))
-                    $dupe_list[] = $cur_dupe['username'];
+				$mail_message = str_replace('<username>', $pun_user['username'], $mail_message);
+				$mail_message = str_replace('<email>', $new_email, $mail_message);
+				$mail_message = str_replace('<profile_url>', get_base_url().'/profile.php?id='.$id, $mail_message);
+				$mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'], $mail_message);
 
-                $mail_subject = $lang_common['Duplicate email notification'];
-                $mail_message = sprintf($lang_common['Duplicate email change message'], $pun_user['username'], implode(', ', $dupe_list))."\n";
-                $mail_message .= sprintf($lang_common['User profile'], get_base_url().'/profile.php?id='.$id)."\n";
-                $mail_message .= "\n".'--'."\n".$lang_common['Email signature'];
+				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
+			}
+		}
 
-                pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
-            }
-        }
+		// Check if someone else already has registered with that email address
+		$result = $db->query('SELECT id, username FROM '.$db->prefix.'users WHERE email=\''.$db->escape($new_email).'\'') or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+		if ($db->num_rows($result))
+		{
+			if ($pun_config['p_allow_dupe_email'] == '0')
+				message($lang_prof_reg['Dupe email']);
+			else if ($pun_config['o_mailing_list'] != '')
+			{
+				while ($cur_dupe = $db->fetch_assoc($result))
+					$dupe_list[] = $cur_dupe['username'];
+
+				// Load the "dupe email change" template
+				$mail_tpl = trim(file_get_contents(PUN_ROOT.'lang/'.$pun_user['language'].'/mail_templates/dupe_email_change.tpl'));
+
+				// The first row contains the subject
+				$first_crlf = strpos($mail_tpl, "\n");
+				$mail_subject = trim(substr($mail_tpl, 8, $first_crlf-8));
+				$mail_message = trim(substr($mail_tpl, $first_crlf));
+
+				$mail_message = str_replace('<username>', $pun_user['username'], $mail_message);
+				$mail_message = str_replace('<dupe_list>', implode(', ', $dupe_list), $mail_message);
+				$mail_message = str_replace('<profile_url>', get_base_url().'/profile.php?id='.$id, $mail_message);
+				$mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'], $mail_message);
+
+				pun_mail($pun_config['o_mailing_list'], $mail_subject, $mail_message);
+			}
+		}
 
 
-        $new_email_key = random_pass(8);
+		$new_email_key = random_pass(8);
 
-        $db->query('UPDATE '.$db->prefix.'users SET activate_string=\''.$db->escape($new_email).'\', activate_key=\''.$new_email_key.'\' WHERE id='.$id) or error('Unable to update activation data', __FILE__, __LINE__, $db->error());
+		$db->query('UPDATE '.$db->prefix.'users SET activate_string=\''.$db->escape($new_email).'\', activate_key=\''.$new_email_key.'\' WHERE id='.$id) or error('Unable to update activation data', __FILE__, __LINE__, $db->error());
 
-        // Load the "activate email" template
-        $mail_tpl = trim(file_get_contents(PUN_ROOT.'lang/'.$pun_user['language'].'/mail_templates/activate_email.tpl'));
+		// Load the "activate email" template
+		$mail_tpl = trim(file_get_contents(PUN_ROOT.'lang/'.$pun_user['language'].'/mail_templates/activate_email.tpl'));
 
-        // The first row contains the subject
-        $first_crlf = strpos($mail_tpl, "\n");
-        $mail_subject = trim(substr($mail_tpl, 8, $first_crlf-8));
-        $mail_message = trim(substr($mail_tpl, $first_crlf));
+		// The first row contains the subject
+		$first_crlf = strpos($mail_tpl, "\n");
+		$mail_subject = trim(substr($mail_tpl, 8, $first_crlf-8));
+		$mail_message = trim(substr($mail_tpl, $first_crlf));
 
-        $mail_message = str_replace('<username>', $pun_user['username'], $mail_message);
-        $mail_message = str_replace('<base_url>', get_base_url(), $mail_message);
-        $mail_message = str_replace('<activation_url>', get_base_url().'/profile.php?action=change_email&id='.$id.'&key='.$new_email_key, $mail_message);
-        $mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'].' '.$lang_common['Mailer'], $mail_message);
+		$mail_message = str_replace('<username>', $pun_user['username'], $mail_message);
+		$mail_message = str_replace('<base_url>', get_base_url(), $mail_message);
+		$mail_message = str_replace('<activation_url>', get_base_url().'/profile.php?action=change_email&id='.$id.'&key='.$new_email_key, $mail_message);
+		$mail_message = str_replace('<board_mailer>', $pun_config['o_board_title'], $mail_message);
 
-        pun_mail($new_email, $mail_subject, $mail_message);
+		pun_mail($new_email, $mail_subject, $mail_message);
 
-        message($lang_profile['Activate email sent'].' <a href="mailto:'.$pun_config['o_admin_email'].'">'.$pun_config['o_admin_email'].'</a>.', true);
-    }
+		message($lang_profile['Activate email sent'].' <a href="mailto:'.$pun_config['o_admin_email'].'">'.$pun_config['o_admin_email'].'</a>.', true);
+	}
 
-    $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Profile'], $lang_profile['Change email']);
-    $required_fields = array('req_new_email' => $lang_profile['New email'], 'req_password' => $lang_common['Password']);
-    $focus_element = array('change_email', 'req_new_email');
-    define('PUN_ACTIVE_PAGE', 'profile');
-    require PUN_ROOT.'header.php';
+	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Profile'], $lang_profile['Change email']);
+	$required_fields = array('req_new_email' => $lang_profile['New email'], 'req_password' => $lang_common['Password']);
+	$focus_element = array('change_email', 'req_new_email');
+	define('PUN_ACTIVE_PAGE', 'profile');
+	require PUN_ROOT.'header.php';
 
 ?>
 <div class="blockform">
@@ -523,7 +539,19 @@ else if (isset($_POST['ban']))
     if ($pun_user['g_id'] != PUN_ADMIN && ($pun_user['g_moderator'] != '1' || $pun_user['g_mod_ban_users'] == '0'))
         message($lang_common['No permission']);
 
-    redirect('admin_bans.php?add_ban='.$id, $lang_profile['Ban redirect']);
+	// Get the username of the user we are banning
+	$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch username', __FILE__, __LINE__, $db->error());
+	$username = $db->result($result);
+
+	// Check whether user is already banned
+	$result = $db->query('SELECT id FROM '.$db->prefix.'bans WHERE username = \''.$db->escape($username).'\' ORDER BY expire IS NULL DESC, expire DESC LIMIT 1') or error('Unable to fetch ban ID', __FILE__, __LINE__, $db->error());
+	if ($db->num_rows($result))
+	{
+		$ban_id = $db->result($result);
+		redirect('admin_bans.php?edit_ban='.$ban_id.'&amp;exists', $lang_profile['Ban redirect']);
+	}
+	else
+		redirect('admin_bans.php?add_ban='.$id, $lang_profile['Ban redirect']);
 }
 
 
@@ -654,104 +682,111 @@ else if (isset($_POST['delete_user']) || isset($_POST['delete_user_comply']))
 
 else if (isset($_POST['form_sent']))
 {
-    // Fetch the user group of the user we are editing
-    $result = $db->query('SELECT u.username, u.group_id, g.g_moderator FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON (g.g_id=u.group_id) WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-    if (!$db->num_rows($result))
-        message($lang_common['Bad request']);
+	// Fetch the user group of the user we are editing
+	$result = $db->query('SELECT u.username, u.group_id, g.g_moderator FROM '.$db->prefix.'users AS u INNER JOIN '.$db->prefix.'groups AS g ON (g.g_id=u.group_id) WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+	if (!$db->num_rows($result))
+		message($lang_common['Bad request']);
 
-    list($old_username, $group_id, $is_moderator) = $db->fetch_row($result);
+	list($old_username, $group_id, $is_moderator) = $db->fetch_row($result);
 
-    if ($pun_user['id'] != $id &&                                                                   // If we arent the user (i.e. editing your own profile)
-        (!$pun_user['is_admmod'] ||                                                                 // and we are not an admin or mod
-        ($pun_user['g_id'] != PUN_ADMIN &&                                                          // or we aren't an admin and ...
-        ($pun_user['g_mod_edit_users'] == '0' ||                                                    // mods aren't allowed to edit users
-        $group_id == PUN_ADMIN ||                                                                   // or the user is an admin
-        $is_moderator))))                                                                           // or the user is another mod
-        message($lang_common['No permission']);
+	if ($pun_user['id'] != $id &&																	// If we arent the user (i.e. editing your own profile)
+		(!$pun_user['is_admmod'] ||																	// and we are not an admin or mod
+		($pun_user['g_id'] != PUN_ADMIN &&															// or we aren't an admin and ...
+		($pun_user['g_mod_edit_users'] == '0' ||													// mods aren't allowed to edit users
+		$group_id == PUN_ADMIN ||																	// or the user is an admin
+		$is_moderator))))																			// or the user is another mod
+		message($lang_common['No permission']);
 
-    if ($pun_user['is_admmod'])
-        confirm_referrer('profile.php');
+	if ($pun_user['is_admmod'])
+		confirm_referrer('profile.php');
 
-    $username_updated = false;
+	$username_updated = false;
 
-    // Validate input depending on section
-    switch ($section)
-    {
-        case 'essentials':
-        {
-            $form = array(
-                'timezone'      => floatval($_POST['form']['timezone']),
-                'dst'           => isset($_POST['form']['dst']) ? '1' : '0',
-                'time_format'   => intval($_POST['form']['time_format']),
-                'date_format'   => intval($_POST['form']['date_format']),
-            );
+	// Validate input depending on section
+	switch ($section)
+	{
+		case 'essentials':
+		{
+			$form = array(
+				'timezone'		=> floatval($_POST['form']['timezone']),
+				'dst'			=> isset($_POST['form']['dst']) ? '1' : '0',
+				'time_format'	=> intval($_POST['form']['time_format']),
+				'date_format'	=> intval($_POST['form']['date_format']),
+			);
 
-            // Make sure we got a valid language string
-            if (isset($_POST['form']['language']))
-            {
-                $languages = forum_list_langs();
-                $form['language'] = pun_trim($_POST['form']['language']);
-                if (!in_array($form['language'], $languages))
-                    message($lang_common['Bad request']);
-            }
+			// Make sure we got a valid language string
+			if (isset($_POST['form']['language']))
+			{
+				$languages = forum_list_langs();
+				$form['language'] = pun_trim($_POST['form']['language']);
+				if (!in_array($form['language'], $languages))
+					message($lang_common['Bad request']);
+			}
 
-            if ($pun_user['is_admmod'])
-            {
-                $form['admin_note'] = pun_trim($_POST['admin_note']);
+			if ($pun_user['is_admmod'])
+			{
+				$form['admin_note'] = pun_trim($_POST['admin_note']);
 
-                // Are we allowed to change usernames?
-                if ($pun_user['g_id'] == PUN_ADMIN || ($pun_user['g_moderator'] == '1' && $pun_user['g_mod_rename_users'] == '1'))
-                {
-                    $form['username'] = pun_trim($_POST['req_username']);
+				// Are we allowed to change usernames?
+				if ($pun_user['g_id'] == PUN_ADMIN || ($pun_user['g_moderator'] == '1' && $pun_user['g_mod_rename_users'] == '1'))
+				{
+					$form['username'] = pun_trim($_POST['req_username']);
 
-                    if ($form['username'] != $old_username)
-                    {
-                        // Check username
-                        require PUN_ROOT.'lang/'.$pun_user['language'].'/register.php';
+					if ($form['username'] != $old_username)
+					{
+						// Check username
+						require PUN_ROOT.'lang/'.$pun_user['language'].'/register.php';
 
-                        $errors = array();
-                        check_username($form['username'], $id);
-                        if (!empty($errors))
-                            message($errors[0]);
+						$errors = array();
+						check_username($form['username'], $id);
+						if (!empty($errors))
+							message($errors[0]);
 
-                        $username_updated = true;
-                    }
-                }
+						$username_updated = true;
+					}
+				}
 
-                // We only allow administrators to update the post count
-                if ($pun_user['g_id'] == PUN_ADMIN)
-                    $form['num_posts'] = intval($_POST['num_posts']);
-            }
+				// We only allow administrators to update the post count
+				if ($pun_user['g_id'] == PUN_ADMIN)
+					$form['num_posts'] = intval($_POST['num_posts']);
+			}
 
-            if ($pun_config['o_regs_verify'] == '0' || $pun_user['is_admmod'])
-            {
-                require PUN_ROOT.'include/email.php';
+			if ($pun_config['o_regs_verify'] == '0' || $pun_user['is_admmod'])
+			{
+				require PUN_ROOT.'include/email.php';
 
-                // Validate the email address
-                $form['email'] = strtolower(trim($_POST['req_email']));
-                if (!is_valid_email($form['email']))
-                    message($lang_common['Invalid email']);
-            }
+				// Validate the email address
+				$form['email'] = strtolower(trim($_POST['req_email']));
+				if (!is_valid_email($form['email']))
+					message($lang_common['Invalid email']);
+			}
 
-            break;
-        }
+			break;
+		}
 
-        case 'personal':
-        {
-            $form = array(
-                'realname'      => pun_trim($_POST['form']['realname']),
-                'url'           => pun_trim($_POST['form']['url']),
-                'location'      => pun_trim($_POST['form']['location']),
+		case 'personal':
+		{
+			$form = array(
+				'realname'		=> pun_trim($_POST['form']['realname']),
+				'url'			=> pun_trim($_POST['form']['url']),
+				'location'		=> pun_trim($_POST['form']['location']),
                 // Age
                 'birthd'        => pun_trim($_POST['form']['birthd']),
                 'birthm'        => pun_trim($_POST['form']['birthm']),
                 'birthy'        => pun_trim($_POST['form']['birthy']),
                 'sex'           => pun_trim($_POST['form']['sex'])
-            );
+			);
 
-            // Add http:// if the URL doesn't contain it already (while allowing https://, too)
-            if ($form['url'] != '' && !preg_match('#^https?://#i', $form['url']))
-                $form['url'] = 'http://'.$form['url'];
+			// Add http:// if the URL doesn't contain it already (while allowing https://, too)
+			if ($form['url'] != '')
+			{
+				$url = url_valid($form['url']);
+
+				if ($url === false)
+					message($lang_profile['Invalid website URL']);
+
+				$form['url'] = $url['url'];
+			}
 
             // MOD AGE - 11 LINES NEW CODE FOLLOW
             if (!is_numeric($form['birthd']) or !is_numeric($form['birthm']) or !is_numeric($form['birthy'])) {
@@ -766,83 +801,83 @@ else if (isset($_POST['form_sent']))
             unset($form['birthm']);
             unset($form['birthy']);
 
-            if ($pun_user['g_id'] == PUN_ADMIN)
-                $form['title'] = pun_trim($_POST['title']);
-            else if ($pun_user['g_set_title'] == '1')
-            {
-                $form['title'] = pun_trim($_POST['title']);
+			if ($pun_user['g_id'] == PUN_ADMIN)
+				$form['title'] = pun_trim($_POST['title']);
+			else if ($pun_user['g_set_title'] == '1')
+			{
+				$form['title'] = pun_trim($_POST['title']);
 
-                if ($form['title'] != '')
-                {
-                    // A list of words that the title may not contain
-                    // If the language is English, there will be some duplicates, but it's not the end of the world
-                    $forbidden = array('member', 'moderator', 'administrator', 'banned', 'guest', utf8_strtolower($lang_common['Member']), utf8_strtolower($lang_common['Moderator']), utf8_strtolower($lang_common['Administrator']), utf8_strtolower($lang_common['Banned']), utf8_strtolower($lang_common['Guest']));
+				if ($form['title'] != '')
+				{
+					// A list of words that the title may not contain
+					// If the language is English, there will be some duplicates, but it's not the end of the world
+					$forbidden = array('member', 'moderator', 'administrator', 'banned', 'guest', utf8_strtolower($lang_common['Member']), utf8_strtolower($lang_common['Moderator']), utf8_strtolower($lang_common['Administrator']), utf8_strtolower($lang_common['Banned']), utf8_strtolower($lang_common['Guest']));
 
-                    if (in_array(utf8_strtolower($form['title']), $forbidden))
-                        message($lang_profile['Forbidden title']);
-                }
-            }
+					if (in_array(utf8_strtolower($form['title']), $forbidden))
+						message($lang_profile['Forbidden title']);
+				}
+			}
 
-            break;
-        }
+			break;
+		}
 
-        case 'messaging':
-        {
-            $form = array(
-                'jabber'        => pun_trim($_POST['form']['jabber']),
-                'icq'           => pun_trim($_POST['form']['icq']),
-                'msn'           => pun_trim($_POST['form']['msn']),
-                'aim'           => pun_trim($_POST['form']['aim']),
-                'yahoo'         => pun_trim($_POST['form']['yahoo']),
-            );
+		case 'messaging':
+		{
+			$form = array(
+				'jabber'		=> pun_trim($_POST['form']['jabber']),
+				'icq'			=> pun_trim($_POST['form']['icq']),
+				'msn'			=> pun_trim($_POST['form']['msn']),
+				'aim'			=> pun_trim($_POST['form']['aim']),
+				'yahoo'			=> pun_trim($_POST['form']['yahoo']),
+			);
 
-            // If the ICQ UIN contains anything other than digits it's invalid
-            if (preg_match('/[^0-9]/', $form['icq']))
-                message($lang_prof_reg['Bad ICQ']);
+			// If the ICQ UIN contains anything other than digits it's invalid
+			if (preg_match('%[^0-9]%', $form['icq']))
+				message($lang_prof_reg['Bad ICQ']);
 
-            break;
-        }
+			break;
+		}
 
-        case 'personality':
-        {
-            $form = array();
+		case 'personality':
+		{
+			$form = array();
 
-            // Clean up signature from POST
-            if ($pun_config['o_signatures'] == '1')
-            {
-                $form['signature'] = pun_linebreaks(pun_trim($_POST['signature']));
+			// Clean up signature from POST
+			if ($pun_config['o_signatures'] == '1')
+			{
+				$form['signature'] = pun_linebreaks(pun_trim($_POST['signature']));
 
-                // Validate signature
-                if (pun_strlen($form['signature']) > $pun_config['p_sig_length'])
-                    message(sprintf($lang_prof_reg['Sig too long'], $pun_config['p_sig_length'], pun_strlen($form['signature']) - $pun_config['p_sig_length']));
-                else if (substr_count($form['signature'], "\n") > ($pun_config['p_sig_lines']-1))
-                    message(sprintf($lang_prof_reg['Sig too many lines'], $pun_config['p_sig_lines']));
-                else if ($form['signature'] && $pun_config['p_sig_all_caps'] == '0' && is_all_uppercase($form['signature']) && !$pun_user['is_admmod'])
-                    $form['signature'] = utf8_ucwords(utf8_strtolower($form['signature']));
+				// Validate signature
+				if (pun_strlen($form['signature']) > $pun_config['p_sig_length'])
+					message(sprintf($lang_prof_reg['Sig too long'], $pun_config['p_sig_length'], pun_strlen($form['signature']) - $pun_config['p_sig_length']));
+				else if (substr_count($form['signature'], "\n") > ($pun_config['p_sig_lines']-1))
+					message(sprintf($lang_prof_reg['Sig too many lines'], $pun_config['p_sig_lines']));
+				else if ($form['signature'] && $pun_config['p_sig_all_caps'] == '0' && is_all_uppercase($form['signature']) && !$pun_user['is_admmod'])
+					$form['signature'] = utf8_ucwords(utf8_strtolower($form['signature']));
 
                 if(preg_match_all("/\[img\](.*?)\[\/img\]/si",$form['signature'],$matches)!=false)
                     check_signature($matches,$form['signature']);
 
-                // Validate BBCode syntax
-                if ($pun_config['p_sig_bbcode'] == '1')
-                {
-                    require PUN_ROOT.'include/parser.php';
+				// Validate BBCode syntax
+				if ($pun_config['p_sig_bbcode'] == '1')
+				{
+					require PUN_ROOT.'include/parser.php';
 
-                    $errors = array();
+					$errors = array();
 
-                    $form['signature'] = preparse_bbcode($form['signature'], $errors, true);
+					$form['signature'] = preparse_bbcode($form['signature'], $errors, true);
 
-                    if(count($errors) > 0)
-                        message('<ul><li>'.implode('</li><li>', $errors).'</li></ul>');
-                }
-            }
+					if(count($errors) > 0)
+						message('<ul><li>'.implode('</li><li>', $errors).'</li></ul>');
+				}
+			}
 
-            break;
-        }
+			break;
+		}
 
-        case 'display':
-        {
-            $form = array(
+		case 'display':
+		{
+			$form = array(
                 'disp_topics'       => pun_trim($_POST['form']['disp_topics']),
                 'disp_posts'        => pun_trim($_POST['form']['disp_posts']),
                 'show_smilies'      => isset($_POST['form']['show_smilies']) ? '1' : '0',
@@ -850,118 +885,118 @@ else if (isset($_POST['form_sent']))
                 'show_img_sig'      => isset($_POST['form']['show_img_sig']) ? '1' : '0',
                 'show_avatars'      => isset($_POST['form']['show_avatars']) ? '1' : '0',
                 'show_sig'          => isset($_POST['form']['show_sig']) ? '1' : '0',
-            );
+			);
 
-            if ($form['disp_topics'] != '')
-            {
-                $form['disp_topics'] = intval($form['disp_topics']);
-                if ($form['disp_topics'] < 3)
-                    $form['disp_topics'] = 3;
-                else if ($form['disp_topics'] > 75)
-                    $form['disp_topics'] = 75;
-            }
+			if ($form['disp_topics'] != '')
+			{
+				$form['disp_topics'] = intval($form['disp_topics']);
+				if ($form['disp_topics'] < 3)
+					$form['disp_topics'] = 3;
+				else if ($form['disp_topics'] > 75)
+					$form['disp_topics'] = 75;
+			}
 
-            if ($form['disp_posts'] != '')
-            {
-                $form['disp_posts'] = intval($form['disp_posts']);
-                if ($form['disp_posts'] < 3)
-                    $form['disp_posts'] = 3;
-                else if ($form['disp_posts'] > 75)
-                    $form['disp_posts'] = 75;
-            }
+			if ($form['disp_posts'] != '')
+			{
+				$form['disp_posts'] = intval($form['disp_posts']);
+				if ($form['disp_posts'] < 3)
+					$form['disp_posts'] = 3;
+				else if ($form['disp_posts'] > 75)
+					$form['disp_posts'] = 75;
+			}
 
-            // Make sure we got a valid style string
-            if (isset($_POST['form']['style']))
-            {
-                $styles = forum_list_styles();
-                $form['style'] = pun_trim($_POST['form']['style']);
-                if (!in_array($form['style'], $styles))
-                    message($lang_common['Bad request']);
-            }
+			// Make sure we got a valid style string
+			if (isset($_POST['form']['style']))
+			{
+				$styles = forum_list_styles();
+				$form['style'] = pun_trim($_POST['form']['style']);
+				if (!in_array($form['style'], $styles))
+					message($lang_common['Bad request']);
+			}
 
-            break;
-        }
+			break;
+		}
 
-        case 'privacy':
-        {
-            $form = array(
-                'email_setting'         => intval($_POST['form']['email_setting']),
-                'notify_with_post'      => isset($_POST['form']['notify_with_post']) ? '1' : '0',
-                'auto_notify'           => isset($_POST['form']['auto_notify']) ? '1' : '0',
+		case 'privacy':
+		{
+			$form = array(
+				'email_setting'			=> intval($_POST['form']['email_setting']),
+				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
+				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
                 'use_pm'                => isset($_POST['form']['use_pm']) ? '1' : '0',
                 'notify_pm'             => isset($_POST['form']['notify_pm']) ? '1' : '0',
-            );
+			);
 
-            if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
-                $form['email_setting'] = $pun_config['o_default_email_setting'];
+			if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
+				$form['email_setting'] = $pun_config['o_default_email_setting'];
 
-            break;
-        }
+			break;
+		}
 
-        default:
-            message($lang_common['Bad request']);
-    }
-
-
-    // Single quotes around non-empty values and NULL for empty values
-    $temp = array();
-    foreach ($form as $key => $input)
-    {
-        $value = ($input !== '') ? '\''.$db->escape($input).'\'' : 'NULL';
-
-        $temp[] = $key.'='.$value;
-    }
-
-    if (empty($temp))
-        message($lang_common['Bad request']);
+		default:
+			message($lang_common['Bad request']);
+	}
 
 
-    $db->query('UPDATE '.$db->prefix.'users SET '.implode(',', $temp).' WHERE id='.$id) or error('Unable to update profile', __FILE__, __LINE__, $db->error());
+	// Single quotes around non-empty values and NULL for empty values
+	$temp = array();
+	foreach ($form as $key => $input)
+	{
+		$value = ($input !== '') ? '\''.$db->escape($input).'\'' : 'NULL';
 
-    // If we changed the username we have to update some stuff
-    if ($username_updated)
-    {
-        $db->query('UPDATE '.$db->prefix.'posts SET poster=\''.$db->escape($form['username']).'\' WHERE poster_id='.$id) or error('Unable to update posts', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'posts SET edited_by=\''.$db->escape($form['username']).'\' WHERE edited_by=\''.$db->escape($old_username).'\'') or error('Unable to update posts', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'topics SET poster=\''.$db->escape($form['username']).'\' WHERE poster=\''.$db->escape($old_username).'\'') or error('Unable to update topics', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'topics SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update topics', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'forums SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update forums', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'online SET ident=\''.$db->escape($form['username']).'\' WHERE ident=\''.$db->escape($old_username).'\'') or error('Unable to update online list', __FILE__, __LINE__, $db->error());
+		$temp[] = $key.'='.$value;
+	}
 
-        // PMS
-        $db->query('UPDATE '.$db->prefix.'messages SET sender=\''.$db->escape($form['username']).'\' WHERE sender=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'messages SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'contacts SET contact_name=\''.$db->escape($form['username']).'\' WHERE contact_name=\''.$db->escape($old_username).'\'') or error('Unable to update contacts', __FILE__, __LINE__, $db->error());
-        $db->query('UPDATE '.$db->prefix.'messages SET receiver=REPLACE(receiver,\''.$db->escape($old_username).'\',\''.$db->escape($form['username']).'\') WHERE receiver LIKE \'%'.$db->escape($old_username).'%\'') or error('Unable to update private messages', __FILE__, __LINE__, $db->error());
+	if (empty($temp))
+		message($lang_common['Bad request']);
 
-        // If the user is a moderator or an administrator we have to update the moderator lists
-        $result = $db->query('SELECT group_id FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
-        $group_id = $db->result($result);
 
-        $result = $db->query('SELECT g_moderator FROM '.$db->prefix.'groups WHERE g_id='.$group_id) or error('Unable to fetch group', __FILE__, __LINE__, $db->error());
-        $group_mod = $db->result($result);
+	$db->query('UPDATE '.$db->prefix.'users SET '.implode(',', $temp).' WHERE id='.$id) or error('Unable to update profile', __FILE__, __LINE__, $db->error());
 
-        if ($group_id == PUN_ADMIN || $group_mod == '1')
-        {
-            $result = $db->query('SELECT id, moderators FROM '.$db->prefix.'forums') or error('Unable to fetch forum list', __FILE__, __LINE__, $db->error());
+	// If we changed the username we have to update some stuff
+	if ($username_updated)
+	{
+		$db->query('UPDATE '.$db->prefix.'posts SET poster=\''.$db->escape($form['username']).'\' WHERE poster_id='.$id) or error('Unable to update posts', __FILE__, __LINE__, $db->error());
+		$db->query('UPDATE '.$db->prefix.'posts SET edited_by=\''.$db->escape($form['username']).'\' WHERE edited_by=\''.$db->escape($old_username).'\'') or error('Unable to update posts', __FILE__, __LINE__, $db->error());
+		$db->query('UPDATE '.$db->prefix.'topics SET poster=\''.$db->escape($form['username']).'\' WHERE poster=\''.$db->escape($old_username).'\'') or error('Unable to update topics', __FILE__, __LINE__, $db->error());
+		$db->query('UPDATE '.$db->prefix.'topics SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update topics', __FILE__, __LINE__, $db->error());
+		$db->query('UPDATE '.$db->prefix.'forums SET last_poster=\''.$db->escape($form['username']).'\' WHERE last_poster=\''.$db->escape($old_username).'\'') or error('Unable to update forums', __FILE__, __LINE__, $db->error());
+		$db->query('UPDATE '.$db->prefix.'online SET ident=\''.$db->escape($form['username']).'\' WHERE ident=\''.$db->escape($old_username).'\'') or error('Unable to update online list', __FILE__, __LINE__, $db->error());
 
-            while ($cur_forum = $db->fetch_assoc($result))
-            {
-                $cur_moderators = ($cur_forum['moderators'] != '') ? unserialize($cur_forum['moderators']) : array();
+		// If the user is a moderator or an administrator we have to update the moderator lists
+		$result = $db->query('SELECT group_id FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+		$group_id = $db->result($result);
 
-                if (in_array($id, $cur_moderators))
-                {
-                    unset($cur_moderators[$old_username]);
-                    $cur_moderators[$form['username']] = $id;
-                    uksort($cur_moderators, 'utf8_strcasecmp');
+		$result = $db->query('SELECT g_moderator FROM '.$db->prefix.'groups WHERE g_id='.$group_id) or error('Unable to fetch group', __FILE__, __LINE__, $db->error());
+		$group_mod = $db->result($result);
 
-                    $db->query('UPDATE '.$db->prefix.'forums SET moderators=\''.$db->escape(serialize($cur_moderators)).'\' WHERE id='.$cur_forum['id']) or error('Unable to update forum', __FILE__, __LINE__, $db->error());
-                }
-            }
-        }
-    }
+		if ($group_id == PUN_ADMIN || $group_mod == '1')
+		{
+			$result = $db->query('SELECT id, moderators FROM '.$db->prefix.'forums') or error('Unable to fetch forum list', __FILE__, __LINE__, $db->error());
 
-    redirect('profile.php?section='.$section.'&amp;id='.$id, $lang_profile['Profile redirect']);
+			while ($cur_forum = $db->fetch_assoc($result))
+			{
+				$cur_moderators = ($cur_forum['moderators'] != '') ? unserialize($cur_forum['moderators']) : array();
+
+				if (in_array($id, $cur_moderators))
+				{
+					unset($cur_moderators[$old_username]);
+					$cur_moderators[$form['username']] = $id;
+					uksort($cur_moderators, 'utf8_strcasecmp');
+
+					$db->query('UPDATE '.$db->prefix.'forums SET moderators=\''.$db->escape(serialize($cur_moderators)).'\' WHERE id='.$cur_forum['id']) or error('Unable to update forum', __FILE__, __LINE__, $db->error());
+				}
+			}
+		}
+
+		// Regenerate the users info cache
+		if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+			require PUN_ROOT.'include/cache.php';
+
+		generate_users_info_cache();
+	}
+
+	redirect('profile.php?section='.$section.'&amp;id='.$id, $lang_profile['Profile redirect']);
 }
 
 
