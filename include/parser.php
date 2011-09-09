@@ -168,23 +168,12 @@ function preparse_bbcode($text, &$errors, $is_signature = false)
 function strip_empty_bbcode($text, &$errors)
 {
 	// If the message contains a code tag we have to split it up (empty tags within [code][/code] are fine)
-<<<<<<< HEAD
 	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false ||
         (strpos($text, '[noir]') !== false && strpos($text, '[/noir]') !== false))
-	{
-		list($inside, $outside) = split_text($text, '[code]', '[/code]', $errors);
-		$text = implode("\1", $outside);
-	}
-
-	// Remove empty tags
-	while (($new_text = preg_replace('/\[(b|u|s|ins|del|em|i|h|colou?r|quote|spoiler|smilie|img|url|email|list|size|acronym|q|sup|sub|left|right|center|justify|video|scenario|titre|intro|texte|perso|didascalie|generique|table|tr|th|td)(?:\=[^\]]*)?\]\s*\[\/\1\]/', '', $text)) !== NULL)
-=======
-	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false)
 		list($inside, $text) = extract_blocks($text, '[code]', '[/code]', $errors);
 
 	// Remove empty tags
-	while (($new_text = preg_replace('%\[(b|u|s|ins|del|em|i|h|colou?r|quote|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]\s*\[/\1\]%', '', $text)) !== NULL)
->>>>>>> tags/fluxbb-1.4.6
+	while (($new_text = preg_replace('%\[(b|u|s|ins|del|em|i|h|colou?r|quote|spoiler|smilie|img|url|email|list|size|acronym|q|sup|sub|left|right|center|justify|video|scenario|titre|intro|texte|perso|didascalie|generique|table|tr|th|td|topic|post|forum|user)(?:\=[^\]]*)?\]\s*\[/\1\]%', '', $text)) !== NULL)
 	{
 		if ($new_text != $text)
 			$text = $new_text;
@@ -227,78 +216,7 @@ function preparse_tags($text, &$errors, $is_signature = false)
 	// Start off by making some arrays of bbcode tags and what we need to do with each one
 
 	// List of all the tags
-<<<<<<< HEAD
-    $tags = array('quote', 'code', 'spoiler', 'b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'img', 'list', 'size', '*', 'h', 'acronym', 'q', 'sup', 'sub', 'left', 'right', 'center', 'justify', 'video', 'scenario', 'titre', 'intro', 'texte', 'perso', 'didascalie', 'noir', 'table', 'tr', 'th', 'td');
-    // List of tags that we need to check are open (You could not put b,i,u in here then illegal nesting like [b][i][/b][/i] would be allowed)
-    $tags_opened = $tags;
-    // and tags we need to check are closed (the same as above, added it just in case)
-    $tags_closed = $tags;
-    // Tags we can nest and the depth they can be nested to (only quotes)
-    $tags_nested = array('quote' => $pun_config['o_quote_depth'], 'list' => 5, '*' => 5);
-    // Tags to ignore the contents of completely (just code)
-    $tags_ignore = array('code');
-    // Block tags, block tags can only go within another block tag, they cannot be in a normal tag
-    $tags_block = array('quote', 'code', 'spoiler', 'list', 'h', '*', 'left', 'right', 'center', 'justify', 'scenario', 'intro', 'texte', 'didascalie');
-    // Inline tags, we do not allow new lines in these
-    $tags_inline = array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'h', 'acronym', 'q', 'sup', 'sub', 'video', 'titre', 'perso');
-    // Tags we trim interior space
-    $tags_trim = array('img', 'video'/*, 'table', 'tr', 'th', 'td'*/);
-    // Tags we remove quotes from the argument
-    $tags_quotes = array('url', 'email', 'img', 'video');
-    // Tags we limit bbcode in
-    $tags_limit_bbcode = array(
-        '*'     => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'acronym', 'q', 'sup', 'sub', 'video'),
-        'list'  => array('*'),
-        'url'   => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'img', 'acronym', 'q', 'sup', 'sub'),
-        'size'   => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'img', 'acronym', 'q', 'sup', 'sub'),
-        'email' => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'img', 'acronym', 'q', 'sup', 'sub'),
-        'img'   => array(),
-        'h'     => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email'),
-        'video'  => array(),
-        'scenario'  => array('b', 'i', 'u', 's', 'em', 'color', 'colour', 'titre', 'intro', 'texte'),
-        'texte'  => array('b', 'i', 'u', 's', 'em', 'color', 'colour', 'perso', 'didascalie', 'noir'),
-        'noir'  => array('b', 'i', 'u', 's', 'em', 'color', 'colour', 'didascalie'),
-        'table' => array('tr'),
-        'tr' => array('th', 'td'),
-        'th' => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'acronym', 'q', 'sup', 'sub', 'video'),
-        'td' => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'acronym', 'q', 'sup', 'sub', 'video')
-    );
-	// Tags we can automatically fix bad nesting
-	$tags_fix = array('spoiler', 'quote', 'b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'h');
-=======
-	$tags = array('quote', 'code', 'b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'img', 'list', '*', 'h', 'topic', 'post', 'forum', 'user');
-	// List of tags that we need to check are open (You could not put b,i,u in here then illegal nesting like [b][i][/b][/i] would be allowed)
-	$tags_opened = $tags;
-	// and tags we need to check are closed (the same as above, added it just in case)
-	$tags_closed = $tags;
-	// Tags we can nest and the depth they can be nested to
-	$tags_nested = array('quote' => $pun_config['o_quote_depth'], 'list' => 5, '*' => 5);
-	// Tags to ignore the contents of completely (just code)
-	$tags_ignore = array('code');
-	// Block tags, block tags can only go within another block tag, they cannot be in a normal tag
-	$tags_block = array('quote', 'code', 'list', 'h', '*');
-	// Inline tags, we do not allow new lines in these
-	$tags_inline = array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'h', 'topic', 'post', 'forum', 'user');
-	// Tags we trim interior space
-	$tags_trim = array('img');
-	// Tags we remove quotes from the argument
-	$tags_quotes = array('url', 'email', 'img', 'topic', 'post', 'forum', 'user');
-	// Tags we limit bbcode in
-	$tags_limit_bbcode = array(
-		'*' 	=> array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'topic', 'post', 'forum', 'user'),
-		'list' 	=> array('*'),
-		'url' 	=> array('img'),
-		'email' => array('img'),
-		'topic' => array('img'),
-		'post'  => array('img'),
-		'forum' => array('img'),
-		'user'  => array('img'),
-		'img' 	=> array(),
-		'h'		=> array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'topic', 'post', 'forum', 'user'),
-	);
-	// Tags we can automatically fix bad nesting
-	$tags_fix = array('quote', 'b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'h', 'topic', 'post', 'forum', 'user');
->>>>>>> tags/fluxbb-1.4.6
+	require_once(PUN_ROOT.'include/parser_tags.php');
 
 	$split_text = preg_split('%(\[[\*a-zA-Z0-9-/]*?(?:=.*?)?\])%', $text, -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
 
@@ -841,117 +759,7 @@ function do_bbcode($text, $is_signature = false)
 		$replace[] = 'handle_list_tag(\'$2\', \'$1\')';
 	}
 
-<<<<<<< HEAD
-    $pattern[] = '#\[b\](.*?)\[/b\]#ms';
-    $pattern[] = '#\[i\](.*?)\[/i\]#ms';
-    $pattern[] = '#\[u\](.*?)\[/u\]#ms';
-    $pattern[] = '#\[s\](.*?)\[/s\]#ms';
-    $pattern[] = '#\[del\](.*?)\[/del\]#ms';
-    $pattern[] = '#\[ins\](.*?)\[/ins\]#ms';
-    $pattern[] = '#\[em\](.*?)\[/em\]#ms';
-    $pattern[] = '#\[colou?r=([a-zA-Z]{3,20}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{3})](.*?)\[/colou?r\]#ms';
-    $pattern[] = '#\[h\](.*?)\[/h\]#ms';
-    $pattern[] = '#\[acronym\](.*?)\[/acronym\]#ms';
-    $pattern[] = '#\[acronym=(.*?)\](.*?)\[/acronym\]#ms';
-    $pattern[] = '#\[q\](.*?)\[/q\]#ms';
-    $pattern[] = '#\[sup\](.*?)\[/sup\]#ms';
-    $pattern[] = '#\[sub\](.*?)\[/sub\]#ms';
-    $pattern[] = '#\[left\](.*?)\[/left\]#ms';
-    $pattern[] = '#\[right\](.*?)\[/right\]#ms';
-    $pattern[] = '#\[center\](.*?)\[/center\]#ms';
-    $pattern[] = '#\[justify\](.*?)\[/justify\]#ms';
-    $pattern[] = '#\[video\]([^\[<]*?)/video/([^_\[<]*?)_([^\[<]*?)\[/video\]#ms';
-    $pattern[] = '#\[video=([0-9]+),([0-9]+)\]([^\[<]*?)/video/([^_\[<]*?)_([^\[<]*?)\[/video\]#ms';
-    $pattern[] = '#\[video\]([^\[<]*?)/(v/|watch\?v=)([^\[<]*?)\[/video\]#ms';
-    $pattern[] = '#\[video=([0-9]+),([0-9]+)\]([^\[<]*?)/(v/|watch\?v=)([^\[<]*?)\[/video\]#ms';
-
-    $pattern[] = '#\[scenario\](.*?)\[/scenario\]#ms';
-    $pattern[] = '#\[titre\](.*?)\[/titre\]#ms';
-    $pattern[] = '#\[intro\](.*?)\[/intro\]#ms';
-    $pattern[] = '#\[texte\](.*?)\[/texte\]#ms';
-    $pattern[] = '#\[perso\](.*?)\[/perso\]#ms';
-    $pattern[] = '#\[perso=(.*?)\](.*?)\[/perso\]#ms';
-    $pattern[] = '#\[didascalie\](.*?)\[/didascalie\]#ms';
-    $pattern[] = '#\[noir\](.*?)\[/noir\]#ms';
-
-    $pattern[] = '#\[L51\](.*?)\[/L51\]#ms';
-    $pattern[] = '#\[L52\](.*?)\[/L52\]#ms';
-    $pattern[] = '#\[L1\](.*?)\[/L1\]#ms';
-    $pattern[] = '#\[L2\](.*?)\[/L2\]#ms';
-    
-    $pattern[] = '#\[table\](.*?)\[/table\]#ms';
-    $pattern[] = '#\[tr\](.*?)\[/tr\]#ms';
-    $pattern[] = '#\[th\](.*?)\[/th\]#ms';
-    $pattern[] = '#\[td\]{{oui}}\[/td\]#ms';
-    $pattern[] = '#\[td\]{{non}}\[/td\]#ms';
-    $pattern[] = '#\[td\]{{partiel}}\[/td\]#ms';
-    $pattern[] = '#\[td\](.*?)\[/td\]#ms';
-
-    $replace[] = '<strong>$1</strong>';
-    $replace[] = '<em>$1</em>';
-    $replace[] = '<span class="bbu">$1</span>';
-    $replace[] = '<span class="bbs">$1</span>';
-    $replace[] = '<del>$1</del>';
-    $replace[] = '<ins>$1</ins>';
-    $replace[] = '<em>$1</em>';
-    $replace[] = '<span style="color: $1">$2</span>';
-    $replace[] = '</p><h5>$1</h5><p>';
-    $replace[] = '<acronym>$1</acronym>';
-    $replace[] = '<acronym title="$1">$2</acronym>';
-    $replace[] = '<q>$1</q>';
-    $replace[] = '<sup>$1</sup>';
-    $replace[] = '<sub>$1</sub>';
-    $replace[] = '</p><p style="text-align: left">$1</p><p>';
-    $replace[] = '</p><p style="text-align: right">$1</p><p>';
-    $replace[] = '</p><p style="text-align: center">$1</p><p>';
-    $replace[] = '</p><p style="text-align: justify">$1</p><p>';
-    $replace[] = '<object type="application/x-shockwave-flash" data="http://www.dailymotion.com/swf/video/$2" width="480" height="384"><param name="movie" value="http://www.dailymotion.com/swf/video/$2" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
-    $replace[] = '<object type="application/x-shockwave-flash" data="http://www.dailymotion.com/swf/video/$4" width="$1" height="$2"><param name="movie" value="http://www.dailymotion.com/swf/video/$4" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
-    $replace[] = '<object type="application/x-shockwave-flash" data="http://www.youtube.com/v/$3" width="425" height="344"><param name="movie" value="http://www.youtube.com/v/$3" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
-    $replace[] = '<object type="application/x-shockwave-flash" data="http://www.youtube.com/v/$5" width="$1" height="$2"><param name="movie" value="http://www.youtube.com/v/$5" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
-
-    $replace[] = '</p><div class="scenario">$1</div><p>';
-    $replace[] = '<div class="titre">$1</div>';
-    $replace[] = '<div class="intro">$1</div>';
-    $replace[] = '<dl class="texte">$1</dl>';
-    $replace[] = ' </dd><dt class="perso" style="position:relative;padding:0;top:0;width:auto;">$1</dt><dd>';
-    $replace[] = ' </dd><dt class="perso" style="position:relative;padding:0;top:0;width:auto;">$2 <span>($1)</span></dt><dd>';
-    $replace[] = '<span class="didascalie">$1</span>';
-    $replace[] = '<dt class="noir" style="position:relative;padding:25px;top:0;width:auto;height:auto;">$1</dt>';
-
-    $replace[] = '<div class="postimg" style="text-align:center;"><img src="img/L5-1.jpg" alt="" /></div>';
-    $replace[] = '<div class="postimg" style="text-align:center;"><img src="img/L5-2.jpg" alt="" /></div>';
-    $replace[] = '<div class="postimg" style="text-align:center;"><img src="img/L234-1.jpg" alt="" /></div>';
-    $replace[] = '<div class="postimg" style="text-align:center;"><img src="img/L234-2.jpg" alt="" /></div>';
-    
-    $replace[] = '<table class="postable">$1</table>';
-    $replace[] = '<tr>$1</tr>';
-    $replace[] = '<th>$1</th>';
-    $replace[] = '<td style="background-color:#ccffcc;font-weight:bold;">Oui</td>';
-    $replace[] = '<td style="background-color:#ff99bb;font-weight:bold;">Non</td>';
-    $replace[] = '<td style="background-color:#ffffdd;font-weight:bold;">Partiel</td>';
-    $replace[] = '<td>$1</td>';
-=======
-	$pattern[] = '%\[b\](.*?)\[/b\]%ms';
-	$pattern[] = '%\[i\](.*?)\[/i\]%ms';
-	$pattern[] = '%\[u\](.*?)\[/u\]%ms';
-	$pattern[] = '%\[s\](.*?)\[/s\]%ms';
-	$pattern[] = '%\[del\](.*?)\[/del\]%ms';
-	$pattern[] = '%\[ins\](.*?)\[/ins\]%ms';
-	$pattern[] = '%\[em\](.*?)\[/em\]%ms';
-	$pattern[] = '%\[colou?r=([a-zA-Z]{3,20}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{3})](.*?)\[/colou?r\]%ms';
-	$pattern[] = '%\[h\](.*?)\[/h\]%ms';
-
-	$replace[] = '<strong>$1</strong>';
-	$replace[] = '<em>$1</em>';
-	$replace[] = '<span class="bbu">$1</span>';
-	$replace[] = '<span class="bbs">$1</span>';
-	$replace[] = '<del>$1</del>';
-	$replace[] = '<ins>$1</ins>';
-	$replace[] = '<em>$1</em>';
-	$replace[] = '<span style="color: $1">$2</span>';
-	$replace[] = '</p><h5>$1</h5><p>';
->>>>>>> tags/fluxbb-1.4.6
+	require_once(PUN_ROOT.'include/parser_patterns.php');
 
 	if (($is_signature && $pun_config['p_sig_img_tag'] == '1') || (!$is_signature && $pun_config['p_message_img_tag'] == '1'))
 	{
@@ -969,17 +777,11 @@ function do_bbcode($text, $is_signature = false)
 		}
 	}
 
-<<<<<<< HEAD
-	$pattern[] = '#\[url\]([^\[]*?)\[/url\]#e';
-	$pattern[] = '#\[url=([^\[]+?)\](.*?)\[/url\]#e';
-	$pattern[] = '#\[email\]([^\[]*?)\[/email\]#';
-	$pattern[] = '#\[email=([^\[]+?)\](.*?)\[/email\]#';
-    $pattern[] = '#\[size=([0-9]{1}|[0-9]{2})](.*?)\[/size\]#e';
-=======
 	$pattern[] = '%\[url\]([^\[]*?)\[/url\]%e';
 	$pattern[] = '%\[url=([^\[]+?)\](.*?)\[/url\]%e';
 	$pattern[] = '%\[email\]([^\[]*?)\[/email\]%';
 	$pattern[] = '%\[email=([^\[]+?)\](.*?)\[/email\]%';
+    $pattern[] = '#\[size=([0-9]{1}|[0-9]{2})](.*?)\[/size\]#e';
 	$pattern[] = '%\[topic\]([^\[]*?)\[/topic\]%e';
 	$pattern[] = '%\[topic=([^\[]+?)\](.*?)\[/topic\]%e';
 	$pattern[] = '%\[post\]([^\[]*?)\[/post\]%e';
@@ -988,15 +790,12 @@ function do_bbcode($text, $is_signature = false)
 	$pattern[] = '%\[forum=([^\[]+?)\](.*?)\[/forum\]%e';
 	$pattern[] = '%\[user\]([^\[]*?)\[/user\]%e';
 	$pattern[] = '%\[user=([^\[]+?)\](.*?)\[/user\]%e';
->>>>>>> tags/fluxbb-1.4.6
 
 	$replace[] = 'handle_url_tag(\'$1\')';
 	$replace[] = 'handle_url_tag(\'$1\', \'$2\')';
 	$replace[] = '<a href="mailto:$1">$1</a>';
 	$replace[] = '<a href="mailto:$1">$2</a>';
-<<<<<<< HEAD
     $replace[] = 'handle_size_tag(\'$1\', \'$2\')';
-=======
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewtopic.php?id=$1\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewtopic.php?id=$1\', \'$2\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewtopic.php?pid=$1#p$1\')';
@@ -1005,8 +804,7 @@ function do_bbcode($text, $is_signature = false)
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewforum.php?id=$1\', \'$2\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/profile.php?id=$1\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/profile.php?id=$1\', \'$2\')';
->>>>>>> tags/fluxbb-1.4.6
-
+	
 	// This thing takes a while! :)
 	$text = preg_replace($pattern, $replace, $text);
 
@@ -1039,17 +837,12 @@ function do_smilies($text)
 
 	foreach ($smilies as $smiley_text => $smiley_img)
 	{
-<<<<<<< HEAD
 		if (strpos($text, $smiley_text) !== false) {
             $img = pun_htmlspecialchars(get_base_url(true).'/img/smilies/'.$smiley_img);
             $img_size = getimagesize($img);
 			$text = ucp_preg_replace('#(?<=[>\s])'.preg_quote($smiley_text, '#').'(?=[^\p{L}\p{N}])#um', '<img src="'.$img.'" class="smile" '.$img_size[3].' alt="'.substr($smiley_img, 0, strrpos($smiley_img, '.')).'" />', $text);
             $img_size = '';
         }
-=======
-		if (strpos($text, $smiley_text) !== false)
-			$text = ucp_preg_replace('%(?<=[>\s])'.preg_quote($smiley_text, '%').'(?=[^\p{L}\p{N}])%um', '<img src="'.pun_htmlspecialchars(get_base_url(true).'/img/smilies/'.$smiley_img).'" width="15" height="15" alt="'.substr($smiley_img, 0, strrpos($smiley_img, '.')).'" />', $text);
->>>>>>> tags/fluxbb-1.4.6
 	}
 
 	return substr($text, 1, -1);
