@@ -30,7 +30,7 @@ $show_last_visit = ($pun_config['o_show_last_visit'] == '1' || $pun_user['is_adm
 
 $username = isset($_GET['username']) && $pun_user['g_search_users'] == '1' ? pun_trim($_GET['username']) : '';
 $show_group = isset($_GET['show_group']) ? intval($_GET['show_group']) : -1;
-$sort_by = isset($_GET['sort_by']) && (in_array($_GET['sort_by'], array('username', 'registered')) || ($_GET['sort_by'] == 'num_posts' && $show_post_count)) ? $_GET['sort_by'] : 'username';
+$sort_by = isset($_GET['sort_by']) && (in_array($_GET['sort_by'], array('username', 'registered')) || ($_GET['sort_by'] == 'num_posts' && $show_post_count) || ($_GET['sort_by'] == 'last_visit' && $show_last_visit)) ? $_GET['sort_by'] : 'username';
 $sort_dir = isset($_GET['sort_dir']) && $_GET['sort_dir'] == 'DESC' ? 'DESC' : 'ASC';
 
 // Create any SQL for the WHERE clause
@@ -147,7 +147,8 @@ while ($cur_group = $db->fetch_assoc($result))
 <?php
 
 // Retrieve a list of user IDs, LIMIT is (really) expensive so we only fetch the IDs here then later fetch the remaining data
-$result = $db->query('SELECT u.id FROM '.$db->prefix.'users AS u WHERE u.id>1 AND u.group_id!='.PUN_UNVERIFIED.(!empty($where_sql) ? ' AND '.implode(' AND ', $where_sql) : '').' ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC LIMIT '.$start_from.', 50') or error('Unable to fetch user IDs', __FILE__, __LINE__, $db->error());
+$q = 'SELECT u.id FROM '.$db->prefix.'users AS u WHERE u.id>1 AND u.group_id!='.PUN_UNVERIFIED.(!empty($where_sql) ? ' AND '.implode(' AND ', $where_sql) : '').' ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC LIMIT '.$start_from.', 50';
+$result = $db->query($q) or error('Unable to fetch user IDs', __FILE__, __LINE__, $db->error());
 
 if ($db->num_rows($result))
 {
@@ -156,7 +157,8 @@ if ($db->num_rows($result))
 		$user_ids[] = $cur_user_id;
 
 	// Grab the users
-	$result = $db->query('SELECT u.id, u.username, u.title, u.num_posts, u.last_visit, u.registered, g.g_id, g.g_user_title FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id IN('.implode(',', $user_ids).') ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC') or error('Unable to fetch user list', __FILE__, __LINE__, $db->error());
+	$q = 'SELECT u.id, u.username, u.title, u.num_posts, u.last_visit, u.registered, g.g_id, g.g_user_title FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id IN('.implode(',', $user_ids).') ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC';
+	$result = $db->query($q) or error('Unable to fetch user list', __FILE__, __LINE__, $db->error());
 
 	while ($user_data = $db->fetch_assoc($result))
 	{

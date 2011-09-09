@@ -15,7 +15,7 @@
 	
     // Block tags, block tags can only go within another block tag, they cannot be in a normal tag
     $old_tags = array('quote', 'code', 'list', 'h', '*');
-    $new_tags = array('spoiler', 'left', 'right', 'center', 'justify', 'scenario', 'intro', 'texte', 'didascalie');
+    $new_tags = array('spoiler', 'left', 'right', 'center', 'justify', 'scenario', 'intro', 'texte', 'didascalie', 'table', 'tr', 'th', 'td');
     $tags_block = array_merge($old_tags, $new_tags);
 	
     // Inline tags, we do not allow new lines in these
@@ -50,7 +50,7 @@
         'table' => array('tr'),
         'tr' => array('th', 'td'),
         'th' => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'acronym', 'q', 'sup', 'sub', 'video'),
-        'td' => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'acronym', 'q', 'sup', 'sub', 'video')
+        'td' => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'acronym', 'q', 'sup', 'sub', 'video', 'topic', 'post', 'forum', 'user')
     );
 	// Tags we can automatically fix bad nesting
 	$old_tags = array('quote', 'b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'h', 'topic', 'post', 'forum', 'user');
