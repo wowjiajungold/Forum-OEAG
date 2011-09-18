@@ -824,6 +824,7 @@ if ($pun_config['o_search_all_forums'] == '1' || $pun_user['is_admmod'])
 	}
 
 	echo "\t\t\t\t\t\t\t".'</fieldset>'."\n";
+	echo "\t\t\t\t\t\t".'<div style="clear:both;"></div>'."\n";
 	echo "\t\t\t\t\t\t".'</div>'."\n";
 	echo "\t\t\t\t\t\t".'</div>'."\n";
 }
@@ -864,6 +865,7 @@ else
 						<br /></label>
 						<p class="clearl"><?php echo $lang_search['Search in info'] ?></p>
 <?php echo ($pun_config['o_search_all_forums'] == '1' || $pun_user['is_admmod'] ? '<p>'.$lang_search['Search multiple forums info'].'</p>' : '') ?>
+						<div style="clear:both;"></div>
 					</div>
 				</fieldset>
 			</div>
@@ -892,6 +894,7 @@ else
 						</select>
 						<br /></label>
 						<p class="clearb"><?php echo $lang_search['Search results info'] ?></p>
+						<div style="clear:both;"></div>
 					</div>
 				</fieldset>
 			</div>

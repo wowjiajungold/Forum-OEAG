@@ -1137,9 +1137,12 @@ MAIN FORMS
 	padding: 7px 0;
 }
 
-.pun fieldset label {
-	display: block;
-	padding: 0 0 7px 0;
+.pun fieldset .checklist-item {
+	clear: both;
+}
+
+.pun fieldset .fld-input {
+    float: left;
 }
 
 .pun label em {
