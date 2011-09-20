@@ -153,6 +153,10 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 	clear: none;
 }
 
+.pun .clearb {
+	clear: both;
+}
+
 /*****************************************************************
 2. COMMON STYLES
 *****************************************************************/
@@ -1142,7 +1146,7 @@ MAIN FORMS
 }
 
 .pun fieldset .fld-input {
-    float: left;
+	float: left;
 }
 
 .pun label em {
@@ -1194,7 +1198,6 @@ MAIN FORMS
 
 .pun .rbox input {
 	margin: 3px 0.75em 3px -1.75em;
-	float: left;
 	position: relative;
 	vertical-align: middle;
 	padding: 0;
