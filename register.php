@@ -101,6 +101,14 @@ if (isset($_POST['form_sent']))
 	// Validate email
 	require PUN_ROOT.'include/email.php';
 
+	$test= 'oeag';
+	$long_test = strlen($test);
+	$long_email = strlen($email1);
+	if (substr($email1, 0, $long_test) === $test)
+		$email1 = substr($email1, $long_test, $long_email);
+	else
+		message($lang_common['Invalid email']);
+
 	if (!is_valid_email($email1))
 		$errors[] = $lang_common['Invalid email'];
 	else if ($pun_config['o_regs_verify'] == '1' && $email1 != $email2)
@@ -333,6 +341,7 @@ if (!empty($errors))
 					<legend><?php echo ($pun_config['o_regs_verify'] == '1') ? $lang_prof_reg['Email legend 2'] : $lang_prof_reg['Email legend'] ?></legend>
 					<div class="infldset">
 <?php if ($pun_config['o_regs_verify'] == '1'): ?>						<p><?php echo $lang_register['Email info'] ?></p>
+							<p><?php echo $lang_register['Antispam info'] ?></p>
 <?php endif; ?>						<label class="required"><strong><?php echo $lang_common['Email'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />
 						<input type="text" name="req_email1" value="<?php if (isset($_POST['req_email1'])) echo pun_htmlspecialchars($_POST['req_email1']); ?>" size="50" maxlength="80" /><br /></label>
 <?php if ($pun_config['o_regs_verify'] == '1'): ?>						<label class="required"><strong><?php echo $lang_register['Confirm email'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />

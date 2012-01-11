@@ -40,59 +40,59 @@ if (isset($_POST['form_sent']))
 		'show_version'			=> $_POST['form']['show_version'] != '1' ? '0' : '1',
 		'show_user_info'		=> $_POST['form']['show_user_info'] != '1' ? '0' : '1',
 		'show_post_count'		=> $_POST['form']['show_post_count'] != '1' ? '0' : '1',
-        'show_last_visit'       => $_POST['form']['show_last_visit'] != '1' ? '0' : '1',
-		'smilies'				=> $_POST['form']['smilies'] != '1' ? '0' : '1',
+		'show_last_visit'       	=> $_POST['form']['show_last_visit'] != '1' ? '0' : '1',
+		'smilies'			=> $_POST['form']['smilies'] != '1' ? '0' : '1',
 		'smilies_sig'			=> $_POST['form']['smilies_sig'] != '1' ? '0' : '1',
 		'make_links'			=> $_POST['form']['make_links'] != '1' ? '0' : '1',
 		'topic_review'			=> intval($_POST['form']['topic_review']),
-		'disp_topics_default'	=> intval($_POST['form']['disp_topics_default']),
-		'disp_posts_default'	=> intval($_POST['form']['disp_posts_default']),
+		'disp_topics_default'		=> intval($_POST['form']['disp_topics_default']),
+		'disp_posts_default'		=> intval($_POST['form']['disp_posts_default']),
 		'indent_num_spaces'		=> intval($_POST['form']['indent_num_spaces']),
 		'quote_depth'			=> intval($_POST['form']['quote_depth']),
-		'quickpost'				=> $_POST['form']['quickpost'] != '1' ? '0' : '1',
+		'quickpost'			=> $_POST['form']['quickpost'] != '1' ? '0' : '1',
 		'users_online'			=> $_POST['form']['users_online'] != '1' ? '0' : '1',
-		'censoring'				=> $_POST['form']['censoring'] != '1' ? '0' : '1',
+		'censoring'			=> $_POST['form']['censoring'] != '1' ? '0' : '1',
 		'signatures'			=> $_POST['form']['signatures'] != '1' ? '0' : '1',
-		'ranks'					=> $_POST['form']['ranks'] != '1' ? '0' : '1',
-		'show_dot'				=> $_POST['form']['show_dot'] != '1' ? '0' : '1',
+		'ranks'				=> $_POST['form']['ranks'] != '1' ? '0' : '1',
+		'show_dot'			=> $_POST['form']['show_dot'] != '1' ? '0' : '1',
 		'topic_views'			=> $_POST['form']['topic_views'] != '1' ? '0' : '1',
-		'quickjump'				=> $_POST['form']['quickjump'] != '1' ? '0' : '1',
-		'gzip'					=> $_POST['form']['gzip'] != '1' ? '0' : '1',
+		'quickjump'			=> $_POST['form']['quickjump'] != '1' ? '0' : '1',
+		'gzip'				=> $_POST['form']['gzip'] != '1' ? '0' : '1',
 		'search_all_forums'		=> $_POST['form']['search_all_forums'] != '1' ? '0' : '1',
-		'additional_navlinks'	=> pun_trim($_POST['form']['additional_navlinks']),
-		'feed_type'				=> intval($_POST['form']['feed_type']),
-		'feed_ttl'				=> intval($_POST['form']['feed_ttl']),
+		'additional_navlinks'		=> pun_trim($_POST['form']['additional_navlinks']),
+		'feed_type'			=> intval($_POST['form']['feed_type']),
+		'feed_ttl'			=> intval($_POST['form']['feed_ttl']),
 		'report_method'			=> intval($_POST['form']['report_method']),
 		'mailing_list'			=> pun_trim($_POST['form']['mailing_list']),
-		'avatars'				=> $_POST['form']['avatars'] != '1' ? '0' : '1',
+		'avatars'			=> $_POST['form']['avatars'] != '1' ? '0' : '1',
 		'avatars_dir'			=> pun_trim($_POST['form']['avatars_dir']),
 		'avatars_width'			=> intval($_POST['form']['avatars_width']),
 		'avatars_height'		=> intval($_POST['form']['avatars_height']),
 		'avatars_size'			=> intval($_POST['form']['avatars_size']),
-        'signatures'            => $_POST['form']['signatures'] != '1' ? '0' : '1',
-        'sig_img_width'      => intval($_POST['form']['signatures_width']),
-        'sig_img_height'     => intval($_POST['form']['signatures_height']),
-        'sig_img_size'       => intval($_POST['form']['signatures_size']),
+		'signatures'			=> $_POST['form']['signatures'] != '1' ? '0' : '1',
+		'sig_img_width'			=> intval($_POST['form']['signatures_width']),
+		'sig_img_height'		=> intval($_POST['form']['signatures_height']),
+		'sig_img_size'			=> intval($_POST['form']['signatures_size']),
 		'admin_email'			=> strtolower(pun_trim($_POST['form']['admin_email'])),
 		'webmaster_email'		=> strtolower(pun_trim($_POST['form']['webmaster_email'])),
-		'forum_subscriptions'	=> $_POST['form']['forum_subscriptions'] != '1' ? '0' : '1',
-		'topic_subscriptions'	=> $_POST['form']['topic_subscriptions'] != '1' ? '0' : '1',
-		'smtp_host'				=> pun_trim($_POST['form']['smtp_host']),
-		'smtp_user'				=> pun_trim($_POST['form']['smtp_user']),
-		'smtp_ssl'				=> $_POST['form']['smtp_ssl'] != '1' ? '0' : '1',
+		'forum_subscriptions'		=> $_POST['form']['forum_subscriptions'] != '1' ? '0' : '1',
+		'topic_subscriptions'		=> $_POST['form']['topic_subscriptions'] != '1' ? '0' : '1',
+		'smtp_host'			=> pun_trim($_POST['form']['smtp_host']),
+		'smtp_user'			=> pun_trim($_POST['form']['smtp_user']),
+		'smtp_ssl'			=> $_POST['form']['smtp_ssl'] != '1' ? '0' : '1',
 		'regs_allow'			=> $_POST['form']['regs_allow'] != '1' ? '0' : '1',
 		'regs_verify'			=> $_POST['form']['regs_verify'] != '1' ? '0' : '1',
 		'regs_report'			=> $_POST['form']['regs_report'] != '1' ? '0' : '1',
-		'rules'					=> $_POST['form']['rules'] != '1' ? '0' : '1',
+		'rules'				=> $_POST['form']['rules'] != '1' ? '0' : '1',
 		'rules_message'			=> pun_trim($_POST['form']['rules_message']),
-		'default_email_setting'	=> intval($_POST['form']['default_email_setting']),
+		'default_email_setting'		=> intval($_POST['form']['default_email_setting']),
 		'announcement'			=> $_POST['form']['announcement'] != '1' ? '0' : '1',
-		'announcement_message'	=> pun_trim($_POST['form']['announcement_message']),
+		'announcement_message'		=> pun_trim($_POST['form']['announcement_message']),
 		'maintenance'			=> $_POST['form']['maintenance'] != '1' ? '0' : '1',
-		'maintenance_message'	=> pun_trim($_POST['form']['maintenance_message']),
-        'captcha_use_registration'  => $_POST['form']['captcha_use_registration'] != '1' ? '0' : '1',
-        'captcha_key_public'    => pun_trim($_POST['form']['captcha_key_public']),
-        'captcha_key_private'   => pun_trim($_POST['form']['captcha_key_private']),
+		'maintenance_message'		=> pun_trim($_POST['form']['maintenance_message']),
+		'captcha_use_registration'	=> $_POST['form']['captcha_use_registration'] != '1' ? '0' : '1',
+		'captcha_key_public'		=> pun_trim($_POST['form']['captcha_key_public']),
+		'captcha_key_private'		=> pun_trim($_POST['form']['captcha_key_private']),
 	);
 
 	if ($form['board_title'] == '')
@@ -197,11 +197,11 @@ if (isset($_POST['form_sent']))
 	if ($form['timeout_online'] >= $form['timeout_visit'])
 		message($lang_admin_options['Timeout error message']);
     
-    // If we don't have an API key we cannot use reCAPTCHA
-    if (empty($form['captcha_key_public']) || empty($form['captcha_key_private']))
-    {
-        $form['captcha_use_registration'] = '0';
-    }
+	// If we don't have an API key we cannot use reCAPTCHA
+	if (empty($form['captcha_key_public']) || empty($form['captcha_key_private']))
+	{
+		$form['captcha_use_registration'] = '0';
+	}
 
 	foreach ($form as $key => $input)
 	{
@@ -696,43 +696,43 @@ generate_admin_menu('options');
 						</div>
 					</fieldset>
 				</div>
-                <div class="inform">
-                    <fieldset>
-                        <legend><?php echo $lang_admin_options['Signatures subhead'] ?></legend>
-                        <div class="infldset">
-                            <table class="aligntop" cellspacing="0">
-                                <tr>
-                                    <th scope="row"><a name="signatures"><?php echo $lang_admin_options['Signatures label'] ?></a></th>
-                                    <td>
-                                        <input type="radio" name="form[signatures]" value="1"<?php if ($pun_config['o_signatures'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[signatures]" value="0"<?php if ($pun_config['o_signatures'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
-                                        <span><?php echo $lang_admin_options['Signatures help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Max width label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[signatures_width]" size="5" maxlength="5" value="<?php echo $pun_config['o_sig_img_width'] ?>" />
-                                        <span><?php echo $lang_admin_options['Max width help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Max height label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[signatures_height]" size="5" maxlength="5" value="<?php echo $pun_config['o_sig_img_height'] ?>" />
-                                        <span><?php echo $lang_admin_options['Max height help'] ?></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><?php echo $lang_admin_options['Max size label'] ?></th>
-                                    <td>
-                                        <input type="text" name="form[signatures_size]" size="6" maxlength="6" value="<?php echo $pun_config['o_sig_img_size'] ?>" />
-                                        <span><?php echo $lang_admin_options['Max size help'] ?></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </fieldset>
-                </div>
+				<div class="inform">
+					<fieldset>
+						<legend><?php echo $lang_admin_options['Signatures subhead'] ?></legend>
+						<div class="infldset">
+							<table class="aligntop" cellspacing="0">
+								<tr>
+									<th scope="row"><a name="signatures"><?php echo $lang_admin_options['Signatures label'] ?></a></th>
+									<td>
+									    <input type="radio" name="form[signatures]" value="1"<?php if ($pun_config['o_signatures'] == '1') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['Yes'] ?></strong>&#160;&#160;&#160;<input type="radio" name="form[signatures]" value="0"<?php if ($pun_config['o_signatures'] == '0') echo ' checked="checked"' ?> />&#160;<strong><?php echo $lang_admin_common['No'] ?></strong>
+									    <span><?php echo $lang_admin_options['Signatures help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Max width label'] ?></th>
+									<td>
+									    <input type="text" name="form[signatures_width]" size="5" maxlength="5" value="<?php echo $pun_config['o_sig_img_width'] ?>" />
+									    <span><?php echo $lang_admin_options['Max width help'] ?></span>
+									</td>
+									</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Max height label'] ?></th>
+									<td>
+									    <input type="text" name="form[signatures_height]" size="5" maxlength="5" value="<?php echo $pun_config['o_sig_img_height'] ?>" />
+									    <span><?php echo $lang_admin_options['Max height help'] ?></span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php echo $lang_admin_options['Max size label'] ?></th>
+									<td>
+									    <input type="text" name="form[signatures_size]" size="6" maxlength="6" value="<?php echo $pun_config['o_sig_img_size'] ?>" />
+									    <span><?php echo $lang_admin_options['Max size help'] ?></span>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</fieldset>
+				</div>
 				<div class="inform">
 					<fieldset>
 						<legend><?php echo $lang_admin_options['E-mail subhead'] ?></legend>

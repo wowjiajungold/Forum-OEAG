@@ -1488,12 +1488,14 @@ else
 <?php endif; ?>                         <label><?php echo $lang_profile['Location'] ?><br /><input type="text" name="form[location]" value="<?php echo pun_htmlspecialchars($user['location']) ?>" size="30" maxlength="30" /><br /></label>
                             <label><?php echo $lang_profile['Website'] ?><br /><input type="text" name="form[url]" value="<?php echo pun_htmlspecialchars($user['url']) ?>" size="50" maxlength="80" /><br /></label>
                             <label><?php echo $lang_common['Sex'] ?><br />
-                            <select name="form[sex]">
-                              <option value=""<?= ($user['sex']==null) ? " selected=\"selected\"" : ""; ?>>--</option>
-                              <option value="0"<?= ($user['sex']=="0") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Male'] ?></option>
-                              <option value="1"<?= ($user['sex']=="1") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Female'] ?></option>
-                              <option value="2"<?= ($user['sex']=="2") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Bigg'] ?></option>
-                            </select></label>
+                              <select name="form[sex]">
+                                <option value=""<?= ($user['sex']==null) ? " selected=\"selected\"" : ""; ?>>--</option>
+                                <option value="0"<?= ($user['sex']=="0") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Male'] ?></option>
+                                <option value="1"<?= ($user['sex']=="1") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Female'] ?></option>
+                                <option value="2"<?= ($user['sex']=="2") ? " selected=\"selected\"" : ""; ?>><?= $lang_common['Bigg'] ?></option>
+                              </select>
+                            </label>
+                            <br />
                             <label><?php echo $lang_profile['Birthdate'].' (<em>'.$lang_profile['Age profile use'].'</em>)';
     if(!empty($user['birthdate'])) {
     $tempdate = explode("/", $user['birthdate']);
@@ -1504,27 +1506,29 @@ else
     $jour = '';
     $mois = '';
     $annee = '';
-    } ?>
-                            <br />
-                         <select name="form[birthd]">
-                          <option value="0">--</option>
+    }
+    $liste_mois = array("janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"); ?>
+                              <br />
+                              <select name="form[birthd]">
+                                <option value="0">--</option>
 <?php for($i=1;$i<32;$i++) { ?>
-                          <option value="<?php echo $i ?>"<?php if ($jour==$i) echo ' selected="selected"' ?>><?php echo $i ?></option>
+                                <option value="<?php echo $i ?>"<?php if ($jour==$i) echo ' selected="selected"' ?>><?php echo $i ?></option>
 <?php } ?>
-                         </select>
-                         <select name="form[birthm]">
-                            <option value="0">--</option>
+                              </select>
+                              <select name="form[birthm]">
+                                <option value="0">--</option>
 <?php for($i=1;$i<13;$i++) { ?>
-                          <option value="<?php echo $i ?>"<?php if ($mois==$i) echo ' selected="selected"' ?>><?php echo $i ?></option>
+                                <option value="<?php echo $i ?>"<?php if ($mois==$i) echo ' selected="selected"' ?>><?php echo $liste_mois[$i-1] ?></option>
 <?php } ?>
-                         </select>
-                         <select name="form[birthy]">
-                            <option value="0">----</option>
+                              </select>
+                              <select name="form[birthy]">
+                                <option value="0">----</option>
 <?php $thisyear = date("Y");
                           for($i=($thisyear-100);$i<($thisyear-2);$i++) { ?>
-                          <option value="<?php echo $i ?>"<?php if ($annee==$i) echo ' selected="selected"' ?>><?php echo $i ?></option>
+                                <option value="<?php echo $i ?>"<?php if ($annee==$i) echo ' selected="selected"' ?>><?php echo $i ?></option>
 <?php } ?>
-                        </select></label>
+                              </select>
+                          </label>
                         </div>
                     </fieldset>
                 </div>
@@ -1671,7 +1675,14 @@ else
 
             foreach ($styles as $temp)
             {
-                if ($user['style'] == $temp)
+                if ( $temp == 'OEAGv4' ) {
+                    if ( $pun_user['is_admmod'] || $pun_user['g_moderator'] == '1' )
+                        if ($user['style'] == $temp)
+                            echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'" selected="selected">'.str_replace('_', ' ', $temp).'</option>'."\n";
+                        else
+                            echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'">'.str_replace('_', ' ', $temp).'</option>'."\n";
+                }
+                else if ($user['style'] == $temp)
                     echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'" selected="selected">'.str_replace('_', ' ', $temp).'</option>'."\n";
                 else
                     echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'">'.str_replace('_', ' ', $temp).'</option>'."\n";

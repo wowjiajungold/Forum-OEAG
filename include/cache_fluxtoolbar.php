@@ -1,7 +1,7 @@
 <?php
 /***********************************************************************
 
-  Copyright (C) 2010 Mpok
+  Copyright (C) 2010-2011 Mpok
   based on code Copyright (C) 2006 Vincent Garnier
   License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
@@ -15,7 +15,7 @@ function write_cache($cache, $text)
 {
 	$fh = @fopen(FORUM_CACHE_DIR.$cache, 'wb');
 	if (!$fh)
-		error('Unable to write configuration cache file to cache directory. Please make sure PHP has write access to the directory \'cache\'', __FILE__, __LINE__);		
+		error('Unable to write configuration cache file to cache directory. Please make sure PHP has write access to the directory \''.pun_htmlspecialchars(FORUM_CACHE_DIR).'\'', __FILE__, __LINE__);		
 	fwrite($fh, $text);
 	fclose($fh);
 }
@@ -45,14 +45,14 @@ function generate_ftb_cache($form = 'form')
 			}
 
 			// Output for checking
-			$output_check .= 'if (preg_match(\'/(?:\[\/?(?:'.implode($tags, '|').')\]';
+			$output_check .= 'if (preg_match(\'%(?:\[/?(?:'.implode($tags, '|').')\]';
 			if (!empty($tags_prompt))
 				$output_check .= '|\[(?:'.implode($tags_prompt, '|').')=';
-			$output_check .= ')/i\', $username))'."\n";
+			$output_check .= ')%i\', $username))'."\n";
 			$output_check .= "\t".'$errors[] = $lang_prof_reg[\'Username BBCode\'];'."\n";
 
 			// Output for search
-			$output_search .= '$text = preg_replace(\'/\[\/?('.implode($tags, '|').')(?:\=[^\]]*)?\]/\', \' \', $text);'."\n";
+			$output_search .= '$text = preg_replace(\'%\[/?('.implode($tags, '|').')(?:\=[^\]]*)?\]%\', \' \', $text);'."\n";
 		}
 
 		write_cache('cache_fluxtoolbar_tag_check.php', $output_check);
@@ -87,11 +87,17 @@ function generate_ftb_cache($form = 'form')
 	}
 
 	// Include the fluxtoolbar language files
-	$output .= '<?php require_once PUN_ROOT.\'lang/\'.$pun_user[\'language\'].\'/fluxtoolbar.php\'; ?>'."\n";
+	$output .= '<?php'."\n".
+		'if (file_exists(PUN_ROOT.\'lang/\'.$pun_user[\'language\'].\'/fluxtoolbar.php\'))'."\n".
+		"\t".'require_once PUN_ROOT.\'lang/\'.$pun_user[\'language\'].\'/fluxtoolbar.php\';'."\n".
+		'else'."\n".
+		"\t".'require_once PUN_ROOT.\'lang/English/fluxtoolbar.php\';'."\n".
+		'?>'."\n";
 
 	// Start output JS
 	$output .=
 		'<script type="text/javascript" src="include/toolbar_func.js"></script>'."\n".
+		'<script type="text/javascript" src="include/jscolor/jscolor.js"></script>'."\n".
 		'<noscript><p><strong><?php echo $lang_ftb[\'enable_js\'] ?></strong></p></noscript>'."\n".
 		'<script type="text/javascript">'."\n".
 		'/* <![CDATA[ */'."\n";

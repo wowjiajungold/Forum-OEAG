@@ -32,6 +32,7 @@ $lang_register = array(
 'Pass legend'				=>	'Please enter and confirm your chosen password',
 'Pass info'					=>	'Passwords must be at least 4 characters long. Passwords are case sensitive.',
 'Email info'				=>	'You must enter a valid email address as your randomly generated password will be sent to that address.',
+'Antispam info'				=>	'To prevent robots from registering automatically, <strong>your registration will not be valid unless the <u>first</u> email below starts with a four letters code </strong>. You will find the code once you\'ve read (entirely ;-) !) the <a href="http://forum.onenagros.org/misc.php?action=rules">Rules</a>.',
 'Confirm email'				=>	'Confirm email address',
 'Captcha legend'            =>  'reCAPTCHA',
 'Captcha info'              =>  'Please complete the captcha below.',

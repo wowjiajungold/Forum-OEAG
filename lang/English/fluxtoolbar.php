@@ -22,7 +22,7 @@ $lang_ftb = array(
 'bt_link'		=>	'Link: [url=http://www.website.ltd/]a website[/url]',
 'bt_link_msg_1'		=>	'Please enter the URL of your link:',
 'bt_link_msg_2'		=>	'Please enter a descriptive name of your link:',
-'bt_img'		=>	'Image: [img=text]http://www.site.ltd/url-image.png[/img]',
+'bt_img'		=>	'Image: [img=text]http://www.website.ltd/url-image.png[/img]',
 'bt_img_msg_1'		=>	'Please enter the URL of your image:',
 'bt_img_msg_2'		=>	'Please enter a descriptive name for your image (alt attribute):',
 'bt_email'		=>	'E-mail address: [email=name@host.ltd]email[/email]',

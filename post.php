@@ -82,13 +82,13 @@ if (isset($_POST['form_sent']))
 	if (!isset($_POST['preview']) && $pun_user['last_post'] != '' && (time() - $pun_user['last_post']) < $pun_user['g_post_flood'])
 		$errors[] = $lang_post['Flood start'].' '.$pun_user['g_post_flood'].' '.$lang_post['flood end'];
 
-    // Mod double post protection
-    else if (!isset($_POST['preview']) && $tid)
-    {
-        if($pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && (time() - $pun_user['last_post']) < $pun_user['g_double_post'] * 60)
-            $errors[] = $lang_mod_double_post['Double post start'].' '.$pun_user['g_double_post'].' '.$lang_mod_double_post['Double post end']; 
-    }
-    // Mod double post protection
+	// Mod double post protection
+	else if (!isset($_POST['preview']) && $tid)
+	{
+		if( $pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && ( time() - $pun_user['last_poster'] ) < ( $pun_user['g_double_post'] * 60 ) )
+			$errors[] = $lang_mod_double_post['Double post start'].' '.$pun_user['g_double_post'].' '.$lang_mod_double_post['Double post end']; 
+	}
+	// Mod double post protection
 
 	// If it's a new topic
 	if ($fid)

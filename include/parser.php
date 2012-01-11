@@ -216,7 +216,7 @@ function preparse_tags($text, &$errors, $is_signature = false)
 	// Start off by making some arrays of bbcode tags and what we need to do with each one
 
 	// List of all the tags
-	require_once(PUN_ROOT.'include/parser_tags.php');
+	require(PUN_ROOT.'include/parser_tags.php');
 
 	$split_text = preg_split('%(\[[\*a-zA-Z0-9-/]*?(?:=.*?)?\])%', $text, -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
 
@@ -759,7 +759,7 @@ function do_bbcode($text, $is_signature = false)
 		$replace[] = 'handle_list_tag(\'$2\', \'$1\')';
 	}
 
-	require_once(PUN_ROOT.'include/parser_patterns.php');
+	require(PUN_ROOT.'include/parser_patterns.php');
 
 	if (($is_signature && $pun_config['p_sig_img_tag'] == '1') || (!$is_signature && $pun_config['p_message_img_tag'] == '1'))
 	{
@@ -839,7 +839,7 @@ function do_smilies($text)
 	{
 		if (strpos($text, $smiley_text) !== false) {
             $img = pun_htmlspecialchars(get_base_url(true).'/img/smilies/'.$smiley_img);
-            $img_size = getimagesize($img);
+            $img_size = @getimagesize($img);
 			$text = ucp_preg_replace('#(?<=[>\s])'.preg_quote($smiley_text, '#').'(?=[^\p{L}\p{N}])#um', '<img src="'.$img.'" class="smile" '.$img_size[3].' alt="'.substr($smiley_img, 0, strrpos($smiley_img, '.')).'" />', $text);
             $img_size = '';
         }

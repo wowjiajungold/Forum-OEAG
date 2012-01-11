@@ -269,7 +269,7 @@ if ($pun_config['o_users_online'] == '1')
 	else
 		echo "\t\t\t".'<div class="clearer"></div>'."\n";
      
-    $todaystamp = date('j/n');
+    $todaystamp = date('j/n/');
     $limitstamp = strtotime(date('Y-m-d'))-7776000;
 
     echo "<!-- $todaystamp -->";

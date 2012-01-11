@@ -33,6 +33,7 @@ $lang_register = array(
 'Pass legend'			=>	'Veuillez saisir et confirmer le mot de passe que vous avez choisi.',
 'Pass info'			=>	'Le mot de passe doit comporter au minimum 4 caractères (sensible à la casse).',
 'Email info'			=>	'Vous devez saisir une adresse électronique valide. Vous pouvez choisir de ne pas divulguer votre adresse aux autres utilisateurs (voir ci-dessous).',
+'Antispam info'			=>	'Afin d\'empêcher les inscriptions automatiques des robots spammeurs, <strong>votre inscription ne sera acceptée que si le <u>premier</u> e-mail ci-dessous est précédé d\'un code à 4 lettres</strong> que vous trouverez en lisant (jusqu\'au bout ;-) !) la <a href="http://forum.onenagros.org/misc.php?action=rules">Charte du forum</a>.',
 'Confirm email'			=>	'Confirmez votre adresse électronique',
 'Captcha legend'            =>  'reCAPTCHA',
 'Captcha info'              =>  'Recopiez le captcha ci-dessous.',
