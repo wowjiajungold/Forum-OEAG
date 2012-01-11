@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -41,43 +41,44 @@ $re_list = '%\[list(?:=([1a*]))?+\]((?:[^\[]*+(?:(?!\[list(?:=[1a*])?+\]|\[/list
 // Here you can add additional smilies if you like (please note that you must escape single quote and backslash)
 $smilies = array(
 	':)' => 'smile.png',
-    ':-)' => 'smile.png',
+	':-)' => 'smile.png',
 	'=)' => 'smile.png',
 	':|' => 'neutral.png',
 	'=|' => 'neutral.png',
 	':(' => 'sad.png',
-    ':-(' => 'sad.png',
+	':-(' => 'sad.png',
 	'=(' => 'sad.png',
 	':D' => 'big_smile.png',
-    ':-D' => 'big_smile.png',
+	':-D' => 'big_smile.png',
 	'=D' => 'big_smile.png',
 	':o' => 'yikes.png',
 	':O' => 'yikes.png',
 	';)' => 'wink.png',
-    ';-)' => 'wink.png',
+	';-)' => 'wink.png',
 	':/' => 'hmm.png',
-    ':-/' => 'hmm.png',
-    ':beuh:' => 'beuh.gif',
-    'o_O' => 'beuh.gif',
-    'O_o' => 'beuh.gif',
-    ':beuh:' => 'beuh.gif',
-    ':huh:' => 'huh.gif',
+	':-/' => 'hmm.png',
+	':beuh:' => 'beuh.gif',
+	'o_O' => 'beuh.gif',
+	'O_o' => 'beuh.gif',
+	':beuh:' => 'beuh.gif',
+	':huh:' => 'huh.gif',
 	':P' => 'tongue.png',
 	':p' => 'tongue.png',
 	':lol:' => 'lol.png',
 	':mad:' => 'mad.png',
 	':rolleyes:' => 'roll.png',
 	':cool:' => 'cool.png',
-    ':siffle:' => 'siffle.gif',
-    ':euh:' => 'euh.gif',
-    ':fete:' => 'fete.gif',
-    ':hug:' => 'hug.gif',
-    ':b' => 'ironique.gif',
-    ':B' => 'ironique.gif',
-    ':love:' => 'love.gif',
-    ':luv:' => 'luv.gif',
-    ':hs:' => 'hs.gif',
-    ':dehors:' => 'dehors.gif');
+	':siffle:' => 'siffle.gif',
+	':euh:' => 'euh.gif',
+	':fete:' => 'fete.gif',
+	':hug:' => 'hug.gif',
+	':b' => 'ironique.gif',
+	':B' => 'ironique.gif',
+	':love:' => 'love.gif',
+	':luv:' => 'luv.gif',
+	':hs:' => 'hs.gif',
+	':dehors:' => 'dehors.gif'
+);
 
 //
 // Make sure all BBCodes are lower case and do a little cleanup
@@ -103,10 +104,10 @@ function preparse_bbcode($text, &$errors, $is_signature = false)
 
 	// If the message contains a code tag we have to split it up (text within [code][/code] shouldn't be touched)
 	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false)
-		list($inside, $text) = extract_blocks($text, '[code]', '[/code]', $errors);
+		list($inside, $text) = extract_blocks($text, '[code]', '[/code]');
 
 	// Tidy up lists
-	$temp = preg_replace($re_list, 'preparse_list_tag(\'$2\', \'$1\', $errors)', $text);
+	$temp = preg_replace($re_list, 'preparse_list_tag(\'$2\', \'$1\')', $text);
 
 	// If the regex failed
 	if ($temp === null)
@@ -143,7 +144,7 @@ function preparse_bbcode($text, &$errors, $is_signature = false)
 		$text = $temp_text;
 
 	// Remove empty tags
-	while (($new_text = strip_empty_bbcode($text, $errors)) !== false)
+	while (($new_text = strip_empty_bbcode($text)) !== false)
 	{
 		if ($new_text != $text)
 		{
@@ -165,11 +166,11 @@ function preparse_bbcode($text, &$errors, $is_signature = false)
 //
 // Strip empty bbcode tags from some text
 //
-function strip_empty_bbcode($text, &$errors)
+function strip_empty_bbcode($text)
 {
 	// If the message contains a code tag we have to split it up (empty tags within [code][/code] are fine)
 	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false ||
-        (strpos($text, '[noir]') !== false && strpos($text, '[/noir]') !== false))
+           (strpos($text, '[noir]') !== false && strpos($text, '[/noir]') !== false))
 		list($inside, $text) = extract_blocks($text, '[code]', '[/code]', $errors);
 
 	// Remove empty tags
@@ -182,16 +183,17 @@ function strip_empty_bbcode($text, &$errors)
 	}
 
 	// If we split up the message before we have to concatenate it together again (code tags)
-    if (isset($inside)) {
-        $parts = explode("\1", $text);
-        $text = '';
-        foreach ($parts as $i => $part)
-        {
-            $text .= $part;
-            if (isset($inside[$i]))
-                $text .= '[code]'.$inside[$i].'[/code]';
-        }
-    }
+	if (isset($inside))
+	{
+		$parts = explode("\1", $text);
+		$text = '';
+		foreach ($parts as $i => $part)
+		{
+			$text .= $part;
+			if (isset($inside[$i]))
+				$text .= '[code]'.$inside[$i].'[/code]';
+		}
+	}
 
 	// Remove empty code tags
 	while (($new_text = preg_replace('%\[(code)\]\s*\[/\1\]%', '', $text)) !== NULL)
@@ -350,18 +352,13 @@ function preparse_tags($text, &$errors, $is_signature = false)
 			$current = strtolower($current);
 
 		// This is if we are currently in a tag which escapes other bbcode such as code
-		// We keep a cound of ignored bbcodes (code tags) so we can nest them, but
+		// We keep a count of ignored bbcodes (code tags) so we can nest them, but
 		// only balanced sets of tags can be nested
 		if ($current_ignore)
 		{
 			// Increase the current ignored tags counter
 			if ('['.$current_ignore.']' == $current)
-			{
-				if (!isset($count_ignored[$current_tag]))
-					$count_ignored[$current_tag] = 2;
-				else
-					$count_ignored[$current_tag]++;
-			}
+				$count_ignored[$current_tag]++;
 
 			// Decrease the current ignored tags counter
 			if ('[/'.$current_ignore.']' == $current)
@@ -529,6 +526,7 @@ function preparse_tags($text, &$errors, $is_signature = false)
 			{
 				// It's an ignore tag so we don't need to worry about what's inside it
 				$current_ignore = $current_tag;
+				$count_ignored[$current_tag] = 1;
 				$new_text .= $current;
 				continue;
 			}
@@ -599,7 +597,7 @@ function preparse_tags($text, &$errors, $is_signature = false)
 //
 // Preparse the contents of [list] bbcode
 //
-function preparse_list_tag($content, $type = '*', &$errors)
+function preparse_list_tag($content, $type = '*')
 {
 	global $lang_common, $re_list;
 
@@ -608,7 +606,7 @@ function preparse_list_tag($content, $type = '*', &$errors)
 
 	if (strpos($content,'[list') !== false)
 	{
-		$content = preg_replace($re_list, 'preparse_list_tag(\'$2\', \'$1\', $errors)', $content);
+		$content = preg_replace($re_list, 'preparse_list_tag(\'$2\', \'$1\')', $content);
 	}
 
 	$items = explode('[*]', str_replace('\"', '"', $content));
@@ -630,6 +628,11 @@ function preparse_list_tag($content, $type = '*', &$errors)
 function handle_url_tag($url, $link = '', $bbcode = false)
 {
 	$url = pun_trim($url);
+
+	// Deal with [url][img]http://example.com/test.png[/img][/url]
+	if (preg_match('%<img src=\\\\"(.*?)\\\\"%', $url, $matches))
+		return handle_url_tag($matches[1], $url, $bbcode);
+
 	$full_url = str_replace(array(' ', '\'', '`', '"'), array('%20', '', '', ''), $url);
 	if (strpos($url, 'www.') === 0) // If it starts with www, we add http://
 		$full_url = 'http://'.$full_url;
@@ -781,21 +784,21 @@ function do_bbcode($text, $is_signature = false)
 	$pattern[] = '%\[url=([^\[]+?)\](.*?)\[/url\]%e';
 	$pattern[] = '%\[email\]([^\[]*?)\[/email\]%';
 	$pattern[] = '%\[email=([^\[]+?)\](.*?)\[/email\]%';
-    $pattern[] = '#\[size=([0-9]{1}|[0-9]{2})](.*?)\[/size\]#e';
-	$pattern[] = '%\[topic\]([^\[]*?)\[/topic\]%e';
-	$pattern[] = '%\[topic=([^\[]+?)\](.*?)\[/topic\]%e';
-	$pattern[] = '%\[post\]([^\[]*?)\[/post\]%e';
-	$pattern[] = '%\[post=([^\[]+?)\](.*?)\[/post\]%e';
-	$pattern[] = '%\[forum\]([^\[]*?)\[/forum\]%e';
-	$pattern[] = '%\[forum=([^\[]+?)\](.*?)\[/forum\]%e';
-	$pattern[] = '%\[user\]([^\[]*?)\[/user\]%e';
-	$pattern[] = '%\[user=([^\[]+?)\](.*?)\[/user\]%e';
+	$pattern[] = '#\[size=([0-9]{1}|[0-9]{2})](.*?)\[/size\]#e';
+	$pattern[] = '%\[topic\]([1-9]\d*)\[/topic\]%e';
+	$pattern[] = '%\[topic=([1-9]\d*)\](.*?)\[/topic\]%e';
+	$pattern[] = '%\[post\]([1-9]\d*)\[/post\]%e';
+	$pattern[] = '%\[post=([1-9]\d*)\](.*?)\[/post\]%e';
+	$pattern[] = '%\[forum\]([1-9]\d*)\[/forum\]%e';
+	$pattern[] = '%\[forum=([1-9]\d*)\](.*?)\[/forum\]%e';
+	$pattern[] = '%\[user\]([1-9]\d*)\[/user\]%e';
+	$pattern[] = '%\[user=([1-9]\d*)\](.*?)\[/user\]%e';
 
 	$replace[] = 'handle_url_tag(\'$1\')';
 	$replace[] = 'handle_url_tag(\'$1\', \'$2\')';
 	$replace[] = '<a href="mailto:$1">$1</a>';
 	$replace[] = '<a href="mailto:$1">$2</a>';
-    $replace[] = 'handle_size_tag(\'$1\', \'$2\')';
+	$replace[] = 'handle_size_tag(\'$1\', \'$2\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewtopic.php?id=$1\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewtopic.php?id=$1\', \'$2\')';
 	$replace[] = 'handle_url_tag(\''.get_base_url(true).'/viewtopic.php?pid=$1#p$1\')';
@@ -819,8 +822,8 @@ function do_clickable($text)
 {
 	$text = ' '.$text;
 
-	$text = ucp_preg_replace('%(?<=[\s\]\)])(<)?(\[)?(\()?([\'"]?)(https?|ftp|news){1}://([\p{L}\p{N}\-]+\.([\p{L}\p{N}\-]+\.)*[\p{L}\p{N}]+(:[0-9]+)?(/[^\s\[]*[^\s.,?!\[;:-])?)\4(?(3)(\)))(?(2)(\]))(?(1)(>))(?![^\s]*\[/(?:url|img)\])%uie', 'stripslashes(\'$1$2$3$4\').handle_url_tag(\'$5://$6\', \'$5://$6\', true).stripslashes(\'$4$10$11$12\')', $text);
-	$text = ucp_preg_replace('%(?<=[\s\]\)])(<)?(\[)?(\()?([\'"]?)(www|ftp)\.(([\p{L}\p{N}\-]+\.)*[\p{L}\p{N}]+(:[0-9]+)?(/[^\s\[]*[^\s.,?!\[;:-])?)\4(?(3)(\)))(?(2)(\]))(?(1)(>))(?![^\s]*\[/(?:url|img)\])%uie', 'stripslashes(\'$1$2$3$4\').handle_url_tag(\'$5.$6\', \'$5.$6\', true).stripslashes(\'$4$10$11$12\')', $text);
+	$text = ucp_preg_replace('%(?<=[\s\]\)])(<)?(\[)?(\()?([\'"]?)(https?|ftp|news){1}://([\p{L}\p{N}\-]+\.([\p{L}\p{N}\-]+\.)*[\p{L}\p{N}]+(:[0-9]+)?(/(?:[^\s\[]*[^\s.,?!\[;:-])?)?)\4(?(3)(\)))(?(2)(\]))(?(1)(>))(?![^\s]*\[/(?:url|img)\])%uie', 'stripslashes(\'$1$2$3$4\').handle_url_tag(\'$5://$6\', \'$5://$6\', true).stripslashes(\'$4$10$11$12\')', $text);
+	$text = ucp_preg_replace('%(?<=[\s\]\)])(<)?(\[)?(\()?([\'"]?)(www|ftp)\.(([\p{L}\p{N}\-]+\.)*[\p{L}\p{N}]+(:[0-9]+)?(/(?:[^\s\[]*[^\s.,?!\[;:-])?)?)\4(?(3)(\)))(?(2)(\]))(?(1)(>))(?![^\s]*\[/(?:url|img)\])%uie', 'stripslashes(\'$1$2$3$4\').handle_url_tag(\'$5.$6\', \'$5.$6\', true).stripslashes(\'$4$10$11$12\')', $text);
 
 	return substr($text, 1);
 }
@@ -864,7 +867,7 @@ function parse_message($text, $hide_smilies)
 
 	// If the message contains a code tag we have to split it up (text within [code][/code] shouldn't be touched)
 	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false)
-		list($inside, $text) = extract_blocks($text, '[code]', '[/code]', $errors);
+		list($inside, $text) = extract_blocks($text, '[code]', '[/code]');
 
 	if ($pun_config['p_message_bbcode'] == '1' && strpos($text, '[') !== false && strpos($text, ']') !== false)
 		$text = do_bbcode($text);
@@ -878,31 +881,52 @@ function parse_message($text, $hide_smilies)
 	$text = str_replace($pattern, $replace, $text);
 
 	// If we split up the message before we have to concatenate it together again (code tags)
-    if (isset($inside)) {
-        $parts = explode("\1", $text);
-        $text = '';
-        foreach ($parts as $i => $part)
-        {
-            $text .= $part;
-            if (isset($inside[$i]))
-            {
-                $num_lines = (substr_count($inside[$i], "\n"));
-                $text .= '</p><div class="codebox"><pre'.(($num_lines > 28) ? ' class="vscroll"' : '').'><code>'.pun_trim($inside[$i], "\n\r").'</code></pre></div><p>';
-            }
-        }
-    }
+	if (isset($inside))
+	{
+		$parts = explode("\1", $text);
+		$text = '';
+		foreach ($parts as $i => $part)
+		{
+			$text .= $part;
+			if (isset($inside[$i]))
+			{
+				$num_lines = (substr_count($inside[$i], "\n"));
+				$text .= '</p><div class="codebox"><pre'.(($num_lines > 28) ? ' class="vscroll"' : '').'><code>'.pun_trim($inside[$i], "\n\r").'</code></pre></div><p>';
+			}
+		}
+	}
 
+	return clean_paragraphs($text);
+}
+
+
+//
+// Clean up paragraphs and line breaks
+//
+function clean_paragraphs($text)
+{
 	// Add paragraph tag around post, but make sure there are no empty paragraphs
-	$text = preg_replace('%<br />\s*?<br />((\s*<br />)*)%i', "</p>$1<p>", $text);
-	$text = str_replace('<p><br />', '<p>', $text);
-	$text = str_replace('<p></p>', '', '<p>'.$text.'</p>');
+	$text = '<p>'.$text.'</p>';
+
+	// Replace any breaks next to paragraphs so our replace below catches them
+	$text = preg_replace('%(</?p>)(?:\s*?<br />){1,2}%i', '$1', $text);
+	$text = preg_replace('%(?:<br />\s*?){1,2}(</?p>)%i', '$1', $text);
+
+	// Remove any empty paragraph tags (inserted via quotes/lists/code/etc) which should be stripped
+	$text = str_replace('<p></p>', '', $text);
+
+	$text = preg_replace('%<br />\s*?<br />%i', '</p><p>', $text);
+
+	$text = str_replace('<p><br />', '<br /><p>', $text);
+	$text = str_replace('<br /></p>', '</p><br />', $text);
+	$text = str_replace('<p></p>', '<br /><br />', $text);
 	
 	$text = str_replace('<table class="postable"><br />', "<table class=\"postable\">\n", $text);
-    $text = str_replace('<tr><br />', "<tr>\n", $text);
-    $text = str_replace('</tr><br />', "</tr>\n", $text);
-    $text = str_replace('<th><br />', "<th>\n", $text);
-    $text = str_replace('</th><br />', "</th>\n", $text);
-    $text = str_replace('</td><br />', "</td>\n", $text);
+	$text = str_replace('<tr><br />', "<tr>\n", $text);
+	$text = str_replace('</tr><br />', "</tr>\n", $text);
+	$text = str_replace('<th><br />', "<th>\n", $text);
+	$text = str_replace('</th><br />', "</th>\n", $text);
+	$text = str_replace('</td><br />', "</td>\n", $text);
 
 	return $text;
 }
@@ -933,10 +957,5 @@ function parse_signature($text)
 	$replace = array('<br />', '&#160; &#160; ', '&#160; ', ' &#160;');
 	$text = str_replace($pattern, $replace, $text);
 
-	// Add paragraph tag around post, but make sure there are no empty paragraphs
-	$text = preg_replace('%<br />\s*?<br />((\s*<br />)*)%i', "</p>$1<p>", $text);
-	$text = str_replace('<p><br />', '<p>', $text);
-	$text = str_replace('<p></p>', '', '<p>'.$text.'</p>');
-
-	return $text;
+	return clean_paragraphs($text);
 }
