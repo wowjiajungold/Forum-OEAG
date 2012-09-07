@@ -34,10 +34,6 @@
     </div>
 
   </div>
-<<<<<<< HEAD
   <div id="player"></div>
-=======
-
->>>>>>> 0814ad43f375b1c095e1b792128b248e795529a1
   </body>
 </html>

@@ -85,11 +85,7 @@ if (isset($_POST['form_sent']))
 	// Mod double post protection
 	else if (!isset($_POST['preview']) && $tid)
 	{
-<<<<<<< HEAD
 		if( $pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && ( time() - $cur_posting['last_post'] ) < ( $pun_user['g_double_post'] * 60 ) )
-=======
-		if( $pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && ( time() - $pun_user['last_poster'] ) < ( $pun_user['g_double_post'] * 60 ) )
->>>>>>> 0814ad43f375b1c095e1b792128b248e795529a1
 			$errors[] = $lang_mod_double_post['Double post start'].' '.$pun_user['g_double_post'].' '.$lang_mod_double_post['Double post end']; 
 	}
 	// Mod double post protection
