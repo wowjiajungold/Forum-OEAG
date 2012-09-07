@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -82,13 +82,13 @@ if (isset($_POST['form_sent']))
 	if (!isset($_POST['preview']) && $pun_user['last_post'] != '' && (time() - $pun_user['last_post']) < $pun_user['g_post_flood'])
 		$errors[] = $lang_post['Flood start'].' '.$pun_user['g_post_flood'].' '.$lang_post['flood end'];
 
-    // Mod double post protection
-    else if (!isset($_POST['preview']) && $tid)
-    {
-        if($pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && (time() - $pun_user['last_post']) < $pun_user['g_double_post'] * 60)
-            $errors[] = $lang_mod_double_post['Double post start'].' '.$pun_user['g_double_post'].' '.$lang_mod_double_post['Double post end']; 
-    }
-    // Mod double post protection
+	// Mod double post protection
+	else if (!isset($_POST['preview']) && $tid)
+	{
+		if( $pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && ( time() - $cur_posting['last_post'] ) < ( $pun_user['g_double_post'] * 60 ) )
+			$errors[] = $lang_mod_double_post['Double post start'].' '.$pun_user['g_double_post'].' '.$lang_mod_double_post['Double post end']; 
+	}
+	// Mod double post protection
 
 	// If it's a new topic
 	if ($fid)
@@ -179,6 +179,9 @@ if (isset($_POST['form_sent']))
 	$hide_smilies = isset($_POST['hide_smilies']) ? '1' : '0';
 	$subscribe = isset($_POST['subscribe']) ? '1' : '0';
 	$stick_topic = isset($_POST['stick_topic']) && $is_admmod ? '1' : '0';
+	
+	// Replace four-byte characters (MySQL cannot handle them)
+	$message = strip_bad_multibyte_chars($message);
 
 	$now = time();
 
@@ -478,10 +481,7 @@ if ($tid)
 		// If the message contains a code tag we have to split it up (text within [code][/code] shouldn't be touched)
 		if (strpos($q_message, '[code]') !== false && strpos($q_message, '[/code]') !== false)
 		{
-			$errors = array();
-			list($inside, $outside) = split_text($q_message, '[code]', '[/code]', $errors);
-			if (!empty($errors)) // Technically this shouldn't happen, since $q_message is an existing post it should only exist if it previously passed validation
-				message($errors[0]);
+			list($inside, $outside) = split_text($q_message, '[code]', '[/code]');
 
 			$q_message = implode("\1", $outside);
 		}

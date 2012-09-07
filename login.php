@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -11,7 +11,7 @@ if (isset($_GET['action']))
 
 define('PUN_ROOT', dirname(__FILE__).'/');
 require PUN_ROOT.'include/common.php';
-
+require_once PUN_ROOT.'include/email.php';
 
 // Load the login.php language file
 require PUN_ROOT.'lang/'.$pun_user['language'].'/login.php';
@@ -30,6 +30,9 @@ if (isset($_POST['form_sent']) && $action == 'in')
 	$cur_user = $db->fetch_assoc($result);
 
 	$authorized = false;
+	
+	$session = $_SESSION;
+	
 
 	if (!empty($cur_user['password']))
 	{
@@ -119,7 +122,7 @@ else if ($action == 'forget' || $action == 'forget_2')
 		// Start with a clean slate
 		$errors = array();
 
-		require PUN_ROOT.'include/email.php';
+		require_once PUN_ROOT.'include/email.php';
 
 		// Validate the email address
 		$email = strtolower(trim($_POST['req_email']));

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -47,18 +47,15 @@ define('PUN_CJK_HANGUL_REGEX', '['.
 //
 function split_words($text, $idx)
 {
-	// Remove BBCode
-	$text = preg_replace('%\[/?(b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list)(?:\=[^\]]*)?\]%', ' ', $text);
-
-    /* FluxToolBar */
-    if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php'))
-        include FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php';
-    else
-    {
-        require_once PUN_ROOT.'include/cache_fluxtoolbar.php';
-        generate_ftb_cache('tags');
-        require FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php';
-    }
+	/* FluxToolBar */
+	if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php'))
+		include FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php';
+	else
+	{
+		require_once PUN_ROOT.'include/cache_fluxtoolbar.php';
+		generate_ftb_cache('tags');
+		require FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php';
+	}
 
 	// Remove any apostrophes or dashes which aren't part of words
 	$text = substr(ucp_preg_replace('%((?<=[^\p{L}\p{N}])[\'\-]|[\'\-](?=[^\p{L}\p{N}]))%u', '', ' '.$text.' '), 1, -1);
@@ -118,6 +115,9 @@ function validate_search_word($word, $idx)
 	if (is_cjk($word))
 		return !$idx;
 
+	// Exclude % and * when checking whether current word is valid
+	$word = str_replace(array('%', '*'), '', $word);
+
 	// Check the word is within the min/max length
 	$num_chars = pun_strlen($word);
 	return $num_chars >= PUN_SEARCH_MIN_WORD && $num_chars <= PUN_SEARCH_MAX_WORD;
@@ -154,7 +154,8 @@ function strip_bbcode($text)
 		$patterns = array(
 			'%\[img=([^\]]*+)\]([^[]*+)\[/img\]%'									=>	'$2 $1',	// Keep the url and description
 			'%\[(url|email)=([^\]]*+)\]([^[]*+(?:(?!\[/\1\])\[[^[]*+)*)\[/\1\]%'	=>	'$2 $3',	// Keep the url and text
-			'%\[(img|url|email)\]([^[]*+(?:(?!\[/\1\])\[[^[]*+)*)\[/\1\]%'			=>	'$2',		// Keep the url
+			'%\[(topic|post|forum|user)\][1-9]\d*\[/\1\]%'							=>	' ',		// Do not index topic/post/forum/user ID
+			'%\[/?(b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]%'	=> ' ' // Remove BBCode
 		);
 	}
 

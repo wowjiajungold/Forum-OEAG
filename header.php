@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -26,6 +26,9 @@ else if (defined('PUN_HELP'))
 	$tpl_file = 'help.tpl';
 else
 	$tpl_file = 'main.tpl';
+
+if (in_array($pun_user['id'], array(3,269,270)))
+	$tpl_file = 'main-v5.tpl';
 
 if (file_exists(PUN_ROOT.'style/'.$pun_user['style'].'/'.$tpl_file))
 {
@@ -85,9 +88,11 @@ if (!defined('PUN_ALLOW_INDEX'))
 
 ?>
 <title><?php echo generate_page_title($page_title, $p) ?></title>
-<link rel="stylesheet" type="text/css" href="style/<?php echo $pun_user['style'].'.css' ?>" />
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-<script type="text/javascript" src="include/custom.js"></script>
+    <link rel="stylesheet" type="text/css" href="style/<?php echo $pun_user['style'].'.css' ?>" />
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="include/custom.js"></script>
 <?php
 
 if (defined('PUN_ADMIN_CONSOLE'))
@@ -107,7 +112,7 @@ if (isset($required_fields))
 /* <![CDATA[ */
 function process_form(the_form)
 {
-	var element_names = {
+	var required_fields = {
 <?php
 	// Output a JavaScript object with localised field names
 	$tpl_temp = count($required_fields);
@@ -123,14 +128,11 @@ function process_form(the_form)
 		for (var i = 0; i < the_form.length; ++i)
 		{
 			var elem = the_form.elements[i];
-			if (elem.name && (/^req_/.test(elem.name)))
+			if (elem.name && required_fields[elem.name] && !elem.value && elem.type && (/^(?:text(?:area)?|password|file)$/i.test(elem.type)))
 			{
-				if (!elem.value && elem.type && (/^(?:text(?:area)?|password|file)$/i.test(elem.type)))
-				{
-					alert('"' + element_names[elem.name] + '" <?php echo $lang_common['required field'] ?>');
-					elem.focus();
-					return false;
-				}
+				alert('"' + required_fields[elem.name] + '" <?php echo $lang_common['required field'] ?>');
+				elem.focus();
+				return false;
 			}
 		}
 	}
@@ -175,7 +177,8 @@ $tpl_main = str_replace('<pun_page>', htmlspecialchars(basename($_SERVER['PHP_SE
 
 // START SUBST - <pun_title>
 //$tpl_main = str_replace('<pun_title>', '<h1><a href="index.php">'.pun_htmlspecialchars($pun_config['o_board_title']).'</a></h1>', $tpl_main);
-$tpl_main = str_replace('<pun_title>', '<img src="img/logo.png" alt="On en a gros !" />', $tpl_main);
+//$tpl_main = str_replace('<pun_title>', '<img src="style/Nowel/logo_nowel.png" alt="On en a gros !" />', $tpl_main);
+$tpl_main = str_replace('<pun_title>', '', $tpl_main);
 // END SUBST - <pun_title>
 
 
@@ -189,33 +192,40 @@ $tpl_main = str_replace('<pun_desc>', '', $tpl_main);
 $links = array();
 
 // Index should always be displayed
-$links[] = '<li id="navindex"'.((PUN_ACTIVE_PAGE == 'index') ? ' class="isactive"' : '').'><a href="index.php">'.$lang_common['Index'].'</a></li>';
+$links[] = '<li id="navindex"'.((PUN_ACTIVE_PAGE == 'index') ? ' class="isactive"' : '').'><a class="brdmenu" href="index.php">'.$lang_common['Index'].'</a></li>';
 
 if ($pun_user['g_read_board'] == '1' && $pun_user['g_view_users'] == '1')
-	$links[] = '<li id="navuserlist"'.((PUN_ACTIVE_PAGE == 'userlist') ? ' class="isactive"' : '').'><a href="userlist.php">'.$lang_common['User list'].'</a></li>';
-
+	$links[] = '<li id="navuserlist"'.((PUN_ACTIVE_PAGE == 'userlist') ? ' class="isactive"' : '').'><a class="brdmenu" href="userlist.php">'.$lang_common['User list'].'</a></li>';
+if (!$pun_user['is_guest'])
+	$links[] = '<li id="navirc"'.((PUN_ACTIVE_PAGE == 'irc') ? ' class="isactive"' : '').'><a class="brdmenu" href="irc.php">Chat</a></li>';
 if ($pun_config['o_rules'] == '1' && (!$pun_user['is_guest'] || $pun_user['g_read_board'] == '1' || $pun_config['o_regs_allow'] == '1'))
-	$links[] = '<li id="navrules"'.((PUN_ACTIVE_PAGE == 'rules') ? ' class="isactive"' : '').'><a href="misc.php?action=rules">'.$lang_common['Rules'].'</a></li>';
+	$links[] = '<li id="navrules"'.((PUN_ACTIVE_PAGE == 'rules') ? ' class="isactive"' : '').'><a class="brdmenu" href="misc.php?action=rules">'.$lang_common['Rules'].'</a></li>';
 
 if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
-	$links[] = '<li id="navsearch"'.((PUN_ACTIVE_PAGE == 'search') ? ' class="isactive"' : '').'><a href="search.php">'.$lang_common['Search'].'</a></li>';
+	$links[] = '<li id="navsearch"'.((PUN_ACTIVE_PAGE == 'search') ? ' class="isactive"' : '').'><a class="brdmenu" href="search.php">'.$lang_common['Search'].'</a></li>';
 
+if ($pun_user['is_admmod'])
+	$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
+		
+
+if (!in_array($pun_user['id'], array(3,269,270))) {
 if ($pun_user['is_guest'])
 {
-	$links[] = '<li id="navregister"'.((PUN_ACTIVE_PAGE == 'register') ? ' class="isactive"' : '').'><a href="register.php">'.$lang_common['Register'].'</a></li>';
-	$links[] = '<li id="navlogin"'.((PUN_ACTIVE_PAGE == 'login') ? ' class="isactive"' : '').'><a href="login.php">'.$lang_common['Login'].'</a></li>';
+	$links[] = '<li id="navregister"'.((PUN_ACTIVE_PAGE == 'register') ? ' class="isactive"' : '').'><a class="brdmenu" href="register.php">'.$lang_common['Register'].'</a></li>';
+	$links[] = '<li id="navlogin"'.((PUN_ACTIVE_PAGE == 'login') ? ' class="isactive"' : '').'><a class="brdmenu" href="login.php">'.$lang_common['Login'].'</a></li>';
 }
 else
 {
-	$links[] = '<li id="navprofile"'.((PUN_ACTIVE_PAGE == 'profile') ? ' class="isactive"' : '').'><a href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></li>';
+	$links[] = '<li id="navprofile"'.((PUN_ACTIVE_PAGE == 'profile') ? ' class="isactive"' : '').'><a class="brdmenu" href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></li>';
 	
 	if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1')
-		$links[] = '<li id="navpm"'.((PUN_ACTIVE_PAGE == 'pm') ? ' class="isactive"' : '').'><a href="pms_inbox.php">'.$lang_pms['PM'].'</a></li>';
+		$links[] = '<li id="navpm"'.((PUN_ACTIVE_PAGE == 'pm') ? ' class="isactive"' : '').'><a class="brdmenu" href="pms_inbox.php">'.$lang_pms['PM'].'</a></li>';
 
 	if ($pun_user['is_admmod'])
-		$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
+		$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
 
 	$links[] = '<li id="navlogout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'">'.$lang_common['Logout'].'</a></li>';
+}
 }
 
 // Are there any additional navlinks we should insert into the array before imploding it?
@@ -238,12 +248,36 @@ $tpl_main = str_replace('<pun_navlinks>', $tpl_temp, $tpl_main);
 // START SUBST - <pun_status>
 $page_statusinfo = $page_topicsearches = array();
 
-if ($pun_user['is_guest'])
+if ($pun_user['is_guest']) {
 	$page_statusinfo = '<p class="conl">'.$lang_common['Not logged in'].'</p>';
+	if (in_array($pun_user['id'], array(3,269,270))) {
+		$page_statusinfo[] = '<li id="navregister"'.((PUN_ACTIVE_PAGE == 'register') ? ' class="isactive"' : '').'><a class="brdmenu" href="register.php">'.$lang_common['Register'].'</a></li>';
+		$page_statusinfo[] = '<li id="navlogin"'.((PUN_ACTIVE_PAGE == 'login') ? ' class="isactive"' : '').'><a class="brdmenu" href="login.php">'.$lang_common['Login'].'</a></li>';
+	}
+}
 else
 {
-	$page_statusinfo[] = '<li><span>'.$lang_common['Logged in as'].' <strong>'.pun_htmlspecialchars($pun_user['username']).'</strong></span></li>';
-	$page_statusinfo[] = '<li><span>'.sprintf($lang_common['Last visit'], format_time($pun_user['last_visit'])).'</span></li>';
+	$avatar = generate_avatar_markup($pun_user['id']);
+	if ($avatar != '' && in_array($pun_user['id'], array(3,269,270))) {
+		$page_statusinfo[] = '<li class="user_avatar"><span>'.generate_avatar_markup($pun_user['id']).'</span></li>';
+	}
+	
+	$page_statusinfo[] = '<li class="nav user_welcome"><span class="user_loggedin">'.$lang_common['Logged in as'].' <strong>'.pun_htmlspecialchars($pun_user['username']).'</strong></span></li>';
+	$page_statusinfo[] = '<li class="nav user_lastvisit"><span class="user_lastlog">'.sprintf($lang_common['Last visit'], format_time($pun_user['last_visit'])).'</span></li>';
+	
+	if (in_array($pun_user['id'], array(3,269,270))) {
+		$page_statusinfo[] = '<li class="nav user_navprofile">';
+		$page_statusinfo[] = '<span class="user_profile"><a class="brdmenu" href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></span>';
+		
+		if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1')
+			$page_statusinfo[] = '<span class="user_mp"><a class="brdmenu" href="pms_inbox.php">'.$lang_pms['PM'].'</a></span>';
+		
+		//if ($pun_user['is_admmod'])
+		//	$page_statusinfo[] = '<span class="user_admin"><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></span>';
+		
+		$page_statusinfo[] = '<span class="user_logout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'">'.$lang_common['Logout'].'</a></span>';
+		$page_statusinfo[] = '</li>';
+	}
 
 	if ($pun_user['is_admmod'])
 	{
@@ -314,6 +348,20 @@ if (is_array($page_statusinfo))
 else
 	$tpl_temp .= "\n\t\t\t".$page_statusinfo;
 
+if (in_array($pun_user['id'], array(3,269,270)) && $pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
+{
+	$tpl_temp .= "\n\t\t\t".'<div id="announce" class="block">';
+	$tpl_temp .= "\n\t\t\t\t".'<div class="box">';
+	$tpl_temp .= "\n\t\t\t\t\t".'<div id="announce-block" class="inbox">';
+	$tpl_temp .= "\n\t\t\t\t\t\t".'<div class="usercontent">'.$pun_config['o_announcement_message'].'</div>';
+	$tpl_temp .= "\n\t\t\t\t\t".'</div>';
+	$tpl_temp .= "\n\t\t\t\t".'</div>';
+	$tpl_temp .= "\n\t\t\t".'</div>';
+}
+
+if (in_array($pun_user['id'], array(3,269,270)))
+	$tpl_temp .= "\n\t\t\t".'<div style="clear:both"></div>';
+
 // Generate quicklinks
 if (!empty($page_topicsearches))
 {
@@ -322,20 +370,49 @@ if (!empty($page_topicsearches))
 	$tpl_temp .= "\n\t\t\t".'</ul>';
 }
 
-$tpl_temp .= "\n\t\t\t".'<div class="clearer"></div>'."\n\t\t".'</div>';
+if (in_array($pun_user['id'], array(3,269,270)) && $pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
+{
+	
+	$tpl_temp .= "\n\t\t\t".'<div class="boxnews">';
+	$tpl_temp .= "\n\t\t\t\t".'<span>Derniers articles sur le site :</span>';
+	$tpl_temp .= "\n\t\t\t\t".'<ul>';
+	
+	ob_start();
+	//$flux = "http://www.onenagros.org/feed";
+	$result_wp = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 2;");
+	$first = true;
+	
+	while($assoc = $db->fetch_assoc($result_wp)) {
+		$post_date = substr($assoc['post_date'],8,2)."/".substr($assoc['post_date'],5,2);
+		$post_title = $assoc['post_title'];
+		$url = "http://www.onenagros.org/".substr($assoc['post_date'],0,10)."-".$assoc['post_name'].".html";
+		$tpl_temp .= "\n\t\t\t\t".'<li';
+		if ( $first ) {
+			$tpl_temp .= ' class="visible"';
+			$first = false;
+		}
+		$tpl_temp .= '><b>'.$post_date.'</b> − <a href="'.$url.'">'.$post_title.'</a></li>';
+	}
+	
+	ob_end_clean();
+	
+	$tpl_temp .= "\n\t\t\t\t".'</ul>';
+	$tpl_temp .= "\n\t\t\t".'</div>';
+}
+
+$tpl_temp .= "\n\t\t\t".'<div style="clear:both"></div>'."\n\t\t".'</div>';
 
 $tpl_main = str_replace('<pun_status>', $tpl_temp, $tpl_main);
 // END SUBST - <pun_status>
 
 
 // START SUBST - <pun_announcement>
-if ($pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
+if (!in_array($pun_user['id'], array(3,269,270)) && $pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
 {
 	ob_start();
 
 ?>
 <div id="announce" class="block">
-	<div class="hd"><h2><span><?php echo $lang_common['Announcement'] ?></span></h2></div>
 	<div class="box">
 		<div id="announce-block" class="inbox">
 			<div class="usercontent"><?php echo $pun_config['o_announcement_message'] ?></div>

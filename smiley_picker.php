@@ -1,19 +1,22 @@
 <?php
 /***********************************************************************
 
-  Copyright (C) 2010 Mpok
+  Copyright (C) 2010-2011 Mpok
   javascript code Copyright (C) 2003-2005 Frosty
   License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
 ************************************************************************/
 
-define('PUN_ROOT', './');
+define('PUN_ROOT', dirname(__FILE__).'/');
 require PUN_ROOT.'include/common.php';
 
 if ($pun_user['g_read_board'] == '0')
 	message($lang_common['No view']);
 
-require PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar.php';
+if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar.php'))
+	require PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar.php';
+else
+	require PUN_ROOT.'lang/English/fluxtoolbar.php';
 
 if ($pun_config['o_smilies'] == '1')
 {

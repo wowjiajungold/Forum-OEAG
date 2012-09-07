@@ -1,7 +1,7 @@
 <?php
 /***********************************************************************
 
-  Copyright (C) 2010 Mpok
+  Copyright (C) 2010-2011 Mpok
   based on code Copyright (C) 2005 Vincent Garnier
   License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
@@ -17,8 +17,14 @@ define('PLUGIN_VERSION', '2.0');
 define('PLUGIN_URL', $_SERVER['REQUEST_URI']);
 
 // Load the puntoolbar language files
-require PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar.php';
-require PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar_admin.php';
+if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar.php'))
+	require PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar.php';
+else
+	require PUN_ROOT.'lang/English/fluxtoolbar.php';
+if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar_admin.php'))
+	require PUN_ROOT.'lang/'.$pun_user['language'].'/fluxtoolbar_admin.php';
+else
+	require PUN_ROOT.'lang/English/fluxtoolbar_admin.php';
 
 // Retrieve configuration
 $ftb_conf = array();
@@ -76,31 +82,31 @@ function validate_tag($t, $mode, $name = '')
 	// Checking name already used
 	if ($mode == 'create' || ($mode == 'edit' && $name != $t['name']))
 	{
-		$res = $db->query('SELECT 1 FROM '.$db->prefix.'toolbar_tags WHERE name=\''.$t['name'].'\'') or error('Unable to retrieve tag name', __FILE__, __LINE__, $db->error());
+		$res = $db->query('SELECT 1 FROM '.$db->prefix.'toolbar_tags WHERE name=\''.$db->escape($t['name']).'\'') or error('Unable to retrieve tag name', __FILE__, __LINE__, $db->error());
 		if ($db->num_rows($res))
 			$errors[] = $lang_ftb_admin['name_used'].$t['name'];
 	}
 
 	// Checking incorrect characters for name
-	if (preg_match('/[^a-zA-Z0-9\-_]/', $t['name']))
+	if (preg_match('%[^a-zA-Z0-9\-_]%', $t['name']))
 		$errors[] = $lang_ftb_admin['incorrect_name'];
 
 	// Retrieve old tag for edit
 	if ($mode == 'edit')
 	{
-		$res = $db->query('SELECT name, code, image, func FROM '.$db->prefix.'toolbar_tags WHERE name=\''.$name.'\'') or error('Unable to retrieve tag', __FILE__, __LINE__, $db->error());
+		$res = $db->query('SELECT name, code, image, func FROM '.$db->prefix.'toolbar_tags WHERE name=\''.$db->escape($name).'\'') or error('Unable to retrieve tag', __FILE__, __LINE__, $db->error());
 		$old = $db->fetch_assoc($res);
 	}
 	else
 		$old = array('name' => '', 'code' => '', 'image' => '', 'func' => 0);
 
 	// Checking code already used
-	$res = $db->query('SELECT 1 FROM '.$db->prefix.'toolbar_tags WHERE name!=\''.$old['name'].'\' AND code!=\''.$old['code'].'\' AND code=\''.$t['code'].'\'') or error('Unable to retrieve tag name', __FILE__, __LINE__, $db->error());
+	$res = $db->query('SELECT 1 FROM '.$db->prefix.'toolbar_tags WHERE name!=\''.$db->escape($old['name']).'\' AND code!=\''.$db->escape($old['code']).'\' AND code=\''.$db->escape($t['code']).'\'') or error('Unable to retrieve tag name', __FILE__, __LINE__, $db->error());
 	if ($db->num_rows($res))
 		$errors[] = $lang_ftb_admin['code_used'].$t['code'];
 
 	// Checking incorrect characters for code
-	if (preg_match('/[^a-zA-Z0-9]/', $t['code']))
+	if (preg_match('%[^a-zA-Z0-9]%', $t['code']))
 		$errors[] = $lang_ftb_admin['incorrect_code'];
 
 	// Checking image - should not be triggered (cause <select>)
@@ -188,7 +194,7 @@ else if (isset($_POST['form_button']))
 		if (!empty($modified))
 		{
 			foreach ($modified as $name => $arr)
-				$db->query('UPDATE '.$db->prefix.'toolbar_tags SET enable_form='.$arr[0].', enable_quick='.$arr[1].', position='.$arr[2].' WHERE name=\''.$name.'\'') or error('Unable to update button', __FILE__, __LINE__, $db->error());
+				$db->query('UPDATE '.$db->prefix.'toolbar_tags SET enable_form='.$arr[0].', enable_quick='.$arr[1].', position='.$arr[2].' WHERE name=\''.$db->escape($name).'\'') or error('Unable to update button', __FILE__, __LINE__, $db->error());
 			re_generate('forms');
 			redirect(PLUGIN_URL, $lang_ftb_admin['success_updated']);
 		}
@@ -343,13 +349,13 @@ else if (isset($_POST['edit_delete']))
 				// Delete old, insert new
 				if ($form['name'] != $name)
 				{
-					$db->query('DELETE FROM '.$db->prefix.'toolbar_tags WHERE name=\''.$name.'\'') or error('Unable to delete old tag', __FILE__, __LINE__, $db->error());
+					$db->query('DELETE FROM '.$db->prefix.'toolbar_tags WHERE name=\''.$db->escape($name).'\'') or error('Unable to delete old tag', __FILE__, __LINE__, $db->error());
 					$db->query('INSERT INTO '.$db->prefix.'toolbar_tags (name, code, enable_form, enable_quick, image, func, position) VALUES(\''.$db->escape($form['name']).'\', \''.$db->escape($form['code']).'\', 0, 0, \''.$db->escape($form['image']).'\', '.$form['func'].', 1)') or error('Unable to insert new tag', __FILE__, __LINE__, $db->error());
 				}
 
 				// Insert new tag
 				else
-					$db->query('UPDATE '.$db->prefix.'toolbar_tags SET code=\''.$db->escape($form['code']).'\', image=\''.$db->escape($form['image']).'\', func='.$form['func'].' WHERE name=\''.$name.'\'') or error('Unable to modify tag', __FILE__, __LINE__, $db->error());
+					$db->query('UPDATE '.$db->prefix.'toolbar_tags SET code=\''.$db->escape($form['code']).'\', image=\''.$db->escape($form['image']).'\', func='.$form['func'].' WHERE name=\''.$db->escape($name).'\'') or error('Unable to modify tag', __FILE__, __LINE__, $db->error());
 			}
 		}
 

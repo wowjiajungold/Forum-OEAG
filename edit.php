@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -75,7 +75,14 @@ if (isset($_POST['form_sent']))
 
 	// Clean up message from POST
 	$message = pun_linebreaks(pun_trim($_POST['req_message']));
-
+	
+	// Check for malicious edits
+	if ( !$is_admmod ) {
+		require_once PUN_ROOT.'include/editmonitor.php';
+		$editmonitor = new EditMonitor();
+		$errors = $editmonitor->errors;
+	}
+	
 	// Here we use strlen() not pun_strlen() as we want to limit the post to PUN_MAX_POSTSIZE bytes, not characters
 	if (strlen($message) > PUN_MAX_POSTSIZE)
 		$errors[] = sprintf($lang_post['Too long message'], forum_number_format(PUN_MAX_POSTSIZE));
@@ -107,6 +114,9 @@ if (isset($_POST['form_sent']))
 	$stick_topic = isset($_POST['stick_topic']) ? '1' : '0';
 	if (!$is_admmod)
 		$stick_topic = $cur_post['sticky'];
+	
+	// Replace four-byte characters (MySQL cannot handle them)
+	$message = strip_bad_multibyte_chars($message);
 
 	// Did everything go according to plan?
 	if (empty($errors) && !isset($_POST['preview']))
@@ -227,7 +237,7 @@ else if (isset($_POST['preview']))
 <?php if ($can_edit_subject): ?>						<label class="required"><strong><?php echo $lang_common['Subject'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />
 						<input class="longinput" type="text" name="req_subject" size="80" maxlength="70" tabindex="<?php echo $cur_index++ ?>" value="<?php echo pun_htmlspecialchars(isset($_POST['req_subject']) ? $_POST['req_subject'] : $cur_post['subject']) ?>" /><br /></label>
 <?php endif; ?>						<label class="required"><strong><?php echo $lang_common['Message'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />
-						<textarea name="req_message" rows="20" cols="95" tabindex="<?php echo $cur_index++ ?>"><?php echo pun_htmlspecialchars(isset($_POST['req_message']) ? $message : $cur_post['message']) ?></textarea><br /></label>
+						<textarea id="req_message" name="req_message" rows="20" cols="95" tabindex="<?php echo $cur_index++ ?>"><?php echo pun_htmlspecialchars(isset($_POST['req_message']) ? $message : $cur_post['message']) ?></textarea><br /></label>
 <?php /* FluxToolBar */
 if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php'))
     include FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php';

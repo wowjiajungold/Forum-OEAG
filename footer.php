@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -10,11 +10,18 @@
 if (!defined('PUN'))
 	exit;
 
+/*$tpl_script = "\n";
+$tpl_script .= '        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>'."\n";
+$tpl_script .= '        <script type="text/javascript" src="include/custom.js"></script>'."\n";
+if ( $pun_user['id'] == 269 ) :
+$tpl_script .= '        <script type="text/javascript" src="include/function.js"></script>'."\n";
+endif;*/
+
 $tpl_temp = trim(ob_get_contents());
+//$tpl_temp .= $tpl_script;
 $tpl_main = str_replace('<pun_main>', $tpl_temp, $tpl_main);
 ob_end_clean();
 // END SUBST - <pun_main>
-
 
 // START SUBST - <pun_footer>
 ob_start();

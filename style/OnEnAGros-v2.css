@@ -305,7 +305,7 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 
 #brdmenu ul {
     height: 25px;
-    margin-top: 89px;
+    margin-top: -33px;
 	padding: 0 10px;
 }
 
@@ -1467,6 +1467,7 @@ html, body, .pun {
 	background: #eee;
 	border-color: #111;
 	color: #333;
+	box-shadow: inset -1px -1px 2px #111;
 }
 
 /* Main Tables
@@ -1728,13 +1729,13 @@ div.scenario .noir {
     -moz-box-shadow: black 2px 2px 10px;
     box-shadow: black 2px 2px 10px;
     color: #ddd;
-    text-shadow: 1px 1px 2px #fff;
+    text-shadow: 0px 0px 2px #fff;
     text-align: center;
 }
 div.scenario .texte {
     padding: 25px 50px;
     font-family: sans-serif;
-    text-shadow: 1px 1px 2px #777;
+    text-shadow: 1px 1px 0px #eee;
     font-size: 14px;
     color: #111;
     text-align: justify;
@@ -1750,7 +1751,7 @@ div.scenario .perso {
     font-weight: bold;
     text-transform: uppercase;
     display: inline-block;
-    text-shadow: 1px 1px 2px #666;
+    text-shadow: 1px 1px 0px #efefef;
 }
 div.scenario .perso span, .scenario .replique span {
     padding: 0;

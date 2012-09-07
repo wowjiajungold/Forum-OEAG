@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2008-2011 FluxBB
+ * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
@@ -269,12 +269,12 @@ if ($pun_config['o_users_online'] == '1')
 	else
 		echo "\t\t\t".'<div class="clearer"></div>'."\n";
      
-    $todaystamp = date('j/n');
+    $todaystamp = date('j/n/');
     $limitstamp = strtotime(date('Y-m-d'))-7776000;
 
     echo "<!-- $todaystamp -->";
     
-    $result = $db->query('SELECT id, username, birthdate FROM '.$db->prefix.'users WHERE birthdate LIKE \''.$todaystamp.'%\' AND last_visit >= \''.$limitstamp.'\'') or error('Impossible de retrouver la liste des utilisateurs en ligne aujourd\'hui', __FILE__, __LINE__, $db->error());
+    $result = $db->query('SELECT id, username, birthdate FROM '.$db->prefix.'users WHERE birthdate LIKE \''.$todaystamp.'%\' AND last_visit >= \''.$limitstamp.'\' AND last_post >= \''.$limitstamp.'\'') or error('Impossible de retrouver la liste des utilisateurs en ligne aujourd\'hui', __FILE__, __LINE__, $db->error());
     while($birth = $db->fetch_row($result))
         $birthdays[] = $birth;
     
