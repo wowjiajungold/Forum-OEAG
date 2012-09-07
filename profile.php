@@ -773,8 +773,8 @@ else if (isset($_POST['form_sent']))
                 // Age
                 'birthd'        => isset($_POST['form']['birthd']) ? pun_trim($_POST['form']['birthd']) : '',
                 'birthm'        => isset($_POST['form']['birthm']) ? pun_trim($_POST['form']['birthm']) : '',
-                'birthy'        => isset($_POST['form']['birthy']) ? pun_trim($_POST['form']['birthy']),
-                'sex'           => isset($_POST['form']['sex']) ? pun_trim($_POST['form']['sex']) : '' : ''
+                'birthy'        => isset($_POST['form']['birthy']) ? pun_trim($_POST['form']['birthy']) : '',
+                'sex'           => isset($_POST['form']['sex']) ? pun_trim($_POST['form']['sex']) : ''
 			);
 
 			// Add http:// if the URL doesn't contain it already (while allowing https://, too)

@@ -665,13 +665,8 @@ function generate_page_title($page_title, $p = null)
 
     $page_title = array_reverse($page_title);
 
-<<<<<<< HEAD
-    if ($p != null)
-        $page_title[0] .= ' ('.sprintf($lang_common['Page'], forum_number_format($p)).')';
-=======
 	if (!is_null($p))
 		$page_title[0] .= ' ('.sprintf($lang_common['Page'], forum_number_format($p)).')';
->>>>>>> tags/fluxbb-1.5.0
 
     $crumbs = implode($lang_common['Title separator'], $page_title);
 
@@ -717,30 +712,6 @@ function set_tracked_topics($tracked_topics)
 //
 function get_tracked_topics()
 {
-<<<<<<< HEAD
-    global $cookie_name;
-
-    $cookie_data = isset($_COOKIE[$cookie_name.'_track']) ? $_COOKIE[$cookie_name.'_track'] : false;
-    if (!$cookie_data)
-        return array('topics' => array(), 'forums' => array());
-
-    if (strlen($cookie_data) > 4048)
-        return array('topics' => array(), 'forums' => array());
-
-    // Unserialize data from cookie
-    $tracked_topics = array('topics' => array(), 'forums' => array());
-    $temp = explode(';', $cookie_data);
-    foreach ($temp as $t)
-    {
-        $type = substr($t, 0, 1) == 'f' ? 'forums' : 'topics';
-        $id = intval(substr($t, 1));
-        $timestamp = intval(substr($t, strpos($t, '=') + 1));
-        if ($id > 0 && $timestamp > 0)
-            $tracked_topics[$type][$id] = $timestamp;
-    }
-
-    return $tracked_topics;
-=======
 	global $cookie_name;
 
 	$cookie_data = isset($_COOKIE[$cookie_name.'_track']) ? $_COOKIE[$cookie_name.'_track'] : false;
@@ -763,7 +734,6 @@ function get_tracked_topics()
 	}
 
 	return $tracked_topics;
->>>>>>> tags/fluxbb-1.5.0
 }
 
 
@@ -927,66 +897,6 @@ function censor_words($text)
 //
 function get_title($user)
 {
-<<<<<<< HEAD
-    global $db, $pun_config, $pun_bans, $lang_common;
-    static $ban_list, $pun_ranks;
-
-    // If not already built in a previous call, build an array of lowercase banned usernames
-    if (empty($ban_list))
-    {
-        $ban_list = array();
-
-        foreach ($pun_bans as $cur_ban)
-            $ban_list[] = strtolower($cur_ban['username']);
-    }
-
-    // If not already loaded in a previous call, load the cached ranks
-    if ($pun_config['o_ranks'] == '1' && !defined('PUN_RANKS_LOADED'))
-    {
-        if (file_exists(FORUM_CACHE_DIR.'cache_ranks.php'))
-            include FORUM_CACHE_DIR.'cache_ranks.php';
-
-        if (!defined('PUN_RANKS_LOADED'))
-        {
-            if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
-                require PUN_ROOT.'include/cache.php';
-
-            generate_ranks_cache();
-            require FORUM_CACHE_DIR.'cache_ranks.php';
-        }
-    }
-
-    // If the user has a custom title
-    if ($user['title'] != '')
-        $user_title = pun_htmlspecialchars($user['title']);
-    // If the user is banned
-    else if (in_array(strtolower($user['username']), $ban_list))
-        $user_title = $lang_common['Banned'];
-    // If the user group has a default user title
-    else if ($user['g_user_title'] != '')
-        $user_title = pun_htmlspecialchars($user['g_user_title']);
-    // If the user is a guest
-    else if ($user['g_id'] == PUN_GUEST)
-        $user_title = $lang_common['Guest'];
-    else
-    {
-        // Are there any ranks?
-        if ($pun_config['o_ranks'] == '1' && !empty($pun_ranks))
-        {
-            foreach ($pun_ranks as $cur_rank)
-            {
-                if ($user['num_posts'] >= $cur_rank['min_posts'])
-                    $user_title = pun_htmlspecialchars($cur_rank['rank']);
-            }
-        }
-
-        // If the user didn't "reach" any rank (or if ranks are disabled), we assign the default
-        if (!isset($user_title))
-            $user_title = $lang_common['Member'];
-    }
-
-    return $user_title;
-=======
 	global $db, $pun_config, $pun_bans, $lang_common;
 	static $ban_list;
 
@@ -1016,7 +926,6 @@ function get_title($user)
 		$user_title = $lang_common['Member'];
 
 	return $user_title;
->>>>>>> tags/fluxbb-1.5.0
 }
 
 
@@ -1025,61 +934,6 @@ function get_title($user)
 //
 function paginate($num_pages, $cur_page, $link)
 {
-<<<<<<< HEAD
-    global $lang_common;
-
-    $pages = array();
-    $link_to_all = false;
-
-    // If $cur_page == -1, we link to all pages (used in viewforum.php)
-    if ($cur_page == -1)
-    {
-        $cur_page = 1;
-        $link_to_all = true;
-    }
-
-    if ($num_pages <= 1)
-        $pages = array('<strong class="item1">1</strong>');
-    else
-    {
-        // Add a previous page link
-        if ($num_pages > 1 && $cur_page > 1)
-            $pages[] = '<a'.(empty($pages) ? ' class="item1"' : '').' href="'.$link.'&amp;p='.($cur_page - 1).'">'.$lang_common['Previous'].'</a>';
-
-        if ($cur_page > 3)
-        {
-            $pages[] = '<a'.(empty($pages) ? ' class="item1"' : '').' href="'.$link.'&amp;p=1">1</a>';
-
-            if ($cur_page > 5)
-                $pages[] = '<span class="spacer">'.$lang_common['Spacer'].'</span>';
-        }
-
-        // Don't ask me how the following works. It just does, OK? :-)
-        for ($current = ($cur_page == 5) ? $cur_page - 3 : $cur_page - 2, $stop = ($cur_page + 4 == $num_pages) ? $cur_page + 4 : $cur_page + 3; $current < $stop; ++$current)
-        {
-            if ($current < 1 || $current > $num_pages)
-                continue;
-            else if ($current != $cur_page || $link_to_all)
-                $pages[] = '<a'.(empty($pages) ? ' class="item1"' : '').' href="'.$link.'&amp;p='.$current.'">'.forum_number_format($current).'</a>';
-            else
-                $pages[] = '<strong'.(empty($pages) ? ' class="item1"' : '').'>'.forum_number_format($current).'</strong>';
-        }
-
-        if ($cur_page <= ($num_pages-3))
-        {
-            if ($cur_page != ($num_pages-3) && $cur_page != ($num_pages-4))
-                $pages[] = '<span class="spacer">'.$lang_common['Spacer'].'</span>';
-
-            $pages[] = '<a'.(empty($pages) ? ' class="item1"' : '').' href="'.$link.'&amp;p='.$num_pages.'">'.forum_number_format($num_pages).'</a>';
-        }
-
-        // Add a next page link
-        if ($num_pages > 1 && !$link_to_all && $cur_page < $num_pages)
-            $pages[] = '<a'.(empty($pages) ? ' class="item1"' : '').' href="'.$link.'&amp;p='.($cur_page +1).'">'.$lang_common['Next'].'</a>';
-    }
-
-    return implode(' ', $pages);
-=======
 	global $lang_common;
 
 	$pages = array();
@@ -1133,7 +987,6 @@ function paginate($num_pages, $cur_page, $link)
 	}
 
 	return implode(' ', $pages);
->>>>>>> tags/fluxbb-1.5.0
 }
 
 
@@ -1144,14 +997,6 @@ function message($message, $no_back_link = false, $http_status = null)
 {
     global $db, $lang_common, $pun_config, $pun_start, $tpl_main, $pun_user, $lang_pms;
 
-<<<<<<< HEAD
-    if (!defined('PUN_HEADER'))
-    {
-        $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Info']);
-        define('PUN_ACTIVE_PAGE', 'index');
-        require PUN_ROOT.'header.php';
-    }
-=======
 	// Did we receive a custom header?
 	if(!is_null($http_status)) {
 		header('HTTP/1.1 ' . $http_status);
@@ -1163,7 +1008,6 @@ function message($message, $no_back_link = false, $http_status = null)
 		define('PUN_ACTIVE_PAGE', 'index');
 		require PUN_ROOT.'header.php';
 	}
->>>>>>> tags/fluxbb-1.5.0
 
 ?>
 
@@ -1187,41 +1031,6 @@ function message($message, $no_back_link = false, $http_status = null)
 //
 function format_time($timestamp, $date_only = false, $date_format = null, $time_format = null, $time_only = false, $no_text = false)
 {
-<<<<<<< HEAD
-    global $pun_config, $lang_common, $pun_user, $forum_date_formats, $forum_time_formats;
-
-    if ($timestamp == '')
-        return $lang_common['Never'];
-
-    $diff = ($pun_user['timezone'] + $pun_user['dst']) * 3600;
-    $timestamp += $diff;
-    $now = time();
-
-    if($date_format == null)
-        $date_format = $forum_date_formats[$pun_user['date_format']];
-
-    if($time_format == null)
-        $time_format = $forum_time_formats[$pun_user['time_format']];
-
-    $date = gmdate($date_format, $timestamp);
-    $today = gmdate($date_format, $now+$diff);
-    $yesterday = gmdate($date_format, $now+$diff-86400);
-
-    if(!$no_text)
-    {
-        if ($date == $today)
-            $date = $lang_common['Today'];
-        else if ($date == $yesterday)
-            $date = $lang_common['Yesterday'];
-    }
-
-    if ($date_only)
-        return $date;
-    else if ($time_only)
-        return gmdate($time_format, $timestamp);
-    else
-        return $date.' '.gmdate($time_format, $timestamp);
-=======
 	global $pun_config, $lang_common, $pun_user, $forum_date_formats, $forum_time_formats;
 
 	if ($timestamp == '')
@@ -1255,7 +1064,6 @@ function format_time($timestamp, $date_only = false, $date_format = null, $time_
 		return gmdate($time_format, $timestamp);
 	else
 		return $date.' '.gmdate($time_format, $timestamp);
->>>>>>> tags/fluxbb-1.5.0
 }
 
 
@@ -1422,11 +1230,7 @@ function pun_linebreaks($str)
 //
 function pun_trim($str, $charlist = false)
 {
-<<<<<<< HEAD
-    return utf8_trim($str, $charlist);
-=======
 	return is_string($str) ? utf8_trim($str, $charlist) : '';
->>>>>>> tags/fluxbb-1.5.0
 }
 
 //
@@ -1446,13 +1250,8 @@ function is_all_uppercase($string)
 //
 function array_insert(&$input, $offset, $element, $key = null)
 {
-<<<<<<< HEAD
-    if ($key == null)
-        $key = $offset;
-=======
 	if (is_null($key))
 		$key = $offset;
->>>>>>> tags/fluxbb-1.5.0
 
     // Determine the proper offset if we're using a string
     if (!is_int($offset))
@@ -1777,15 +1576,9 @@ H2 {MARGIN: 0; COLOR: #FFFFFF; BACKGROUND-COLOR: #B84623; FONT-SIZE: 1.1em; PADD
     <div>
 <?php
 
-<<<<<<< HEAD
-    if (defined('PUN_DEBUG') && $file !== null && $line !== null)
-    {
-        echo "\t\t".'<strong>File:</strong> '.$file.'<br />'."\n\t\t".'<strong>Line:</strong> '.$line.'<br /><br />'."\n\t\t".'<strong>FluxBB reported</strong>: '.$message."\n";
-=======
 	if (defined('PUN_DEBUG') && !is_null($file) && !is_null($line))
 	{
 		echo "\t\t".'<strong>File:</strong> '.$file.'<br />'."\n\t\t".'<strong>Line:</strong> '.$line.'<br /><br />'."\n\t\t".'<strong>FluxBB reported</strong>: '.$message."\n";
->>>>>>> tags/fluxbb-1.5.0
 
         if ($db_error)
         {
