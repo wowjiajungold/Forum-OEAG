@@ -47,6 +47,7 @@ define('PUN_CJK_HANGUL_REGEX', '['.
 //
 function split_words($text, $idx)
 {
+<<<<<<< HEAD
 	/* FluxToolBar */
 	if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php'))
 		include FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php';
@@ -56,6 +57,10 @@ function split_words($text, $idx)
 		generate_ftb_cache('tags');
 		require FORUM_CACHE_DIR.'cache_fluxtoolbar_tag_search.php';
 	}
+=======
+	// Remove BBCode
+	$text = preg_replace('%\[/?(b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]%', ' ', $text);
+>>>>>>> tags/fluxbb-1.5.0
 
 	// Remove any apostrophes or dashes which aren't part of words
 	$text = substr(ucp_preg_replace('%((?<=[^\p{L}\p{N}])[\'\-]|[\'\-](?=[^\p{L}\p{N}]))%u', '', ' '.$text.' '), 1, -1);
@@ -154,8 +159,8 @@ function strip_bbcode($text)
 		$patterns = array(
 			'%\[img=([^\]]*+)\]([^[]*+)\[/img\]%'									=>	'$2 $1',	// Keep the url and description
 			'%\[(url|email)=([^\]]*+)\]([^[]*+(?:(?!\[/\1\])\[[^[]*+)*)\[/\1\]%'	=>	'$2 $3',	// Keep the url and text
+			'%\[(img|url|email)\]([^[]*+(?:(?!\[/\1\])\[[^[]*+)*)\[/\1\]%'			=>	'$2',		// Keep the url
 			'%\[(topic|post|forum|user)\][1-9]\d*\[/\1\]%'							=>	' ',		// Do not index topic/post/forum/user ID
-			'%\[/?(b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]%'	=> ' ' // Remove BBCode
 		);
 	}
 
