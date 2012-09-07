@@ -904,8 +904,13 @@ function parse_message($text, $hide_smilies)
 
 	return clean_paragraphs($text);
 }
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> 0814ad43f375b1c095e1b792128b248e795529a1
 //
 // Clean up paragraphs and line breaks
 //

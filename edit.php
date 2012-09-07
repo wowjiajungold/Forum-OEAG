@@ -238,7 +238,11 @@ else if (isset($_POST['preview']))
 						<input class="longinput" type="text" name="req_subject" size="80" maxlength="70" tabindex="<?php echo $cur_index++ ?>" value="<?php echo pun_htmlspecialchars(isset($_POST['req_subject']) ? $_POST['req_subject'] : $cur_post['subject']) ?>" /><br /></label>
 <?php endif; ?>						<label class="required"><strong><?php echo $lang_common['Message'] ?> <span><?php echo $lang_common['Required'] ?></span></strong><br />
 						<textarea id="req_message" name="req_message" rows="20" cols="95" tabindex="<?php echo $cur_index++ ?>"><?php echo pun_htmlspecialchars(isset($_POST['req_message']) ? $message : $cur_post['message']) ?></textarea><br /></label>
+<<<<<<< HEAD
 <?php /* FluxToolBar */
+=======
+huhu<?php /* FluxToolBar */
+>>>>>>> 0814ad43f375b1c095e1b792128b248e795529a1
 if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php'))
     include FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php';
 else

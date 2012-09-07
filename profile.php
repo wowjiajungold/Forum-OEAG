@@ -1674,8 +1674,20 @@ else
 
             foreach ($styles as $temp)
             {
+<<<<<<< HEAD
                 if ($user['style'] == $temp)
                     $selected = ' selected="selected"';
+=======
+                if ( $temp == 'OEAGv4' ) {
+                    if ( $pun_user['is_admmod'] || $pun_user['g_moderator'] == '1' )
+                        if ($user['style'] == $temp)
+                            echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'" selected="selected">'.str_replace('_', ' ', $temp).'</option>'."\n";
+                        else
+                            echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'">'.str_replace('_', ' ', $temp).'</option>'."\n";
+                }
+                else if ($user['style'] == $temp)
+                    echo "\t\t\t\t\t\t\t\t".'<option value="'.$temp.'" selected="selected">'.str_replace('_', ' ', $temp).'</option>'."\n";
+>>>>>>> 0814ad43f375b1c095e1b792128b248e795529a1
                 else
                     $selected = '';
                 
