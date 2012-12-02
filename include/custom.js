@@ -1,10 +1,12 @@
-$(document).ready(function() {
+$(window).load(function() {
 	$('tr').bind('mouseover mouseout', function() {
 		$(this).toggleClass('hover');
 	});
 	
-// 	setInterval( function() {
-// 		$('.boxnews li.visible').removeClass('visible').next().addClass('visible');
+// 	$('#brdmenu li').hover(function() {
+// 		$(this).find('span').show(0);
 // 	},
-// 	1000 );
+// 	function() {
+// 		$(this).find('span').hide(0);
+// 	});
 });

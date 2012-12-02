@@ -216,7 +216,7 @@ if (!empty($forum_actions))
 }
 
 ?>
-<div id="brdstats" class="block">
+<div id="brdstats" class="blocktable">
 	<h2><span><?php echo $lang_index['Board info'] ?></span></h2>
 	<div class="box">
 		<div class="inbox">

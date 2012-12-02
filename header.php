@@ -27,9 +27,6 @@ else if (defined('PUN_HELP'))
 else
 	$tpl_file = 'main.tpl';
 
-if (in_array($pun_user['id'], array(3,269,270)))
-	$tpl_file = 'main-v5.tpl';
-
 if (file_exists(PUN_ROOT.'style/'.$pun_user['style'].'/'.$tpl_file))
 {
 	$tpl_file = PUN_ROOT.'style/'.$pun_user['style'].'/'.$tpl_file;
@@ -192,41 +189,21 @@ $tpl_main = str_replace('<pun_desc>', '', $tpl_main);
 $links = array();
 
 // Index should always be displayed
-$links[] = '<li id="navindex"'.((PUN_ACTIVE_PAGE == 'index') ? ' class="isactive"' : '').'><a class="brdmenu" href="index.php">'.$lang_common['Index'].'</a></li>';
+$links[] = '<li id="navindex"'.((PUN_ACTIVE_PAGE == 'index') ? ' class="isactive"' : '').'><a class="brdmenu" href="index.php"> <i></i> <span>'.$lang_common['Index'].'</span></a></li>';
 
 if ($pun_user['g_read_board'] == '1' && $pun_user['g_view_users'] == '1')
-	$links[] = '<li id="navuserlist"'.((PUN_ACTIVE_PAGE == 'userlist') ? ' class="isactive"' : '').'><a class="brdmenu" href="userlist.php">'.$lang_common['User list'].'</a></li>';
+	$links[] = '<li id="navuserlist"'.((PUN_ACTIVE_PAGE == 'userlist') ? ' class="isactive"' : '').'><a class="brdmenu" href="userlist.php"> <i></i> <span>'.$lang_common['User list'].'</span></a></li>';
 if (!$pun_user['is_guest'])
-	$links[] = '<li id="navirc"'.((PUN_ACTIVE_PAGE == 'irc') ? ' class="isactive"' : '').'><a class="brdmenu" href="irc.php">Chat</a></li>';
+	$links[] = '<li id="navirc"'.((PUN_ACTIVE_PAGE == 'irc') ? ' class="isactive"' : '').'><a class="brdmenu" href="irc.php"> <i></i> <span>Chat</span></a></li>';
 if ($pun_config['o_rules'] == '1' && (!$pun_user['is_guest'] || $pun_user['g_read_board'] == '1' || $pun_config['o_regs_allow'] == '1'))
-	$links[] = '<li id="navrules"'.((PUN_ACTIVE_PAGE == 'rules') ? ' class="isactive"' : '').'><a class="brdmenu" href="misc.php?action=rules">'.$lang_common['Rules'].'</a></li>';
+	$links[] = '<li id="navrules"'.((PUN_ACTIVE_PAGE == 'rules') ? ' class="isactive"' : '').'><a class="brdmenu" href="misc.php?action=rules"> <i></i> <span>'.$lang_common['Rules'].'</span></a></li>';
 
 if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
-	$links[] = '<li id="navsearch"'.((PUN_ACTIVE_PAGE == 'search') ? ' class="isactive"' : '').'><a class="brdmenu" href="search.php">'.$lang_common['Search'].'</a></li>';
+	$links[] = '<li id="navsearch"'.((PUN_ACTIVE_PAGE == 'search') ? ' class="isactive"' : '').'><a class="brdmenu" href="search.php"> <i></i> <span>'.$lang_common['Search'].'</span></a></li>';
 
 if ($pun_user['is_admmod'])
-	$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
-		
+	$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a class="brdmenu" href="admin_index.php"> <i></i> <span>'.$lang_common['Admin'].'</span></a></li>';
 
-if (!in_array($pun_user['id'], array(3,269,270))) {
-if ($pun_user['is_guest'])
-{
-	$links[] = '<li id="navregister"'.((PUN_ACTIVE_PAGE == 'register') ? ' class="isactive"' : '').'><a class="brdmenu" href="register.php">'.$lang_common['Register'].'</a></li>';
-	$links[] = '<li id="navlogin"'.((PUN_ACTIVE_PAGE == 'login') ? ' class="isactive"' : '').'><a class="brdmenu" href="login.php">'.$lang_common['Login'].'</a></li>';
-}
-else
-{
-	$links[] = '<li id="navprofile"'.((PUN_ACTIVE_PAGE == 'profile') ? ' class="isactive"' : '').'><a class="brdmenu" href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></li>';
-	
-	if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1')
-		$links[] = '<li id="navpm"'.((PUN_ACTIVE_PAGE == 'pm') ? ' class="isactive"' : '').'><a class="brdmenu" href="pms_inbox.php">'.$lang_pms['PM'].'</a></li>';
-
-	if ($pun_user['is_admmod'])
-		$links[] = '<li id="navadmin"'.((PUN_ACTIVE_PAGE == 'admin') ? ' class="isactive"' : '').'><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></li>';
-
-	$links[] = '<li id="navlogout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'">'.$lang_common['Logout'].'</a></li>';
-}
-}
 
 // Are there any additional navlinks we should insert into the array before imploding it?
 if ($pun_user['g_read_board'] == '1' && $pun_config['o_additional_navlinks'] != '')
@@ -249,11 +226,10 @@ $tpl_main = str_replace('<pun_navlinks>', $tpl_temp, $tpl_main);
 $page_statusinfo = $page_topicsearches = array();
 
 if ($pun_user['is_guest']) {
-	$page_statusinfo = '<p class="conl">'.$lang_common['Not logged in'].'</p>';
-	if (in_array($pun_user['id'], array(3,269,270))) {
-		$page_statusinfo[] = '<li id="navregister"'.((PUN_ACTIVE_PAGE == 'register') ? ' class="isactive"' : '').'><a class="brdmenu" href="register.php">'.$lang_common['Register'].'</a></li>';
-		$page_statusinfo[] = '<li id="navlogin"'.((PUN_ACTIVE_PAGE == 'login') ? ' class="isactive"' : '').'><a class="brdmenu" href="login.php">'.$lang_common['Login'].'</a></li>';
-	}
+	$page_statusinfo[] = '<li class="user_avatar"><span>'.generate_avatar_markup(3).'</span></li>';
+	$page_statusinfo[] = '<li class="nav user_welcome"><span class="user_logout">'.$lang_common['Not logged in'].'</span></li>';
+	$page_statusinfo[] = '<li class="nav user_navprofile"><span class="user_register"><a class="brdmenu" href="register.php">'.$lang_common['Register'].'</a></span></li>';
+	$page_statusinfo[] = '<li class="nav user_navprofile"><span class="user_login"><a class="brdmenu" href="login.php">'.$lang_common['Login'].'</a></span>';
 }
 else
 {
@@ -262,63 +238,29 @@ else
 		$page_statusinfo[] = '<li class="user_avatar"><span>'.generate_avatar_markup($pun_user['id']).'</span></li>';
 	}
 	
-	$page_statusinfo[] = '<li class="nav user_welcome"><span class="user_loggedin">'.$lang_common['Logged in as'].' <strong>'.pun_htmlspecialchars($pun_user['username']).'</strong></span></li>';
+	$page_statusinfo[] = '<li class="nav user_welcome"><span class="user_logout">'.$lang_common['Logged in as'].' <strong>'.pun_htmlspecialchars($pun_user['username']).'</strong></span></li>';
 	$page_statusinfo[] = '<li class="nav user_lastvisit"><span class="user_lastlog">'.sprintf($lang_common['Last visit'], format_time($pun_user['last_visit'])).'</span></li>';
 	
-	if (in_array($pun_user['id'], array(3,269,270))) {
-		$page_statusinfo[] = '<li class="nav user_navprofile">';
-		$page_statusinfo[] = '<span class="user_profile"><a class="brdmenu" href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></span>';
+	$page_statusinfo[] = '<li class="nav user_navprofile">';
+	$page_statusinfo[] = '<span class="user_profile"><a class="brdmenu" href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></span>';
+	
+	if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1') {
 		
-		if ($pun_config['o_pms_enabled'] == '1' && $pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1')
-			$page_statusinfo[] = '<span class="user_mp"><a class="brdmenu" href="pms_inbox.php">'.$lang_pms['PM'].'</a></span>';
-		
-		//if ($pun_user['is_admmod'])
-		//	$page_statusinfo[] = '<span class="user_admin"><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></span>';
-		
-		$page_statusinfo[] = '<span class="user_logout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'">'.$lang_common['Logout'].'</a></span>';
-		$page_statusinfo[] = '</li>';
-	}
-
-	if ($pun_user['is_admmod'])
-	{
-		if ($pun_config['o_report_method'] == '0' || $pun_config['o_report_method'] == '2')
-		{
-			$result_header = $db->query('SELECT 1 FROM '.$db->prefix.'reports WHERE zapped IS NULL') or error('Unable to fetch reports info', __FILE__, __LINE__, $db->error());
-
-			if ($db->result($result_header))
-				$page_statusinfo[] = '<li class="reportlink"><span><strong><a href="admin_reports.php">'.$lang_common['New reports'].'</a></strong></span></li>';
-		}
-
-		if ($pun_config['o_maintenance'] == '1')
-			$page_statusinfo[] = '<li class="maintenancelink"><span><strong><a href="admin_options.php#maintenance">'.$lang_common['Maintenance mode enabled'].'</a></strong></span></li>';
-	}
-
-	$num_new_pm = 0;
-	if ($pun_user['g_pm'] == '1' && $pun_user['use_pm'] == '1' && $pun_config['o_pms_enabled'] == '1')
-	{
-		// Boxes status
-		$pm_boxes_full = ($pun_user['num_pms'] >= $pun_user['g_pm_limit']) ? true : false;
-		$pm_boxes_empty = ($pun_user['num_pms'] <= '0') ? true : false;
-		if ($pun_user['g_pm_limit'] != '0' && !$pun_user['is_admmod'])
-		{
-			if ($pm_boxes_empty)
-				$page_statusinfo[] = '<li><span>'.$lang_pms['Empty boxes'].'</span></li>';
-			elseif ($pm_boxes_full)
-				$page_statusinfo[] = '<li><span><a href="pms_inbox.php"><strong>'.$lang_pms['Full boxes'].'</strong></a></span></li>';
-			else
-			{
-				$per_cent_box = ceil($pun_user['num_pms'] / $pun_user['g_pm_limit'] * '100');
-				$page_statusinfo[] = '<li><span>'.sprintf($lang_pms['Full to'],$per_cent_box.'%').' <div id="mp_bar_ext"><div id="mp_bar_int" style="width:'.$per_cent_box.'px;"><!-- --></div></div></span></li>';
-			}
-		}
-		
-		// Check for new messages
 		$result_messages = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'messages WHERE showed=0 AND show_message=1 AND owner='.$pun_user['id']) or error('Unable to check the availibility of new messages', __FILE__, __LINE__, $db->error());
 		$num_new_pm = $db->result($result_messages);
 		
 		if ($num_new_pm > 0)
-			$page_statusinfo[] = '<li><span><a href="pms_inbox.php"><strong>'.($num_new_pm == '1' ? $lang_pms['New message'] : sprintf($lang_pms['New messages'],$num_new_pm)).'</strong></a></span></li>';		
+			$page_statusinfo[] = '<span class="user_mp user_mp_on gotapm"><a class="brdmenu" href="pms_inbox.php"><strong>'.$lang_pms['PM'].'</strong></a><sup><acronym title="'.($num_new_pm == '1' ? $lang_pms['New message'] : sprintf($lang_pms['New messages'],$num_new_pm)).'">'.$num_new_pm.'</acronym></sup></span>';
+		else
+			$page_statusinfo[] = '<span class="user_mp empty"><a class="brdmenu" href="pms_inbox.php">'.$lang_pms['PM'].'</a></span>';
+		
 	}
+	
+	//if ($pun_user['is_admmod'])
+	//	$page_statusinfo[] = '<span class="user_admin"><a class="brdmenu" href="admin_index.php">'.$lang_common['Admin'].'</a></span>';
+	
+	$page_statusinfo[] = '<span class="user_logout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'">'.$lang_common['Logout'].'</a></span>';
+	$page_statusinfo[] = '</li>';
 
 	if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
 	{
@@ -348,19 +290,31 @@ if (is_array($page_statusinfo))
 else
 	$tpl_temp .= "\n\t\t\t".$page_statusinfo;
 
-if (in_array($pun_user['id'], array(3,269,270)) && $pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
+$tpl_temp .= "\n\t\t\t".'<div id="announce" class="block">';
+$tpl_temp .= "\n\t\t\t\t".'<div class="box">';
+$tpl_temp .= "\n\t\t\t\t\t".'<div id="announce-block" class="inbox">';
+$tpl_temp .= "\n\t\t\t\t\t\t".'<div class="usercontent">';
+$tpl_temp .= "\n\t\t\t\t\t\t\t".$pun_config['o_announcement_message'].'<br />';
+
+if ($pun_user['is_admmod'])
 {
-	$tpl_temp .= "\n\t\t\t".'<div id="announce" class="block">';
-	$tpl_temp .= "\n\t\t\t\t".'<div class="box">';
-	$tpl_temp .= "\n\t\t\t\t\t".'<div id="announce-block" class="inbox">';
-	$tpl_temp .= "\n\t\t\t\t\t\t".'<div class="usercontent">'.$pun_config['o_announcement_message'].'</div>';
-	$tpl_temp .= "\n\t\t\t\t\t".'</div>';
-	$tpl_temp .= "\n\t\t\t\t".'</div>';
-	$tpl_temp .= "\n\t\t\t".'</div>';
+	if ($pun_config['o_report_method'] == '0' || $pun_config['o_report_method'] == '2')
+	{
+		$result_header = $db->query('SELECT 1 FROM '.$db->prefix.'reports WHERE zapped IS NULL') or error('Unable to fetch reports info', __FILE__, __LINE__, $db->error());
+		if ($db->result($result_header))
+			$tpl_temp .= "\n\t\t\t\t\t\t\t".'<strong><a href="admin_reports.php">'.$lang_common['New reports'].'</a></strong>';
+			//$page_statusinfo[] = '<li class="reportlink"><span><strong><a href="admin_reports.php">'.$lang_common['New reports'].'</a></strong></span></li>';
+	}
+	if ($pun_config['o_maintenance'] == '1')
+		$tpl_temp .= "\n\t\t\t\t\t\t\t".'<strong><a href="admin_options.php#maintenance">'.$lang_common['Maintenance mode enabled'].'</a></strong>';
+		//$page_statusinfo[] = '<li class="maintenancelink"><span><strong><a href="admin_options.php#maintenance">'.$lang_common['Maintenance mode enabled'].'</a></strong></span></li>';
 }
 
-if (in_array($pun_user['id'], array(3,269,270)))
-	$tpl_temp .= "\n\t\t\t".'<div style="clear:both"></div>';
+$tpl_temp .= "\n\t\t\t\t\t\t".'</div>';
+$tpl_temp .= "\n\t\t\t\t\t".'</div>';
+$tpl_temp .= "\n\t\t\t\t".'</div>';
+$tpl_temp .= "\n\t\t\t".'</div>';
+$tpl_temp .= "\n\t\t\t".'<div style="clear:both"></div>';
 
 // Generate quicklinks
 if (!empty($page_topicsearches))
@@ -370,35 +324,31 @@ if (!empty($page_topicsearches))
 	$tpl_temp .= "\n\t\t\t".'</ul>';
 }
 
-if (in_array($pun_user['id'], array(3,269,270)) && $pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
-{
-	
-	$tpl_temp .= "\n\t\t\t".'<div class="boxnews">';
-	$tpl_temp .= "\n\t\t\t\t".'<span>Derniers articles sur le site :</span>';
-	$tpl_temp .= "\n\t\t\t\t".'<ul>';
-	
-	ob_start();
-	//$flux = "http://www.onenagros.org/feed";
-	$result_wp = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 2;");
-	$first = true;
-	
-	while($assoc = $db->fetch_assoc($result_wp)) {
-		$post_date = substr($assoc['post_date'],8,2)."/".substr($assoc['post_date'],5,2);
-		$post_title = $assoc['post_title'];
-		$url = "http://www.onenagros.org/".substr($assoc['post_date'],0,10)."-".$assoc['post_name'].".html";
-		$tpl_temp .= "\n\t\t\t\t".'<li';
-		if ( $first ) {
-			$tpl_temp .= ' class="visible"';
-			$first = false;
-		}
-		$tpl_temp .= '><b>'.$post_date.'</b> − <a href="'.$url.'">'.$post_title.'</a></li>';
+$tpl_temp .= "\n\t\t\t".'<div class="boxnews">';
+$tpl_temp .= "\n\t\t\t\t".'<span>Derniers articles sur le site :</span>';
+$tpl_temp .= "\n\t\t\t\t".'<ul>';
+
+ob_start();
+
+$result_wp = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 2;");
+$first = true;
+
+while($assoc = $db->fetch_assoc($result_wp)) {
+	$post_date = substr($assoc['post_date'],8,2)."/".substr($assoc['post_date'],5,2);
+	$post_title = $assoc['post_title'];
+	$url = "http://www.onenagros.org/".substr($assoc['post_date'],0,10)."-".$assoc['post_name'].".html";
+	$tpl_temp .= "\n\t\t\t\t".'<li';
+	if ( $first ) {
+		$tpl_temp .= ' class="visible"';
+		$first = false;
 	}
-	
-	ob_end_clean();
-	
-	$tpl_temp .= "\n\t\t\t\t".'</ul>';
-	$tpl_temp .= "\n\t\t\t".'</div>';
+	$tpl_temp .= '><b>'.$post_date.'</b> − <a href="'.$url.'">'.$post_title.'</a></li>';
 }
+
+ob_end_clean();
+
+$tpl_temp .= "\n\t\t\t\t".'</ul>';
+$tpl_temp .= "\n\t\t\t".'</div>';
 
 $tpl_temp .= "\n\t\t\t".'<div style="clear:both"></div>'."\n\t\t".'</div>';
 
@@ -407,47 +357,7 @@ $tpl_main = str_replace('<pun_status>', $tpl_temp, $tpl_main);
 
 
 // START SUBST - <pun_announcement>
-if (!in_array($pun_user['id'], array(3,269,270)) && $pun_user['g_read_board'] == '1' && $pun_config['o_announcement'] == '1')
-{
-	ob_start();
-
-?>
-<div id="announce" class="block">
-	<div class="box">
-		<div id="announce-block" class="inbox">
-			<div class="usercontent"><?php echo $pun_config['o_announcement_message'] ?></div>
-		</div>
-	</div>
-    <div class="boxnews">
-        <span>Derniers articles sur le site :</span><br />
-        <ul>
-<?php
-$result_wp = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 3;");
-$first = true;
-
-while($assoc = $db->fetch_assoc($result_wp)) {
-    $post_date = substr($assoc['post_date'],8,2)."/".substr($assoc['post_date'],5,2);
-    $post_title = $assoc['post_title'];
-    $url = "http://www.onenagros.org/".substr($assoc['post_date'],0,10)."-".$assoc['post_name'].".html";
-    if($first)
-        echo "            <li><b>$post_date</b> − <a href=\"$url\"><span style=\"color:#000;\">$post_title</span></a></li>\n";
-    else
-        echo "            <li><b>$post_date</b> − <a href=\"$url\">$post_title</a></li>\n";
-    $first = false;
-}
-
-?>
-        </ul>
-    </div>
-</div>
-<?php
-
-	$tpl_temp = trim(ob_get_contents());
-	$tpl_main = str_replace('<pun_announcement>', $tpl_temp, $tpl_main);
-	ob_end_clean();
-}
-else
-	$tpl_main = str_replace('<pun_announcement>', '', $tpl_main);
+$tpl_main = str_replace('<pun_announcement>', '', $tpl_main);
 // END SUBST - <pun_announcement>
 
 

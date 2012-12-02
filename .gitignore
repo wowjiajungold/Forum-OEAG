@@ -10,9 +10,11 @@
 /cache/*.cache
 /cache/db_update.lock
 /cache/*
+/cache*
 /modules/
 /include/user/*.php
 /img/avatars/*.png
 /img/avatars/*.jpg
 /img/avatars/*.gif
 /config.php
+/style/OnEnAGros-v5-nowel.css.menu*
