@@ -226,16 +226,16 @@ $tpl_main = str_replace('<pun_navlinks>', $tpl_temp, $tpl_main);
 $page_statusinfo = $page_topicsearches = array();
 
 if ($pun_user['is_guest']) {
-	$page_statusinfo[] = '<li class="user_avatar"><span>'.generate_avatar_markup(3).'</span></li>';
+	$page_statusinfo[] = '<li class="user_avatar" style="background-image: url('.generate_avatar_markup(3, true).');"></li>';
 	$page_statusinfo[] = '<li class="nav user_welcome"><span class="user_logout">'.$lang_common['Not logged in'].'</span></li>';
 	$page_statusinfo[] = '<li class="nav user_navprofile"><span class="user_register"><a class="brdmenu" href="register.php">'.$lang_common['Register'].'</a></span></li>';
 	$page_statusinfo[] = '<li class="nav user_navprofile"><span class="user_login"><a class="brdmenu" href="login.php">'.$lang_common['Login'].'</a></span>';
 }
 else
 {
-	$avatar = generate_avatar_markup($pun_user['id']);
-	if ($avatar != '' && in_array($pun_user['id'], array(3,269,270))) {
-		$page_statusinfo[] = '<li class="user_avatar"><span>'.generate_avatar_markup($pun_user['id']).'</span></li>';
+	$avatar = generate_avatar_markup($pun_user['id'], true);
+	if ($avatar != '') {
+		$page_statusinfo[] = '<li class="user_avatar" style="background-image: url('.$avatar.');"></li>';
 	}
 	
 	$page_statusinfo[] = '<li class="nav user_welcome"><span class="user_logout">'.$lang_common['Logged in as'].' <strong>'.pun_htmlspecialchars($pun_user['username']).'</strong></span></li>';

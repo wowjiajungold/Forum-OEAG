@@ -18,11 +18,11 @@
 
 @font-face {
     font-family: 'ParchmentMF';
-    src: url('parchmentmf.eot');
-    src: url('parchmentmf.eot?#iefix') format('embedded-opentype'),
-         url('parchmentmf.woff') format('woff'),
-         url('parchmentmf.ttf') format('truetype'),
-         url('parchmentmf.svg#parchmentmf') format('svg');
+    src: url('inc/parchmentmf.eot');
+    src: url('inc/parchmentmf.eot?#iefix') format('embedded-opentype'),
+         url('inc/parchmentmf.woff') format('woff'),
+         url('inc/parchmentmf.ttf') format('truetype'),
+         url('inc/parchmentmf.svg#parchmentmf') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -330,7 +330,6 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 }
 
 #brdmenu ul {
-	background: rgba(0, 0, 0, 0.6);
 	border-radius: 0 6px 6px 0;
 	float: left;
 	margin: 14px 0 0 0;
@@ -788,7 +787,7 @@ MAIN POSTS
 
 .pun .blockpost {
 	border-radius: 3px;
-	margin: 10px 0 0 0;
+	margin: 16px 0 0 0;
 	overflow: hidden;
 	position: relative;
 }
@@ -1600,6 +1599,10 @@ body {
     border-top: 2px solid #888;*/
 }
 
+#brdmenu ul {
+	background: rgba(0, 0, 0, 0.8);
+}
+
 #brdmenu li {
     height: 40px;
 }
@@ -1617,7 +1620,7 @@ body {
 }
 
 #brdmenu li span {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 5px;
     display: none;
     margin: -4px 0 0 18px;
@@ -1627,7 +1630,7 @@ body {
 
 #brdmenu li span::after {
     border: 5px solid transparent;
-    border-right-color: rgba(0, 0, 0, 0.6);
+    border-right-color: rgba(0, 0, 0, 0.8);
     content: ' ';
     left: -10px;
     height: 0;
@@ -1834,7 +1837,7 @@ body {
 }
 
 .pun .blockform .box, #adstats, #adintro, #postpreview, #posterror {
-	background: white;
+	background: #e3e4e7;
 	border-radius: 3px;
 	box-shadow: 0 1px 2px #999;
 }
@@ -2090,6 +2093,10 @@ table.postable {
 }
 
 #brdwelcome li.user_avatar {
+	background-color: #fff;
+	background-position: center top;
+	background-repeat: no-repeat;
+	background-size: 125px auto;
 	border: 6px solid white;
 	border-radius: 72px;
 	float: none;
