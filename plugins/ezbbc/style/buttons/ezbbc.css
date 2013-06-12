@@ -1,8 +1,0 @@
-#ezbbctoolbar .button, #ezbbctoolbar .smiley {
-	border: 1px inset #ccc;
-	margin-right: 1px;
-}
-
-#ezbbctoolbar .button:hover, #ezbbctoolbar .smiley:hover {
-	border: 1px outset #BFBFBF;
-}

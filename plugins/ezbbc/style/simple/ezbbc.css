@@ -1,9 +1,0 @@
-#ezbbctoolbar .button, #ezbbctoolbar .smiley {
-	vertical-align: middle;
-	margin: 1px 1px 0 0;
-	
-}
-
-#ezbbctoolbar .button:hover, #ezbbctoolbar .smiley:hover {
-       vertical-align: top;
-}
