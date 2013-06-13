@@ -2,9 +2,9 @@
 
 
 
-//
-// Convert Wikilike links
-//
+/**
+ * Implement Wikilike links 
+ */
 function do_wikilinks( $text )
 {
 	global $db;
@@ -44,9 +44,9 @@ function do_wikilinks( $text )
 }
 
 
-//
-// Parse the contents of [livre] bbcode
-//
+/**
+ * Parse the contents of [livre] bbcode
+ */
 function handle_livre_tag( $livre, $episodes = '' )
 {
 	global $db;
@@ -70,8 +70,6 @@ function handle_livre_tag( $livre, $episodes = '' )
 			
 			if ( count( $episodes ) > 0 ) :
 				$query = "SELECT post_title, guid, menu_order FROM wp_posts WHERE post_type='page' AND post_status='publish' AND post_parent='".$livres_ID[$livre]."' AND menu_order IN (".implode( ",", $episodes ).")";
-			//elseif ( count( $episodes ) == 0 ) :
-			//	$query = "SELECT post_title, guid FROM wp_posts WHERE post_type='page' AND post_status='publish' AND post_parent='".$livres_ID[$livre]."' ORDER BY menu_order";
 			endif;
 		endif;
 		

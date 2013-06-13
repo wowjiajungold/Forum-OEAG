@@ -163,7 +163,7 @@ function strip_empty_bbcode($text)
 		list($inside, $text) = extract_blocks($text, '[code]', '[/code]');
 
 	// Remove empty tags
-	while (!is_null($new_text = preg_replace('%\[(b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]\s*\[/\1\]%', '', $text)))
+	while (!is_null($new_text = preg_replace('%\[(b|u|s|ins|del|em|i|h|colou?r|quote|spoiler|smilie|img|url|email|list|size|acronym|q|sup|sub|left|right|center|justify|video|scenario|titre|intro|texte|perso|didascalie|generique|table|tr|th|td|topic|post|forum|user)(?:\=[^\]]*)?\]\s*\[/\1\]%', '', $text)))
 	{
 		if ($new_text != $text)
 			$text = $new_text;
@@ -796,6 +796,8 @@ function do_bbcode($text, $is_signature = false)
 	$replace[] = '<span style="color: $1">$2</span>';
 	$replace[] = '</p><h5>$1</h5><p>';
 
+	require PUN_ROOT.'OnEnAGros/parser_patterns.php';
+
 	if (($is_signature && $pun_config['p_sig_img_tag'] == '1') || (!$is_signature && $pun_config['p_message_img_tag'] == '1'))
 	{
 		$pattern[] = '%\[img\]((ht|f)tps?://)([^\s<"]*?)\[/img\]%e';
@@ -811,6 +813,12 @@ function do_bbcode($text, $is_signature = false)
 			$replace[] = 'handle_img_tag(\'$2$4\', false, \'$1\')';
 		}
 	}
+	
+	require PUN_ROOT.'OnEnAGros/parser_kaamelott.php';
+	if ( strpos($text, '[[') !== false && strpos($text, ']]') )
+		$text = preg_replace( '/(\[\[(.*?)\]\]|\[\[(.*?)\|(.*?)\]\])/e', 'do_wikilinks(\'$2\')', $text );
+	if ( strpos($text, '[livre') !== false )
+		$text = preg_replace( '/(\[livre=([1-6])\](.*?)\[\/livre\])/e', 'handle_livre_tag(\'$2\', \'$3\')', $text );
 
 	$pattern[] = '%\[url\]([^\[]*?)\[/url\]%e';
 	$pattern[] = '%\[url=([^\[]+?)\](.*?)\[/url\]%e';
@@ -949,6 +957,8 @@ function clean_paragraphs($text)
 	$text = str_replace('<p><br />', '<br /><p>', $text);
 	$text = str_replace('<br /></p>', '</p><br />', $text);
 	$text = str_replace('<p></p>', '<br /><br />', $text);
+
+	$text = $oeag->oeag_clean_table_br( $text );
 
 	return $text;
 }
