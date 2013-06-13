@@ -825,7 +825,7 @@ if ($pun_config['o_search_all_forums'] == '1' || $pun_user['is_admmod'])
 			$cur_category = $cur_forum['cid'];
 		}
 
-		echo "\t\t\t\t\t\t\t\t".'<label><input type="checkbox" name="forums[]" id="forum-'.$cur_forum['fid'].'" value="'.$cur_forum['fid'].'" />'.pun_htmlspecialchars($cur_forum['forum_name']).'</label>'."\n";
+		echo "\t\t\t\t\t\t\t\t".'<div class="checklist-item"><span class="fld-input"><input type="checkbox" name="forums[]" id="forum-'.$cur_forum['fid'].'" value="'.$cur_forum['fid'].'" /></span> <label for="forum-'.$cur_forum['fid'].'">'.pun_htmlspecialchars($cur_forum['forum_name']).'</label></div>'."\n";
 	}
 
 	if ($cur_category)
@@ -833,7 +833,7 @@ if ($pun_config['o_search_all_forums'] == '1' || $pun_user['is_admmod'])
 		echo "\t\t\t\t\t\t\t\t".'</div>'."\n";
 		echo "\t\t\t\t\t\t\t".'</fieldset>'."\n";
 	}
-	
+
 	echo "\t\t\t\t\t\t".'</div>'."\n";
 	echo "\t\t\t\t\t\t".'</div>'."\n";
 }
@@ -874,6 +874,7 @@ else
 						<br /></label>
 						<p class="clearl"><?php echo $lang_search['Search in info'] ?></p>
 <?php echo ($pun_config['o_search_all_forums'] == '1' || $pun_user['is_admmod'] ? '<p>'.$lang_search['Search multiple forums info'].'</p>' : '') ?>
+						<div style="clear:both;"></div>
 					</div>
 				</fieldset>
 			</div>

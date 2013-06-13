@@ -181,38 +181,11 @@ class OnEnAGros {
         return $ret;
     }
 
-    /**
-     * Calculate user's age based on birthdate
+    /** ******************************************************
      * 
-     * @return int User age
+     *     parser.php section
      * 
-     * @since OnEnAGros 1.5.3
-     */
-    public function oeag_get_age( $date ) {
-        
-        $tmp = explode("/", $date);
-
-        $d = $tmp[0];
-        $m = $tmp[1];
-        $y = $tmp[2];
-
-        $today['m'] = date('n');
-        $today['d'] = date('j');
-        $today['y'] = date('Y');
-        
-        $y = $today['y'] - $y;
-        
-        if ( $today['m'] <= $m ) {
-            if ( $m == $today['m'] ) {
-                if ( $d > $today['d'] )
-                    $y--;
-            }
-            else
-                $y--;
-        }
-        
-        return $y;
-    }
+     * ****************************************************** */
 
     /**
      * Add some custom smilies
@@ -401,11 +374,216 @@ class OnEnAGros {
         }
         return $ret;
     }
-    
-    
-    
-    
-    
+
+    /** ******************************************************
+     * 
+     *     register.php section
+     * 
+     * ****************************************************** */
+
+    /**
+     * Magick test to avoid vilain automatic inscriptions
+     * 
+     * @return string valid email if ok
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_vilain_detector() {
+        
+        global $lang_common;
+        
+        $magick = 'oeag';
+        
+        $l_m  = strlen( $magick );
+        $l_ml = strlen( $email1 );
+        
+        if ( substr( $email1, 0, $l_m ) === $magick )
+                return substr( $email1, $l_m, $l_ml );
+        else
+                message( $lang_common['Invalid email'] );
+    }
+
+    /** ******************************************************
+     * 
+     *     profile.php section
+     * 
+     * ****************************************************** */
+
+    /**
+     * Calculate user's age based on birthdate
+     * 
+     * @return int User age
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_get_age( $date ) {
+        
+        $tmp = explode("/", $date);
+
+        $d = $tmp[0];
+        $m = $tmp[1];
+        $y = $tmp[2];
+
+        $today['m'] = date('n');
+        $today['d'] = date('j');
+        $today['y'] = date('Y');
+        
+        $y = $today['y'] - $y;
+        
+        if ( $today['m'] <= $m ) {
+            if ( $m == $today['m'] ) {
+                if ( $d > $today['d'] )
+                    $y--;
+            }
+            else
+                $y--;
+        }
+        
+        return $y;
+    }
+
+    /**
+     * Display user's gender in profile view
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_prof_reg_sex_view() {
+        
+        global $user, $user_personal;
+        
+        $l   = array( $this->lang['Male'], $this->lang['Female'], $this->lang['Bigg'] );
+        $ret = array();
+        
+        $u = (int) $user['sex'];
+        
+        if ( isset( $u ) && $u >= 0 && $u < 3 ) {
+            $_user = array(
+                'sex' => $u,
+            );
+            $_user_personal = array(
+                sprintf( '<dt>%s: </dt>', $this->lang['Sex'] ),
+                sprintf( '<dd><img src="/OnEnAGros/img/s%d.gif" alt="%s" /> %s</dd>', $u, $l[$u], $l[$u] ),
+            );
+            
+            $ret = array(
+                'user'          => array_merge( $user, $_user ),
+                'user_personal' => array_merge( $user_personal, $_user_personal ),
+            );
+        }
+        
+        return $ret;
+    }
+
+    /**
+     * Display user's age in profile view
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_prof_reg_birthdate_view() {
+        
+        global $user, $user_personal;
+        
+        $ret = array();
+        
+        if ( $user['birthdate'] != '' ) {
+            $_user_personal = array(
+                sprintf( '<dt>%s: </dt>', $this->lang['Age'] ),
+                sprintf( '<dd>%d %s</dd>', $this->oeag_get_age( $user['birthdate'] ), $this->lang['Years old'] ),
+            );
+            
+            $ret = array(
+                'user_personal' => array_merge( $user_personal, $_user_personal ),
+            );
+        }
+        
+        return $ret;
+    }
+
+    public function oeag_prof_reg_personnal() {
+        
+        global $form, $_POST;
+        
+        $_form = array(
+            'birthdate'     => null,
+            'sex'           => isset( $_POST['form']['sex'] ) ? pun_trim( $_POST['form']['sex'] ) : '',
+        );
+        
+        $d = isset( $_POST['form']['birthd'] ) ? pun_trim( $_POST['form']['birthd'] ) : '';
+        $m = isset( $_POST['form']['birthm'] ) ? pun_trim( $_POST['form']['birthm'] ) : '';
+        $y = isset( $_POST['form']['birthy'] ) ? pun_trim( $_POST['form']['birthy'] ) : '';
+        
+        if ( ( is_numeric( $d ) && $d != 0 ) &&
+             ( is_numeric( $m ) && $m != 0 ) &&
+             ( is_numeric( $y ) && $y != 0 ) ) {
+                $_form['birthdate'] = "$d/$m/$y";
+        }
+        
+        return array(
+            'form' => array_merge( $form, $_form ),
+        );
+    }
+
+    public function oeag_prof_reg_sex_form() {
+        
+        global $pun_user;
+        
+        $d = $m = $y = '';
+        $l = array( "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" );
+        $thisyear = date("Y");
+        
+        if ( !empty( $pun_user['birthdate'] ) ) {
+            $t = explode( "/", $pun_user['birthdate'] );
+            $d = $t[0];
+            $m = $t[1];
+            $y = $t[2];
+        }
+        
+        echo "\t\t\t\t\t\t\t".'<label>'.$this->lang['Birthdate'].' ('.$this->lang['Age profile use'].')'."\n";
+        echo "\t\t\t\t\t\t\t".'<br />'."\n";
+        echo "\t\t\t\t\t\t\t".'<select name="form[birthd]">'."\n";
+        echo "\t\t\t\t\t\t\t".'<option value="0">--</option>'."\n";
+
+        for ( $i = 1; $i < 32; $i++ )
+            echo "\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $d == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
+
+        echo "\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t".'<select name="form[birthm]">'."\n";
+        echo "\t\t\t\t\t\t\t".'<option value="0">--</option>'."\n";
+
+        for ( $i = 1; $i < 13; $i++ )
+            echo "\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $m == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
+
+        echo "\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t".'<select name="form[birthy]">'."\n";
+        echo "\t\t\t\t\t\t\t".'<option value="0">----</option>'."\n";
+
+        for ( $i = ( $thisyear - 100 ); $i < ( $thisyear - 8 ); $i++ )
+            echo "\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $y == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
+
+        echo "\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t".'</label>'."\n";
+        
+    }
+
+    public function oeag_prof_reg_birthdate_form() {
+        
+        global $pun_user;
+?>
+							<label><?php echo $this->lang['Sex'] ?><br />
+								<select name="form[sex]">
+									<option value=""<?php echo ( $pun_user['sex'] == null ? " selected=\"selected\"" : "" ); ?>>--</option>
+									<option value="0"<?php echo ( $pun_user['sex'] == "0" ? " selected=\"selected\"" : "" ); ?>><?php echo $this->lang['Male']; ?></option>
+									<option value="1"<?php echo ( $pun_user['sex'] == "1" ? " selected=\"selected\"" : "" ); ?>><?php echo $this->lang['Female']; ?></option>
+									<option value="2"<?php echo ( $pun_user['sex'] == "2" ? " selected=\"selected\"" : "" ); ?>><?php echo $this->lang['Bigg']; ?></option>
+								</select>
+							</label>
+<?php
+    }
+
+
+
+
+
 }
 
 
