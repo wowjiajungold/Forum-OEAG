@@ -537,7 +537,7 @@ function generate_profile_menu($page = '')
 //
 // Outputs markup to display a user's avatar
 //
-function generate_avatar_markup($user_id)
+function generate_avatar_markup($user_id, $return_url=false)
 {
 	global $pun_config;
 
@@ -550,7 +550,10 @@ function generate_avatar_markup($user_id)
 
 		if (file_exists(PUN_ROOT.$path) && $img_size = getimagesize(PUN_ROOT.$path))
 		{
-			$avatar_markup = '<img src="'.pun_htmlspecialchars(get_base_url(true).'/'.$path.'?m='.filemtime(PUN_ROOT.$path)).'" '.$img_size[3].' alt="" />';
+			if ($return_url===true)
+				$avatar_markup = pun_htmlspecialchars(get_base_url(true).'/'.$path.'?m='.filemtime(PUN_ROOT.$path));
+			else
+				$avatar_markup = '<img src="'.pun_htmlspecialchars(get_base_url(true).'/'.$path.'?m='.filemtime(PUN_ROOT.$path)).'" '.$img_size[3].' alt="" />';
 			break;
 		}
 	}

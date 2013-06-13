@@ -59,6 +59,8 @@ $smilies = array(
 	':rolleyes:' => 'roll.png',
 	':cool:' => 'cool.png');
 
+extract( $oeag->oeag_custom_smilies() );
+
 //
 // Make sure all BBCodes are lower case and do a little cleanup
 //
@@ -156,11 +158,12 @@ function preparse_bbcode($text, &$errors, $is_signature = false)
 function strip_empty_bbcode($text)
 {
 	// If the message contains a code tag we have to split it up (empty tags within [code][/code] are fine)
-	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false)
+	if (strpos($text, '[code]') !== false && strpos($text, '[/code]') !== false ||
+           (strpos($text, '[noir]') !== false && strpos($text, '[/noir]') !== false))
 		list($inside, $text) = extract_blocks($text, '[code]', '[/code]');
 
 	// Remove empty tags
-	while (!is_null($new_text = preg_replace('%\[(b|u|s|ins|del|em|i|h|colou?r|quote|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]\s*\[/\1\]%', '', $text)))
+	while (!is_null($new_text = preg_replace('%\[(b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|topic|post|forum|user)(?:\=[^\]]*)?\]\s*\[/\1\]%', '', $text)))
 	{
 		if ($new_text != $text)
 			$text = $new_text;
@@ -199,7 +202,7 @@ function strip_empty_bbcode($text)
 //
 function preparse_tags($text, &$errors, $is_signature = false)
 {
-	global $lang_common, $pun_config, $pun_user;
+	global $lang_common, $pun_config, $pun_user, $oeag;
 
 	// Start off by making some arrays of bbcode tags and what we need to do with each one
 
@@ -238,6 +241,8 @@ function preparse_tags($text, &$errors, $is_signature = false)
 	);
 	// Tags we can automatically fix bad nesting
 	$tags_fix = array('quote', 'b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'h', 'topic', 'post', 'forum', 'user');
+
+	extract( $oeag->oeag_custom_tags() );
 
 	// Disallow URL tags
 	if ($pun_user['g_post_links'] != '1')
@@ -756,7 +761,7 @@ function handle_list_tag($content, $type = '*')
 //
 function do_bbcode($text, $is_signature = false)
 {
-	global $lang_common, $pun_user, $pun_config, $re_list;
+	global $lang_common, $pun_user, $pun_config, $re_list, $oeag;
 
 	if (strpos($text, '[quote') !== false)
 	{
@@ -926,6 +931,8 @@ function parse_message($text, $hide_smilies)
 //
 function clean_paragraphs($text)
 {
+	global $oeag;
+
 	// Add paragraph tag around post, but make sure there are no empty paragraphs
 
 	$text = '<p>'.$text.'</p>';

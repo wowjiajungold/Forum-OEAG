@@ -1,0 +1,148 @@
+@import url(/style/OnEnAGros-v4.3.css);
+
+/* Footer
+----------------------------------------------------------------*/
+
+.pun #brdfooter {
+	margin: 0 0 175px 0;
+}
+
+/*****************************************************************
+4. MAIN TABLES
+*****************************************************************/
+
+#punindex #brdmain .blocktable h2, #punsearch #vf h2, #punstats-users #vf h2, #punuserlist #users1 h2  {
+	background: url(/OnEnAGros/style/OnEnAGros/img/oeag-spring-2013-ft.png) 0 0 no-repeat;
+	border-radius: 0;
+	color: #fff;
+	margin: -18px 1px 0 0;
+	padding: 22px 0 10px 0;
+	text-shadow: 1px 1px 0 #000;
+	width: 100%;
+}
+
+#punindex #brdmain .blocktable h2 span, #punsearch #vf h2 span, #punstats-users #vf h2 span, #punuserlist #users1 h2 span {
+    margin: 0 0 0 25px;
+}
+
+#punindex #brdmain .blocktable h2 span.cat_desc, #punsearch #vf h2 span.cat_desc, #punstats-users #vf h2 span.cat_desc, #punuserlist #users1 h2 span.cat_desc {
+    position: relative;
+    font-size: 20px;
+    font-weight: normal;
+    left: -80px;
+    top: 11px;
+    z-index: 9999;
+}
+
+#punindex #brdmain .blocktable h2 span.cat_desc a {
+    color: #fff;
+    text-shadow: 0 1px 0 #000;
+}
+
+#punindex #brdmain .blocktable h2 span.cat_desc a:hover {
+    color: #0069db;
+}
+
+#punindex .blocktable th.tcl, #punsearch #vf th.tcl {
+	z-index: 0;
+}
+
+/*****************************************************************
+COLOUR SCHEME
+*****************************************************************/
+
+/* Basic defaults and Common Items
+----------------------------------------------------------------*/
+
+body {
+	background: #EFEFEF url(/OnEnAGros/style/OnEnAGros/img/oeag-spring-2013-bg.jpg) bottom center no-repeat;
+}
+
+#brdtitle {
+	background: url(/OnEnAGros/style/OnEnAGros/img/oeag-spring-2013_.jpg) center top no-repeat;
+}
+
+.pun a:hover, .pun a:active, .pun a:focus {
+	color: #0069db;
+}
+
+/* Main Tables
+----------------------------------------------------------------*/
+
+.pun .blocktable tr.rowodd:hover a, .pun .blocktable tr.roweven:hover a {
+	/*color: #222;*/
+}
+
+.pun .blocktable table {
+	background: url(/OnEnAGros/style/OnEnAGros/img/oeag-spring-blocktable.png) center top repeat-y;
+	border-collapse: separate;
+	border-radius: 6px;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 5px solid transparent;
+}
+
+.pun .blocktable table thead {
+	background: transparent;
+	color: #fff;
+	text-shadow: 0 1px 1px #000;
+}
+
+.pun .blocktable table thead th.tcr {
+	border-radius: 0 6px 0 0;
+	height: 40px;
+}
+
+.pun .blocktable thead tr {
+	
+}
+
+.pun .blocktable thead tr th {
+	padding: 0;
+	position: relative;
+	z-index: 9999;
+}
+
+.pun .blocktable thead tr th.tcl {
+	color: transparent;
+}
+
+.pun .blocktable table tbody tr {
+	border-collapse: separate;
+}
+
+.pun .blocktable table tbody td {
+	background: #fff;
+}
+
+.pun .blocktable table tbody tr:first-child .tcl {
+	border-top-left-radius: 6px;
+}
+
+.pun .blocktable table tbody tr:first-child .tcr {
+	border-top-right-radius: 6px;
+}
+
+.pun .blocktable table tbody tr:last-child .tcl {
+	border-bottom-left-radius: 6px;
+}
+
+.pun .blocktable table tbody tr:last-child .tcr {
+	border-bottom-right-radius: 6px;
+}
+
+
+/* Status Indicators
+----------------------------------------------------------------*/
+
+.pun .icon {
+    background: url(/OnEnAGros/style/OnEnAGros/img/koff.png) top left no-repeat;
+}
+.pun .inew .icon {
+    background: url(/OnEnAGros/style/OnEnAGros/img/kon.png) top left no-repeat;
+}
+
+/* Private messages
+----------------------------------------------------------------*/
+
+#brdwelcome span.user_mp.gotapm acronym {color: #0069db;}

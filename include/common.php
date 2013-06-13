@@ -197,3 +197,7 @@ if (!defined('PUN_SEARCH_MAX_WORD'))
 
 if (!defined('FORUM_MAX_COOKIE_SIZE'))
 	define('FORUM_MAX_COOKIE_SIZE', 4048);
+
+// Load OEAG special class
+require PUN_ROOT.'OnEnAGros/OnEnAGros.php';
+$oeag = new OnEnAGros();
