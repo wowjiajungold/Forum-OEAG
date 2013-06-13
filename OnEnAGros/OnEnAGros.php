@@ -445,6 +445,8 @@ class OnEnAGros {
     /**
      * Display user's gender in profile view
      * 
+     * @return array user and user_info modified content
+     * 
      * @since OnEnAGros 1.5.3
      */
     public function oeag_prof_reg_sex_view() {
@@ -477,6 +479,8 @@ class OnEnAGros {
     /**
      * Display user's age in profile view
      * 
+     * @return array user_personnal modified content
+     * 
      * @since OnEnAGros 1.5.3
      */
     public function oeag_prof_reg_birthdate_view() {
@@ -499,13 +503,20 @@ class OnEnAGros {
         return $ret;
     }
 
+    /**
+     * Add user sex & birthdate in profile
+     * 
+     * @return array user_personnal modified content
+     * 
+     * @since OnEnAGros 1.5.3
+     */
     public function oeag_prof_reg_personnal() {
         
         global $form, $_POST;
         
         $_form = array(
-            'birthdate'     => null,
-            'sex'           => isset( $_POST['form']['sex'] ) ? pun_trim( $_POST['form']['sex'] ) : '',
+            'birthdate'     => isset( $_POST['form']['birthdate'] ) ? pun_trim( $_POST['form']['birthdate'] ) : '',
+            'sex'           => isset( $_POST['form']['sex'] )       ? pun_trim( $_POST['form']['sex'] )       : '',
         );
         
         $d = isset( $_POST['form']['birthd'] ) ? pun_trim( $_POST['form']['birthd'] ) : '';
@@ -523,6 +534,11 @@ class OnEnAGros {
         );
     }
 
+    /**
+     * Add user sex input in profile form
+     * 
+     * @since OnEnAGros 1.5.3
+     */
     public function oeag_prof_reg_sex_form() {
         
         global $pun_user;
@@ -539,50 +555,121 @@ class OnEnAGros {
         }
         
         echo "\t\t\t\t\t\t\t".'<label>'.$this->lang['Birthdate'].' ('.$this->lang['Age profile use'].')'."\n";
-        echo "\t\t\t\t\t\t\t".'<br />'."\n";
-        echo "\t\t\t\t\t\t\t".'<select name="form[birthd]">'."\n";
-        echo "\t\t\t\t\t\t\t".'<option value="0">--</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'<br />'."\n";
+        echo "\t\t\t\t\t\t\t\t".'<select name="form[birthd]">'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="0">--</option>'."\n";
 
         for ( $i = 1; $i < 32; $i++ )
-            echo "\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $d == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
+            echo "\t\t\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $d == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
 
-        echo "\t\t\t\t\t\t\t".'</select>'."\n";
-        echo "\t\t\t\t\t\t\t".'<select name="form[birthm]">'."\n";
-        echo "\t\t\t\t\t\t\t".'<option value="0">--</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'<select name="form[birthm]">'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="0">--</option>'."\n";
 
         for ( $i = 1; $i < 13; $i++ )
-            echo "\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $m == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
+            echo "\t\t\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $m == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
 
-        echo "\t\t\t\t\t\t\t".'</select>'."\n";
-        echo "\t\t\t\t\t\t\t".'<select name="form[birthy]">'."\n";
-        echo "\t\t\t\t\t\t\t".'<option value="0">----</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'<select name="form[birthy]">'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="0">----</option>'."\n";
 
         for ( $i = ( $thisyear - 100 ); $i < ( $thisyear - 8 ); $i++ )
-            echo "\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $y == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
+            echo "\t\t\t\t\t\t\t\t\t".'<option value="'.$i.'"'.( $y == $i ? ' selected="selected"' : '' ).'>'.$i.'</option>'."\n";
 
-        echo "\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'</select>'."\n";
         echo "\t\t\t\t\t\t\t".'</label>'."\n";
         
     }
 
+    /**
+     * Add user birthdate input in profile form
+     * 
+     * @since OnEnAGros 1.5.3
+     */
     public function oeag_prof_reg_birthdate_form() {
         
         global $pun_user;
-?>
-							<label><?php echo $this->lang['Sex'] ?><br />
-								<select name="form[sex]">
-									<option value=""<?php echo ( $pun_user['sex'] == null ? " selected=\"selected\"" : "" ); ?>>--</option>
-									<option value="0"<?php echo ( $pun_user['sex'] == "0" ? " selected=\"selected\"" : "" ); ?>><?php echo $this->lang['Male']; ?></option>
-									<option value="1"<?php echo ( $pun_user['sex'] == "1" ? " selected=\"selected\"" : "" ); ?>><?php echo $this->lang['Female']; ?></option>
-									<option value="2"<?php echo ( $pun_user['sex'] == "2" ? " selected=\"selected\"" : "" ); ?>><?php echo $this->lang['Bigg']; ?></option>
-								</select>
-							</label>
-<?php
+
+        echo "\t\t\t\t\t\t\t".'<label>'.$this->lang['Sex'].'<br />'."\n";
+        echo "\t\t\t\t\t\t\t\t".'<select name="form[sex]">'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value=""'.( $pun_user['sex'] == null ? ' selected="selected"' : '' ).'>--</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="0"'.( $pun_user['sex'] == "0" ? ' selected="selected"' : '' ).'>'.$this->lang['Male'].'</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="1"'.( $pun_user['sex'] == "1" ? ' selected="selected"' : '' ).'>'.$this->lang['Female'].'</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="2"'.( $pun_user['sex'] == "2" ? ' selected="selected"' : '' ).'>'.$this->lang['Bigg'].'</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'</select>'."\n";
+        echo "\t\t\t\t\t\t\t".'</label>'."\n";
+
     }
 
+    
 
 
+    /**
+     * Check for submitted posts while we were typing current post
+     * 
+     * @return boolead $revision true if someone posted anything new, false else
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_check_revision() {
+        
+        global $cur_posting, $_POST, $tid;
+        
+        $revision = false;
+        
+        if ( isset( $_POST['form_time'] ) &&
+             isset( $cur_posting['last_post'] ) &&
+             $tid != 0 && 
+             $_POST['form_time'] < $cur_posting['last_post'] )
+            $revision = true;
+        
+        return $revision;
+    }
 
+    /**
+     * Check for double posts: is current user the thread's last poster?
+     * 
+     * @return array error message
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_check_double_post() {
+        
+        global $tid, $pun_user, $cur_posting, $_POST, $errors;
+
+        $ret = array();
+
+        if ( $tid && !isset( $_POST['preview'] ) )
+            if( $pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && ( time() - $cur_posting['last_post'] ) < ( $pun_user['g_double_post'] * 60 ) )
+                $_errors = sprintf( $this->lang['Double post'], $pun_user['g_double_post'] );
+        
+        return array(
+            'errors' => array_merge( $errors, $_errors ),
+        );
+    }
+
+    /**
+     * Display revision announce if needed.
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_check_revision_view() {
+        
+        global $revision;
+        
+        if ( !$revision )
+            return false;
+        
+        echo '<div id="postrevision" class="blockform">'."\n";
+        echo '    <h2><span>'.$this->lang['Post revision'].'</span></h2>'."\n";
+        echo '    <div class="box">'."\n";
+        echo '        <div class="inform">'."\n";
+        echo '            <p style="padding:40px 0 0 10px;">'.$this->lang['Post revision info'].'</p>'."\n";
+        echo '        </div>'."\n";
+        echo '    </div>'."\n";
+        echo '</div>'."\n";
+        echo '<br />'."\n";
+    }
 
 }
 

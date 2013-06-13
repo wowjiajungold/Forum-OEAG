@@ -31,6 +31,8 @@ if (!$db->num_rows($result))
 $cur_posting = $db->fetch_assoc($result);
 $is_subscribed = $tid && $cur_posting['is_subscribed'];
 
+$revision = $oeag->oeag_check_revision();
+
 // Is someone trying to post into a redirect forum?
 if ($cur_posting['redirect_url'] != '')
 	message($lang_common['Bad request']);
@@ -62,6 +64,8 @@ if (isset($_POST['form_sent']))
 	// Flood protection
 	if (!isset($_POST['preview']) && $pun_user['last_post'] != '' && (time() - $pun_user['last_post']) < $pun_user['g_post_flood'])
 		$errors[] = sprintf($lang_post['Flood start'], $pun_user['g_post_flood'], $pun_user['g_post_flood'] - (time() - $pun_user['last_post']));
+
+	extract( $oeag->oeag_check_double_post() );
 
 	// If it's a new topic
 	if ($fid)
@@ -554,6 +558,8 @@ require PUN_ROOT.'header.php';
 </div>
 
 <?php
+
+$oeag->oeag_check_revision_view();
 
 // If there are errors, we display them
 if (!empty($errors))
