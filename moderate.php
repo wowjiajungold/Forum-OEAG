@@ -397,7 +397,7 @@ if (isset($_GET['tid']))
 	<div class="inbox crumbsplus">
 		<div class="pagepost">
 			<p class="pagelink conl"><?php echo $paging_links ?></p>
-			<p class="conr modbuttons"><input type="submit" name="split_posts" value="<?php echo $lang_misc['Split'] ?>"<?php echo $button_status ?> /> <input type="submit" name="delete_posts" value="<?php echo $lang_misc['Delete'] ?>"<?php echo $button_status ?> /></p>
+			<p class="conr modbuttons"><a id="multiselectall" href="#">Tout sélectionner</a> <input type="submit" name="split_posts" value="<?php echo $lang_misc['Split'] ?>"<?php echo $button_status ?> /> <input type="submit" name="delete_posts" value="<?php echo $lang_misc['Delete'] ?>"<?php echo $button_status ?> /></p>
 			<div class="clearer"></div>
 		</div>
 		<ul class="crumbs">

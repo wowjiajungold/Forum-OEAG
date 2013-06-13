@@ -627,6 +627,30 @@ class OnEnAGros {
     }
 
     /**
+     * Display user's age in profile view
+     * 
+     * @return array user_personnal modified content
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_double_post_view() {
+        
+        global $group;
+        
+        echo "\t\t\t\t\t\t\t\t".'<tr>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<th scope="row">'.$this->lang['Double post label'].'</th>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<td>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t\t".'<input type="text" name="double_post" size="5" maxlength="4" value="'.$group['g_double_post'].'" tabindex="26" />'."\n";
+        echo "\t\t\t\t\t\t\t\t\t\t".'<span>'.$this->lang['Double post help'].'</span>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'</td>'."\n";
+        echo "\t\t\t\t\t\t\t\t".'</tr>'."\n";
+    }
+
+    public function oeag_double_post_form() {
+         
+    }
+
+    /**
      * Check for double posts: is current user the thread's last poster?
      * 
      * @return array error message
@@ -670,6 +694,8 @@ class OnEnAGros {
         echo '</div>'."\n";
         echo '<br />'."\n";
     }
+
+
 
 }
 

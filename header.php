@@ -95,8 +95,8 @@ if (!defined('PUN_ALLOW_INDEX'))
     <link rel="stylesheet" type="text/css" href="style/<?php echo $pun_user['style'].'.css' ?>" />
     <link rel="shortcut icon" href="style/OnEnAGros/img/favicon.png" />
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-    <script type="text/javascript" src="include/custom.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="OnEnAGros/js/custom.js"></script>
 <?php
 
 if (defined('PUN_ADMIN_CONSOLE'))
