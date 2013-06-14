@@ -59,6 +59,7 @@ $smilies = array(
 	':rolleyes:' => 'roll.png',
 	':cool:' => 'cool.png');
 
+if ( $oeag === null ) global $oeag;
 extract( $oeag->oeag_custom_smilies() );
 
 //

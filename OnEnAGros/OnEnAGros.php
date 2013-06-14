@@ -194,7 +194,7 @@ class OnEnAGros {
      * 
      * @since OnEnAGros 1.5.3
      */
-    public function oeag_custom_smilies() {
+    public static function oeag_custom_smilies() {
         
         global $smilies;
         
@@ -695,7 +695,17 @@ class OnEnAGros {
         echo '<br />'."\n";
     }
 
-
+    
+    public function oeag_get_fluxtoolbar() {
+        if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php'))
+            include FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php';
+        else
+        {
+            require_once PUN_ROOT.'include/cache_fluxtoolbar.php';
+            generate_ftb_cache('form');
+            require FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php';
+        }
+    }
 
 }
 
