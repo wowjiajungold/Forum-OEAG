@@ -11,4 +11,19 @@ $(window).load(function() {
         }
         return false;
     });
+    
+    $('#wp-synchro').click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'GET',
+            url:  '/wp_synchro.php',
+            success: function(data) {
+                $('#wp-synchro').html(data);
+            },
+            error: function() {
+                $('#wp-synchro').html('… Y a du avoir un problème au moment où j’ai mis le feu…');
+            }
+        });
+        
+    });
 });

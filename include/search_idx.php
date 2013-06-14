@@ -169,6 +169,8 @@ function update_search_index($mode, $post_id, $message, $subject = null)
 	// Remove any bbcode that we shouldn't index
 	$message = strip_bbcode($message);
 
+	$oeag->oeag_get_fluxtoolbar('tag_search');
+
 	// Split old and new post/subject to obtain array of 'words'
 	$words_message = split_words($message, true);
 	$words_subject = ($subject) ? split_words($subject, true) : array();

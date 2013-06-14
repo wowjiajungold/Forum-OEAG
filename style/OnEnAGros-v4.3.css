@@ -2243,6 +2243,31 @@ table thead {
 }
 
 
+#wp-synchro {
+    float: right;
+    padding: 0.25em 0.5em;
+    width:20em;
+}
+
+#wp-synchro a {
+    opacity: 0.75;
+}
+
+#wp-synchro a:hover {
+    opacity: 1.0;
+}
+
+#wp-synchro a,
+#wp-synchro a:hover {
+    -webkit-transition: opacity 0.3s ease;
+       -moz-transition: opacity 0.3s ease;
+         -o-transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease;
+}
+
+#wp-synchro p {
+    font-size: 0.8em;
+}
 
 
 

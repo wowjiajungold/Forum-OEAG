@@ -696,17 +696,16 @@ class OnEnAGros {
     }
 
     
-    public function oeag_get_fluxtoolbar() {
-        if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php'))
-            include FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php';
+    public function oeag_get_fluxtoolbar( $wut = 'form' ) {
+        if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_'.$wut.'.php'))
+            include FORUM_CACHE_DIR.'cache_fluxtoolbar_'.$wut.'.php';
         else
         {
             require_once PUN_ROOT.'include/cache_fluxtoolbar.php';
-            generate_ftb_cache('form');
-            require FORUM_CACHE_DIR.'cache_fluxtoolbar_form.php';
+            generate_ftb_cache( $wut );
+            require FORUM_CACHE_DIR.'cache_fluxtoolbar_'.$wut.'.php';
         }
     }
-
 }
 
 

@@ -1266,6 +1266,12 @@ else
 					<fieldset>
 						<legend><?php echo $lang_profile['Username and pass legend'] ?></legend>
 						<div class="infldset">
+<?php if ( $pun_user['id'] == 269 || $pun_user['id'] == 3 ) : ?>
+							<div id="wp-synchro">
+								<a href="#"><img src="OnEnAGros/img/onenagros-btn.png" alt="Créer un compte OnEnAGros!" /></a>
+								<p><small>Ce compte vous donnera accès à de nouvelles fonctionnalités du site</small></p>
+							</div>
+<?php endif; ?>
 							<input type="hidden" name="form_sent" value="1" />
 							<?php echo $username_field ?>
 <?php if ($pun_user['id'] == $id || $pun_user['g_id'] == PUN_ADMIN || ($user['g_moderator'] == '0' && $pun_user['g_mod_change_passwords'] == '1')): ?>							<p class="actions"><span><a href="profile.php?action=change_pass&amp;id=<?php echo $id ?>"><?php echo $lang_profile['Change pass'] ?></a></span></p>

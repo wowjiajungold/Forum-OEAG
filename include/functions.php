@@ -446,6 +446,8 @@ function check_username($username, $exclude_id = null)
 	else if (preg_match('%(?:\[/?(?:b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|\*|topic|post|forum|user)\]|\[(?:img|url|quote|list)=)%i', $username))
 		$errors[] = $lang_prof_reg['Username BBCode'];
 
+	$oeag->oeag_get_fluxtoolbar('tag_check');
+
 	// Check username for any censored words
 	if ($pun_config['o_censoring'] == '1' && censor_words($username) != $username)
 		$errors[] = $lang_register['Username censor'];
