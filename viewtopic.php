@@ -265,6 +265,8 @@ while ($cur_post = $db->fetch_assoc($result))
 			else if ($cur_post['email_setting'] == '1' && !$pun_user['is_guest'] && $pun_user['g_send_email'] == '1')
 				$user_contacts[] = '<span class="email"><a href="misc.php?email='.$cur_post['poster_id'].'">'.$lang_common['Email'].'</a></span>';
 
+			require PUN_ROOT.'plugins/apms/viewtopic_add1.php';
+
 			if ($cur_post['url'] != '')
 			{
 				if ($pun_config['o_censoring'] == '1')

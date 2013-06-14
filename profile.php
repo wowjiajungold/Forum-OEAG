@@ -640,6 +640,8 @@ else if (isset($_POST['delete_user']) || isset($_POST['delete_user_comply']))
 
 		generate_users_info_cache();
 
+		require PUN_ROOT.'plugins/apms/profile_add1.php';
+
 		redirect('index.php', $lang_profile['User delete redirect']);
 	}
 
@@ -908,6 +910,9 @@ else if (isset($_POST['form_sent']))
 				'email_setting'			=> intval($_POST['form']['email_setting']),
 				'notify_with_post'		=> isset($_POST['form']['notify_with_post']) ? '1' : '0',
 				'auto_notify'			=> isset($_POST['form']['auto_notify']) ? '1' : '0',
+				'use_pm'			=> isset($_POST['form']['use_pm']) ? '1' : '0',
+				'notify_pm'			=> isset($_POST['form']['notify_pm']) ? '1' : '0',
+				'notify_pm_full'		=> isset($_POST['form']['notify_pm_full']) ? '1' : '0',
 			);
 
 			if ($form['email_setting'] < 0 || $form['email_setting'] > 2)
@@ -991,7 +996,7 @@ else if (isset($_POST['form_sent']))
 }
 
 
-$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.signature, u.sex, u.birthdate, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, u.last_visit, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
+$result = $db->query('SELECT u.username, u.email, u.title, u.realname, u.url, u.jabber, u.icq, u.msn, u.aim, u.yahoo, u.location, u.signature, u.sex, u.birthdate, u.disp_topics, u.disp_posts, u.email_setting, u.notify_with_post, u.notify_pm, u.notify_pm_full, u.use_pm, u.auto_notify, u.show_smilies, u.show_img, u.show_img_sig, u.show_avatars, u.show_sig, u.timezone, u.dst, u.language, u.style, u.num_posts, u.last_post, u.registered, u.registration_ip, u.admin_note, u.date_format, u.time_format, u.last_visit, g.g_id, g.g_user_title, g.g_moderator FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 if (!$db->num_rows($result))
 	message($lang_common['Bad request'], false, '404 Not Found');
 
@@ -1057,6 +1062,8 @@ if ($pun_user['id'] != $id &&																	// If we aren't the user (i.e. edi
 		$user_personal[] = '<dt>'.$lang_common['Email'].'</dt>';
 		$user_personal[] = '<dd><span class="email">'.$email_field.'</span></dd>';
 	}
+
+	require PUN_ROOT.'plugins/apms/profile_add3.php';
 
 	$user_messaging = array();
 
@@ -1219,6 +1226,8 @@ else
 				$username_field = '<p>'.sprintf($lang_profile['Username info'], pun_htmlspecialchars($user['username'])).'</p>'."\n";
 
 			$email_field = '<label class="required"><strong>'.$lang_common['Email'].' <span>'.$lang_common['Required'].'</span></strong><br /><input type="text" name="req_email" value="'.$user['email'].'" size="40" maxlength="80" /><br /></label><p><span class="email"><a href="misc.php?email='.$id.'">'.$lang_common['Send email'].'</a></span></p>'."\n";
+
+			require PUN_ROOT.'plugins/apms/profile_add4.php';
 		}
 		else
 		{
@@ -1691,13 +1700,15 @@ else
 						</div>
 					</fieldset>
 				</div>
-<?php endif; ?>				<p class="buttons"><input type="submit" name="update" value="<?php echo $lang_common['Submit'] ?>" /> <?php echo $lang_profile['Instructions'] ?></p>
+<?php endif; ?>				<?php require PUN_ROOT.'plugins/apms/profile_add5.php'; ?>
+				<p class="buttons"><input type="submit" name="update" value="<?php echo $lang_common['Submit'] ?>" /> <?php echo $lang_profile['Instructions'] ?></p>
 			</form>
 		</div>
 	</div>
 <?php
 
 	}
+
 	else if ($section == 'admin')
 	{
 		if (!$pun_user['is_admmod'] || ($pun_user['g_moderator'] == '1' && $pun_user['g_mod_ban_users'] == '0'))

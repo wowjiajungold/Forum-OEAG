@@ -246,6 +246,8 @@ else
 	$page_statusinfo[] = '<li class="nav user_navprofile">';
 	$page_statusinfo[] = '<span class="user_profile"><a class="brdmenu" href="profile.php?id='.$pun_user['id'].'">'.$lang_common['Profile'].'</a></span>';
 	
+	require PUN_ROOT.'plugins/apms/header_add1.php';
+	
 	$page_statusinfo[] = '<span class="user_logout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'">'.$lang_common['Logout'].'</a></span>';
 	$page_statusinfo[] = '</li>';
 

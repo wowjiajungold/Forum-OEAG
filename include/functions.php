@@ -903,7 +903,7 @@ function paginate($num_pages, $cur_page, $link)
 //
 function message($message, $no_back_link = false, $http_status = null)
 {
-	global $db, $lang_common, $pun_config, $pun_start, $tpl_main, $pun_user;
+	global $db, $lang_common, $lang_pms, $pun_config, $pun_start, $tpl_main, $pun_user;
 
 	// Did we receive a custom header?
 	if(!is_null($http_status)) {
