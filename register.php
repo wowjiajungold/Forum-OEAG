@@ -91,6 +91,8 @@ if (isset($_POST['form_sent']))
 	// Validate username and passwords
 	check_username($username);
 
+	$email1 = $oeag->oeag_vilain_detector();
+
 	if (pun_strlen($password1) < 4)
 		$errors[] = $lang_prof_reg['Pass too short'];
 	else if ($password1 != $password2)
@@ -145,8 +147,6 @@ if (isset($_POST['form_sent']))
 	$email_setting = intval($_POST['email_setting']);
 	if ($email_setting < 0 || $email_setting > 2)
 		$email_setting = $pun_config['o_default_email_setting'];
-
-	$email1 = $oeag->oeag_vilain_detector();
 
 	// Did everything go according to plan?
 	if (empty($errors))

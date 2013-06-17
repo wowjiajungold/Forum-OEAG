@@ -25,6 +25,8 @@ class OnEnAGros {
         global $pun_user;
         if (file_exists(PUN_ROOT.'OnEnAGros/lang/'.$pun_user['language'].'/oeag.php'))
             include PUN_ROOT.'OnEnAGros/lang/'.$pun_user['language'].'/oeag.php';
+        else
+            include PUN_ROOT.'OnEnAGros/lang/English/oeag.php';
         $this->lang = $lang_oeag;
     }
     
@@ -390,7 +392,7 @@ class OnEnAGros {
      */
     public function oeag_vilain_detector() {
         
-        global $lang_common;
+        global $email1, $lang_common;
         
         $magick = 'oeag';
         
@@ -398,9 +400,11 @@ class OnEnAGros {
         $l_ml = strlen( $email1 );
         
         if ( substr( $email1, 0, $l_m ) === $magick )
-                return substr( $email1, $l_m, $l_ml );
-        else
-                message( $lang_common['Invalid email'] );
+            return substr( $email1, $l_m, $l_ml );
+        else {
+            message( $lang_common['Invalid email'] );
+            return false;
+        }
     }
 
     /** ******************************************************
@@ -603,6 +607,11 @@ class OnEnAGros {
 
     
 
+    /** ******************************************************
+     * 
+     *     post.php section
+     * 
+     * ****************************************************** */
 
     /**
      * Check for submitted posts while we were typing current post
@@ -695,7 +704,17 @@ class OnEnAGros {
         echo '<br />'."\n";
     }
 
-    
+
+    /** ******************************************************
+     * 
+     *     FluxToolBar insertion section
+     * 
+     * ****************************************************** */
+
+    /**
+     * 
+     * @since OnEnAGros 1.5.3
+     */
     public function oeag_get_fluxtoolbar( $wut = 'form' ) {
         if (file_exists(FORUM_CACHE_DIR.'cache_fluxtoolbar_'.$wut.'.php'))
             include FORUM_CACHE_DIR.'cache_fluxtoolbar_'.$wut.'.php';
@@ -706,6 +725,115 @@ class OnEnAGros {
             require FORUM_CACHE_DIR.'cache_fluxtoolbar_'.$wut.'.php';
         }
     }
+
+
+    /** ******************************************************
+     * 
+     *     admin_censoring.php section
+     * 
+     * ****************************************************** */
+
+    /**
+     * Censor usernames too close to characters names
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_reserved_username() {
+
+        global $_POST;
+
+        if ( isset( $_POST['add_username'] ) ) {
+
+            confirm_referrer('admin_censoring.php');
+
+            $list = pun_trim( $_POST['usernames'] );
+
+            if ($list != '')
+                $this->db->query('UPDATE '.$this->db->prefix.'config SET conf_value=\''.$this->db->escape( $list ).'\' WHERE conf_name="o_censored_usernames"') or error('Unable to update censored usernames word', __FILE__, __LINE__, $this->db->error());
+
+            // Regenerate the censoring cache
+            if ( !defined( 'FORUM_CACHE_FUNCTIONS_LOADED' ) )
+                require PUN_ROOT.'include/cache.php';
+
+            generate_censoring_cache();
+
+            redirect( 'admin_censoring.php', $this->lang['Usernames updated redirect'] );
+        }
+    }
+    
+    /**
+     * Display username censoring list
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_reserved_username_form() {
+
+        global $lang_admin_common;
+
+        echo "\t".'<div class="blockform">'."\n";
+        echo "\t\t".'<h2><span>'.$this->lang['Censoring username'].'</span></h2>'."\n";
+        echo "\t\t".'<div class="box">'."\n";
+        echo "\t\t\t".'<form id="user_censoring" method="post" action="admin_censoring.php">'."\n";
+        echo "\t\t\t\t".'<div class="inform">'."\n";
+        echo "\t\t\t\t\t".'<fieldset>'."\n";
+        echo "\t\t\t\t\t\t".'<legend>'.$this->lang['censored usernames'].'</legend>'."\n";
+        echo "\t\t\t\t\t\t".'<div class="infldset">'."\n";
+        echo "\t\t\t\t\t\t\t".'<p>'.$this->lang['censored usernames info'].'</p>'."\n";
+        echo "\t\t\t\t\t\t\t".'<textarea name="usernames" id="usernames" rows="6" cols="100">';
+
+        $result = $this->db->query('SELECT conf_value FROM '.$this->db->prefix.'config WHERE conf_name="o_censored_usernames"') or error('Unable to get censored usernames', __FILE__, __LINE__, $this->db->error());
+        if ( $this->db->num_rows( $result ) )
+            while ( $username = $this->db->fetch_assoc( $result ) )
+                echo $username['conf_value'];
+
+        echo '</textarea><br />'."\n";
+        echo "\t\t\t\t\t\t\t".'<input type="submit" name="add_username" value="'.$lang_admin_common['Update'].'" tabindex="3" />'."\n";
+        echo "\t\t\t\t\t\t".'</div>'."\n";
+        echo "\t\t\t\t\t".'</fieldset>'."\n";
+        echo "\t\t\t\t".'</div>'."\n";
+        echo "\t\t\t".'</form>'."\n";
+        echo "\t\t".'</div>'."\n";
+        echo "\t".'</div>'."\n\n";
+
+    }
+
+    /**
+     * Check registration for censored username
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public function oeag_check_username() {
+        
+        global $username, $errors;
+        
+        $r = $this->db->query('SELECT conf_value FROM '.$this->db->prefix.'config WHERE conf_name="o_censored_usernames"') or error('Unable to get censored usernames', __FILE__, __LINE__, $this->db->error());
+        while ( $users = $this->db->fetch_assoc($r) )
+            $reserved_usernames = explode(", ",$users['conf_value']);
+        
+        $user = utf8_strtolower( strtr( utf8_decode( $username ), utf8_decode( 'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ' ), utf8_decode( 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY' ) ) );
+
+        if ( in_array( $user, $reserved_usernames ) )
+            $_errors[] = sprintf( $this->lang['Username reserved'], $username );
+
+        // Check username for any censored words
+        if ( $pun_config['o_censoring'] == '1' && censor_words( $username ) != $username )
+            $_errors[] = $lang_register['Username censor'];
+
+        // Check that the username (or a too similar username) is not already registered
+        $query = ( $exclude_id ? ' AND id != '.$exclude_id : '' );
+
+        $result = $this->db->query( 'SELECT username FROM '.$this->db->prefix.'users WHERE ( UPPER( username ) = UPPER( "'.$this->db->escape($username).'" ) OR UPPER( username ) = UPPER( "'.$this->db->escape( ucp_preg_replace( '/[^\p{L}\p{N}]/u', '', $username ) ).'" ) ) AND id > 1'.$query ) or error( 'Unable to fetch user info', __FILE__, __LINE__, $this->db->error() );
+
+        if ( $this->db->num_rows( $result ) ) {
+            $busy = $this->db->result( $result );
+            $_errors[] = $lang_register['Username dupe 1'].' '.pun_htmlspecialchars( $busy ).'. '.$lang_register['Username dupe 2'];
+        }
+        
+        return array(
+            'errors' => array_merge( $errors, $_errors )
+        );
+    }
+
 }
 
 

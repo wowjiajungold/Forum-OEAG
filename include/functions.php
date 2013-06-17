@@ -427,7 +427,7 @@ function check_bans()
 //
 function check_username($username, $exclude_id = null)
 {
-	global $db, $pun_config, $errors, $lang_prof_reg, $lang_register, $lang_common, $pun_bans;
+	global $db, $pun_config, $errors, $lang_prof_reg, $lang_register, $lang_common, $pun_bans, $oeag;
 
 	// Convert multiple whitespace characters into one (to prevent people from registering with indistinguishable usernames)
 	$username = preg_replace('%\s+%s', ' ', $username);
@@ -446,7 +446,7 @@ function check_username($username, $exclude_id = null)
 	else if (preg_match('%(?:\[/?(?:b|u|s|ins|del|em|i|h|colou?r|quote|code|img|url|email|list|\*|topic|post|forum|user)\]|\[(?:img|url|quote|list)=)%i', $username))
 		$errors[] = $lang_prof_reg['Username BBCode'];
 
-	$oeag->oeag_get_fluxtoolbar('tag_check');
+	//$oeag->oeag_get_fluxtoolbar('tag_check');
 
 	// Check username for any censored words
 	if ($pun_config['o_censoring'] == '1' && censor_words($username) != $username)
@@ -462,6 +462,8 @@ function check_username($username, $exclude_id = null)
 		$busy = $db->result($result);
 		$errors[] = $lang_register['Username dupe 1'].' '.pun_htmlspecialchars($busy).'. '.$lang_register['Username dupe 2'];
 	}
+
+	extract( $oeag->oeag_check_username() );
 
 	// Check username for any banned usernames
 	foreach ($pun_bans as $cur_ban)

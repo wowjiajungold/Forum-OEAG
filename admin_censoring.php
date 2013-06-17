@@ -84,12 +84,16 @@ else if (isset($_POST['remove']))
 	redirect('admin_censoring.php',  $lang_admin_censoring['Word removed redirect']);
 }
 
+$oeag->oeag_reserved_username();
+
 $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_admin_common['Admin'], $lang_admin_common['Censoring']);
 $focus_element = array('censoring', 'new_search_for');
 define('PUN_ACTIVE_PAGE', 'admin');
 require PUN_ROOT.'header.php';
 
 generate_admin_menu('censoring');
+
+$oeag->oeag_reserved_username_form();
 
 ?>
 	<div class="blockform">
