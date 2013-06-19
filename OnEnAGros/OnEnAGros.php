@@ -128,11 +128,11 @@ class OnEnAGros {
         global $cur_post, $username;
         
         if( $cur_post['sex'] != '' && in_array( $cur_post['sex'], array( 0, 1, 2 ) ) ) {
-            
-            $src = 'OnEnAGros/img/s'.$cur_post['sex'].'.gif';
-            $alt = $cur_post['sex'] ? $this->lang['Female'] : $this->lang['Male'];
-
-            $username = sprintf( '<img src="%s" alt="%s" /> <span>%s</span>', $src, $alt, $username );
+            if ( $cur_post['sex'] == 0 )
+                $src = 'male';
+            else if ( $cur_post['sex'] == 1 )
+                $src = 'female';
+            $username = sprintf( '<i class="icon-%s"></i> <span>%s</span>', $src, $username );
         }
     }
 
@@ -832,6 +832,76 @@ class OnEnAGros {
         return array(
             'errors' => array_merge( $errors, $_errors )
         );
+    }
+/**
+     * Random quote generator
+     * 
+     * @return string a random quote
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    function oeag_random_quote() {
+        $quotes = array(
+            "le forum qui commence à rigoler à partir de 6",
+            "le forum qui respire pas la compote",
+            "le forum qui sait si il va y avoir du vent",
+            "le forum qui fait des flans",
+            "le forum qui présente vos hommages au roi Arthur",
+            "le forum qui sait où est la poulette",
+            "le forum qui met du beurre au fond du plat",
+            "le forum officiellement cul nu",
+            "le forum qui lève le doigt pour aller pisser",
+            "le forum qui n'a pas inventé le plat de la main morte",
+            "le forum qui prend tout le fromage gratiné",
+            "le forum qui ne se vautre pas dans la bouffe",
+            "le forum qui vous envoie le registre à travers la gueule",
+            "le forum qui n'a pas eu le temps d'enlever son armure",
+            "le forum qui change pas assiette pour fromage",
+            "le forum fort en pomme. ",
+            "le forum qui apprécie les fruits au sirop",
+            "le forum qui fait flamber la moitié de la Bretagne",
+            "le forum qui habite pas à six heures de marche avec un autre mec",
+            "le forum qui marche alternativement à cloche pied sur chaque pied",
+            "le forum qui se saigne aux quatre parfums du matin au soir",
+            "le forum qui fait construire des buffets à vaisselle",
+            "le forum fourni avec une notice",
+            "le forum qui ne pratique pas le putsch",
+            "le forum qui plie, mais ne cède... qu'en cas de pépin",
+            "le forum qui désacralise le guet-apens",
+            "le forum qui ne mange pas de graines",
+            "le forum sans alcool",
+            "le forum qui ne confond pas un clafoutis et une part de clafoutis",
+            "le forum qui sait boire du lait à la paille par les trous de nez",
+            "le forum qui noie la peau de l’ours avant d’avoir vendu le poisson",
+            "le forum en chair et en personne",
+            "le forum à notre souverain, rain rain",
+            "le forum qui fait tenir un balai en équilibre sur le pif",
+            "le forum qui a le droit de boire du cidre",
+            "le forum qu'on peut s'en servir pour donner de l'élan à un pigeon",
+            "le forum qui cherche à vous rembobiner",
+            "le forum qui est trop jouasse d’être là",
+            "le forum pour arracher les noix",
+            "le forum qui prête du pognon à des taux vraiment pas dégueulasses",
+            "le forum qui ne dit pas qu'il est unijambiste",
+            "le forum qui passe pas par la grande porte",
+            "le forum qu'on y voit comme à travers une pelle",
+            "et ça, c'est du nougat ?",
+            "le forum qui aime bien pisser du haut des remparts",
+            "le forum qui est passé à ça de la quéquette !",
+            "le forum qui sait pas dire « fakir » en Latin",
+            "le forum qui va varier la pâte, aussi",
+            "le forum qui a atteint le paroxysme",
+            "le forum qu'y a que moi qui PEUX le voir. Vous, vous pouvez pas",
+            "le forum qui siffle des intervalles païens",
+            "le forum qui compte la demi-passe",
+            "le forum qui tient pas un stand de crêpes",
+            "le forum qui fait une pédale sur « Dies Irae »",
+            "le forum qui a des épines dans les pieds",
+            "le forum qui pisse par la fenêtre",
+            "le forum qui s'est fait tatouer « J'aime le raisin de table » sur la miche droite."
+        );
+
+        return $quotes[rand(0, count($quotes)-1)];
     }
 
 }

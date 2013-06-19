@@ -10,6 +10,11 @@
 if (!defined('PUN'))
 	exit;
 
+if ( $pun_user['style'] == 'OnEnAGros-v5' ) {
+    require 'header-v5.php';
+    return false;
+}
+
 // Send no-cache headers
 header('Expires: Thu, 21 Jul 1977 07:30:00 GMT'); // When yours truly first set eyes on this world! :)
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');

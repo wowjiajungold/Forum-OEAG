@@ -9,30 +9,34 @@
   <body>
 
     <div id="pun<pun_page>" class="pun">
+
       <div class="punwrap">
 
         <div id="brdheader" class="block">
-        <div class="box">
+
           <div id="brdtitle" class="inbox">
             <pun_navlinks>
             <pun_title>
           </div>
-        </div>
-        <div id="brdtopblock" class="block">
-          <pun_status>
-          <pun_announcement>
-        </div>
-      </div>
 
-      <div id="brdmain">
-        <pun_main>
-      </div>
+          <div id="brdtopblock" class="block">
+            <pun_status>
+            <pun_announcement>
+          </div>
 
-      <pun_footer>
+        </div>
+
+        <div id="brdmain">
+          <pun_main>
+        </div>
+
+        <pun_footer>
+
+      </div>
 
     </div>
 
-  </div>
-  <div id="player"></div>
+    <div id="player"></div>
+
   </body>
 </html>

@@ -26,4 +26,8 @@ $(window).load(function() {
         });
         
     });
+    
+    $('.nav a, .brdmenu a').tooltip({
+        placement: 'bottom'
+    });
 });
