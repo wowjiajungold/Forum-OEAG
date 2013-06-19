@@ -11,7 +11,7 @@ if (!defined('PUN'))
 	exit;
 
 if ( $pun_user['style'] == 'OnEnAGros-v5' ) {
-    require 'header-v5.php';
+    require '/OnEnAGros/header-v5.php';
     return false;
 }
 
