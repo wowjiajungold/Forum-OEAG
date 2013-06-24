@@ -11,7 +11,7 @@ if (!defined('PUN'))
 	exit;
 
 if ( $pun_user['style'] == 'OnEnAGros-v5' ) {
-    require '/OnEnAGros/header-v5.php';
+    require PUN_ROOT.'OnEnAGros/header-v5.php';
     return false;
 }
 
@@ -101,6 +101,7 @@ if (!defined('PUN_ALLOW_INDEX'))
     <link rel="shortcut icon" href="style/OnEnAGros/img/favicon.png" />
 
     <script type="text/javascript" src="//code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="OnEnAGros/js/jquery.tablesorter.min.js"></script>
     <script type="text/javascript" src="OnEnAGros/js/custom.js"></script>
 <?php
 
@@ -258,8 +259,8 @@ else
 
 	if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
 	{
-		$page_topicsearches[] = '<a href="search.php?action=show_replies" title="'.$lang_common['Show posted topics'].'">'.$lang_common['Posted topics'].'</a>';
 		$page_topicsearches[] = '<a href="search.php?action=show_new" title="'.$lang_common['Show new posts'].'">'.$lang_common['New posts header'].'</a>';
+		$page_topicsearches[] = '<a href="search.php?action=show_replies" title="'.$lang_common['Show posted topics'].'">'.$lang_common['Posted topics'].'</a>';
 	}
 }
 
@@ -320,7 +321,7 @@ $tpl_temp .= "\n\t\t\t".'<div class="boxnews">';
 $tpl_temp .= "\n\t\t\t\t".'<span>Derniers articles sur le site :</span>';
 $tpl_temp .= "\n\t\t\t\t".'<ul>';
 
-/*ob_start();
+ob_start();
 
 $result_wp = $db->query("SELECT ID, post_date, post_name, post_title FROM wp_posts WHERE post_type='post' AND post_status='publish' ORDER BY post_date DESC LIMIT 2;");
 $first = true;
@@ -337,7 +338,7 @@ while($assoc = $db->fetch_assoc($result_wp)) {
 	$tpl_temp .= '><b>'.$post_date.'</b> − <a href="'.$url.'">'.$post_title.'</a></li>';
 }
 
-ob_end_clean();*/
+ob_end_clean();
 
 $tpl_temp .= "\n\t\t\t\t".'</ul>';
 $tpl_temp .= "\n\t\t\t".'</div>';

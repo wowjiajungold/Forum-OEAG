@@ -24,6 +24,7 @@ require PUN_ROOT.'lang/'.$pun_user['language'].'/search.php';
 
 // Determine if we are allowed to view post counts
 $show_post_count = ($pun_config['o_show_post_count'] == '1' || $pun_user['is_admmod']) ? true : false;
+$show_last_visit = ($pun_config['o_show_last_visit'] == '1' || $pun_user['is_admmod']) ? true : false;
 
 $username = isset($_GET['username']) && $pun_user['g_search_users'] == '1' ? pun_trim($_GET['username']) : '';
 $show_group = isset($_GET['show_group']) ? intval($_GET['show_group']) : -1;
@@ -128,6 +129,7 @@ while ($cur_group = $db->fetch_assoc($result))
 					<th class="tcl" scope="col"><?php echo $lang_common['Username'] ?></th>
 					<th class="tc2" scope="col"><?php echo $lang_common['Title'] ?></th>
 <?php if ($show_post_count): ?>					<th class="tc3" scope="col"><?php echo $lang_common['Posts'] ?></th>
+<?php endif; if ($show_last_visit): ?>					<th class="tc3" scope="col"><?php echo $oeag->lang['Last visit label'] ?></th>
 <?php endif; ?>					<th class="tcr" scope="col"><?php echo $lang_common['Registered'] ?></th>
 				</tr>
 			</thead>
@@ -144,7 +146,7 @@ if ($db->num_rows($result))
 		$user_ids[] = $cur_user_id;
 
 	// Grab the users
-	$result = $db->query('SELECT u.id, u.username, u.title, u.num_posts, u.registered, g.g_id, g.g_user_title FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id IN('.implode(',', $user_ids).') ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC') or error('Unable to fetch user list', __FILE__, __LINE__, $db->error());
+	$result = $db->query('SELECT u.id, u.username, u.title, u.num_posts, u.registered, u.last_visit, g.g_id, g.g_user_title FROM '.$db->prefix.'users AS u LEFT JOIN '.$db->prefix.'groups AS g ON g.g_id=u.group_id WHERE u.id IN('.implode(',', $user_ids).') ORDER BY '.$sort_by.' '.$sort_dir.', u.id ASC') or error('Unable to fetch user list', __FILE__, __LINE__, $db->error());
 
 	while ($user_data = $db->fetch_assoc($result))
 	{
@@ -155,6 +157,8 @@ if ($db->num_rows($result))
 					<td class="tcl"><?php echo '<a href="profile.php?id='.$user_data['id'].'">'.pun_htmlspecialchars($user_data['username']).'</a>' ?></td>
 					<td class="tc2"><?php echo $user_title_field ?></td>
 <?php if ($show_post_count): ?>					<td class="tc3"><?php echo forum_number_format($user_data['num_posts']) ?></td>
+<?php endif; ?>
+<?php if ($show_last_visit): ?>					<td class="tc3"><?php echo date( "d M Y", $user_data['last_visit']) ?></td>
 <?php endif; ?>
 					<td class="tcr"><?php echo format_time($user_data['registered'], true) ?></td>
 				</tr>

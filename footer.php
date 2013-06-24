@@ -152,6 +152,9 @@ if (defined('PUN_SHOW_QUERIES'))
 
 $tpl_temp = trim(ob_get_contents());
 $tpl_main = str_replace('<pun_footer>', $tpl_temp, $tpl_main);
+
+$tpl_main = $oeag->oeag_toolbar();
+
 ob_end_clean();
 // END SUBST - <pun_footer>
 

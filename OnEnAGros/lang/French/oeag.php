@@ -7,6 +7,10 @@ $lang_oeag = array(
     'censored usernames'       =>  'Noms d’utilisateurs censurés',
     'censored usernames info'  =>  'Cette liste contient tous les noms d’utilisateurs censurés, principalement parce qu’ils sont issus de la série et risquent d’être utilisés plusieurs fois sous diverses variantes, nuisant à la lisibilité du forum.',
 
+    // admin_options.php
+    'Last visit label'         =>  'Dernière visite',
+    'Last visit help'          =>  'Afficher la date de la dernière connexion d’un membre.',
+
     // common.php
     'Sex'                       =>  'Homme / Femme',
     'Male'                      =>  'Homme',
@@ -16,10 +20,9 @@ $lang_oeag = array(
     // index.php
     'Members online today'      =>  'Membres en ligne aujourd’hui : %s',
     'Today'                     =>  'Aujourd’hui : %s discussion%s, %s message%s',
-    'Birthday'                  =>  'Anniversaires : %s',
+    'Birthday'                  =>  'Anniversaires : ',
 
     // post.php
-    
     'Post revision'             =>  'Révision',
     'Post revision info'        =>  'Un nouveau message a été publié pendant que vous rédigié le votre ; vous pouvez le lire ci-dessus avant de valider votre message.',
     'Double post label'         =>  'Interval de double-post',

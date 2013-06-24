@@ -10,9 +10,6 @@ $lang_oeag = array(
     // admin_options.php
     'Last visit label'          =>  'Date of the last visit',
     'Last visit help'           =>  'Show the date of the last visit users connection to the forum.',
-    'Signatures subhead'        =>  'Signatures',
-    'Use signatures label'      =>  'Use images in signatures (one only)',
-    'Use signatures help'       =>  'When enabled, users will be able to insert an image into their signature.',
 
     // common.php
     'Sex'                       =>  'Man / Woman',
@@ -23,7 +20,7 @@ $lang_oeag = array(
     // index.php
     'Members online today'      =>  'Members online today: %s',
     'Today'                     =>  'Today: %s topic%s, %s message%s',
-    'Birthday'                  =>  'Birthday: %s',
+    'Birthday'                  =>  'Birthday: ',
 
     // post.php
     'Post revision'             =>  'Revision',
@@ -34,9 +31,6 @@ $lang_oeag = array(
 
     // prof_reg.php
     'Username reserved'        =>  'The username you chose, "%s" is reserved. You seem to have chosen some unquaint name, too close from an existing name or nickname used in the show... Eventualy some people will have the same idea, making the board a mess. Please be a bit more imaginative and find yourself more personnal another username!',
-    'Sig img too big'          =>  'You\'re using an image that is too big: %sx%s whereas %s authorised.',
-    'Sig img too heavy'        =>  'You\'re using an image that is heavy: %s whereas %s authorised.',
-    'Sig too much img'         =>  'You can\'t use more than one image in your signature.',
 
     // profile.php
     'Years old'                =>  'Years old',

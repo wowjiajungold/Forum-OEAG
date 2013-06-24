@@ -36,7 +36,7 @@
 
     </div>
 
-    <div id="player"></div>
+    <pun_toolbox>
 
   </body>
 </html>

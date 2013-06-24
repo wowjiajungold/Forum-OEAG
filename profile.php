@@ -1275,12 +1275,10 @@ else
 					<fieldset>
 						<legend><?php echo $lang_profile['Username and pass legend'] ?></legend>
 						<div class="infldset">
-<?php if ( $pun_user['id'] == 269 || $pun_user['id'] == 3 ) : ?>
 							<div id="wp-synchro">
 								<a href="#"><img src="OnEnAGros/img/onenagros-btn.png" alt="Créer un compte OnEnAGros!" /></a>
 								<p><small>Ce compte vous donnera accès à de nouvelles fonctionnalités du site</small></p>
 							</div>
-<?php endif; ?>
 							<input type="hidden" name="form_sent" value="1" />
 							<?php echo $username_field ?>
 <?php if ($pun_user['id'] == $id || $pun_user['g_id'] == PUN_ADMIN || ($user['g_moderator'] == '0' && $pun_user['g_mod_change_passwords'] == '1')): ?>							<p class="actions"><span><a href="profile.php?action=change_pass&amp;id=<?php echo $id ?>"><?php echo $lang_profile['Change pass'] ?></a></span></p>
@@ -1837,6 +1835,31 @@ else
 <?php
 
 	}
+
+	else if ($section == 'trophy' || $section == 'stats')
+	{
+		if ( !$pun_user['is_admmod'] || ($pun_user['g_moderator'] == '1' && $pun_user['g_mod_ban_users'] == '0'))
+			message($lang_common['Bad request'], false, '403 Forbidden');
+
+		$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_common['Profile'], $lang_profile['Section admin']);
+
+		define('PUN_ACTIVE_PAGE', 'profile');
+		require PUN_ROOT.'OnEnAGros/header-v5.php';
+
+		if ( $section == 'trophy' ) {
+			generate_profile_menu('trophy');
+			require PUN_ROOT.'OnEnAGros/Trophy.php';
+			$trophy = new Trophy();
+			$trophy->trophy_profile_view();
+		}
+		else if ( $section == 'stats' ) {
+			generate_profile_menu('stats');
+			require PUN_ROOT.'OnEnAGros/Stats.php';
+			$stats = new Decorator(new Stats());
+			$stats->stats_profile_view();
+		}
+	}
+
 	else
 		message($lang_common['Bad request']);
 

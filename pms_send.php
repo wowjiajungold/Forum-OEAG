@@ -39,6 +39,12 @@ $edit = isset($_REQUEST['edit']) ? intval($_REQUEST['edit']) : '0';
 $tid = isset($_REQUEST['tid']) ? intval($_REQUEST['tid']) : '0';
 $mid = isset($_REQUEST['mid']) ? intval($_REQUEST['mid']) : '0';
 
+if ( $pun_user['id'] == 269 ) {
+// 	var_dump($r);
+// 	var_dump($q);
+// 	var_dump($edit);
+}
+
 $errors = array();
 
 if (!empty($r) && !isset($_POST['form_sent'])) // It's a reply

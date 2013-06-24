@@ -529,7 +529,12 @@ function generate_profile_menu($page = '')
 <?php endif; ?>					<li<?php if ($page == 'display') echo ' class="isactive"'; ?>><a href="profile.php?section=display&amp;id=<?php echo $id ?>"><?php echo $lang_profile['Section display'] ?></a></li>
 					<li<?php if ($page == 'privacy') echo ' class="isactive"'; ?>><a href="profile.php?section=privacy&amp;id=<?php echo $id ?>"><?php echo $lang_profile['Section privacy'] ?></a></li>
 <?php if ($pun_user['g_id'] == PUN_ADMIN || ($pun_user['g_moderator'] == '1' && $pun_user['g_mod_ban_users'] == '1')): ?>					<li<?php if ($page == 'admin') echo ' class="isactive"'; ?>><a href="profile.php?section=admin&amp;id=<?php echo $id ?>"><?php echo $lang_profile['Section admin'] ?></a></li>
-<?php endif; ?>				</ul>
+<?php endif; ?>
+<?php if ($pun_user['id'] == 269): ?>
+					<li<?php if ($page == 'trophy') echo ' class="isactive"'; ?>><a href="profile.php?section=trophy&amp;id=<?php echo $id ?>">Trophés</a></li>
+					<li<?php if ($page == 'stats') echo ' class="isactive"'; ?>><a href="profile.php?section=stats&amp;id=<?php echo $id ?>">Statistiques</a></li>
+<?php endif; ?>
+				</ul>
 			</div>
 		</div>
 	</div>

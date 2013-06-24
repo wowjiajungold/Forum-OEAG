@@ -31,6 +31,18 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Fertigo';
+    src: url('/OnEnAGros/font/Fertigo_PRO-webfont.eot');
+    src: url('/OnEnAGros/font/Fertigo_PRO-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/OnEnAGros/font/Fertigo_PRO-webfont.woff') format('woff'),
+         url('/OnEnAGros/font/Fertigo_PRO-webfont.ttf') format('truetype'),
+         url('/OnEnAGros/font/Fertigo_PRO-webfont.svg#FertigoPRO') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 html, body {
 	min-height: 100%;
 }
@@ -54,6 +66,20 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 	padding-top: 1px;
 }
 
+/* Font
+----------------------------------------------------------------*/
+.verdana     {font-family: 'Verdana', sans-serif !important;}
+.helvetica   {font-family: 'Helvetica', sans-serif !important;}
+.georgia     {font-family: 'Georgia', sans-serif !important;}
+.tahoma      {font-family: 'Tahoma', sans-serif !important;}
+.qlassik     {font-family: 'QlassikMediumRegular', sans-serif !important; font-size: 1.2em; font-weight: lighter !important;}
+.parchment   {font-family: 'ParchmentMF', sans-serif !important; font-size: 2em;}
+.fertigo     {font-family: 'Fertigo', sans-serif !important; font-size: 1.2em;}
+.raleway     {font-family: 'Raleway', sans-serif !important; font-size: 1.2em;}
+.sans-serif  {font-family: sans-serif !important; font-size: 1.2em;}
+.serif       {font-family: serif !important; font-size: 1.2em;}
+.monospace   {font-family: monospace !important; font-size: 1.2em;}
+
 /* Bootstrap fix
 ----------------------------------------------------------------*/
 
@@ -73,13 +99,13 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 ----------------------------------------------------------------*/
 
 .pun {
-	font: 81.25%/1.462em Arial, Helvetica, sans-serif;
+	font: 81.25%/1.462em 'Raleway', Arial, Helvetica, sans-serif;
 	max-width: 1200px;
 	margin: 0px auto;
 }
 
 .pun table, .pun td, .pun th, .pun input, .pun select, .pun optgroup, .pun textarea {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: 'Raleway', Arial, Helvetica, sans-serif;
 	font-size: 1em;
 }
 
@@ -101,12 +127,12 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 }
 
 .pun h1 {
-	font:2.154em/1em "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font:2.154em/1em 'Fertigo', "Trebuchet MS", Arial, Helvetica, sans-serif;
 	padding: 7px 0;
 }
 
 .pun h2, .pun .hd h2 {
-	font: 1.462em/1em "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font: 1.462em/1em 'Fertigo', "Trebuchet MS", Arial, Helvetica, sans-serif;
 	padding: 7px 0;
     margin: 0;
 }
@@ -216,10 +242,16 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 .pun {
 	width: 1170px;
 	padding: 0 2em 2em 2em;
+	position: relative;
 }
 
 #punredirect, #punmaint {
-	padding: 60px 20% 12px 20%;
+	padding: 60px 0 0 0;
+	width: 60%;
+}
+
+#punredirect #brdmain, #punmaint #brdmain {
+	background: white;
 }
 
 #puninstall, #pundb_update {
@@ -347,6 +379,29 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 	text-shadow: 0 1px 0 #000;
 }
 
+#brdtitle .user_search {
+	position: absolute;
+	bottom: 1em;
+	right: 1em;
+}
+
+#brdtitle .user_search .search_query {
+	background-color: rgba(0, 0, 0, 0.5) !important;
+	box-shadow: 0 2px 3px #000 inset !important;
+	color: #eee;
+	font-family: 'QlassikMediumRegular', sans-serif;
+	font-size: 1.2em;
+	text-shadow: 0 1px 0 #000;
+}
+
+#brdtitle .user_search .search_submit {
+	background: transparent;
+	box-shadow: 0 0 0;
+	color: #eee;
+	font-family: 'FontAwesome';
+	text-shadow: 0 1px 0 #000;
+}
+
 #brddesc {
 	border-top-style: dotted;
 	border-top-width: 1px;
@@ -383,6 +438,28 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 
 #brdmenu li#navindex {
 	border-top: 1px solid #ddd;
+}
+
+#brdheadmenu li#navsite {
+	opacity: 0.6;
+}
+
+#brdheadmenu li#navsite:hover {
+	opacity: 0.9;
+}
+
+#brdheadmenu li#navsite,
+#brdheadmenu li#navsite:hover {
+	-webkit-transition: opacity 0.3s ease;
+	   -moz-transition: opacity 0.3s ease;
+	     -o-transition: opacity 0.3s ease;
+		transition: opacity 0.3s ease;
+}
+
+#brdheadmenu li#navsite img {
+	height: 1.5em;
+	margin-bottom: -0.1em;
+	width: 1.5em;
 }
 
 #brdmenu a:link, #brdmenu a:visited {
@@ -653,10 +730,14 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 
 #announce .quote {
 	color: #666;
-	font-family: 'QlassikMediumRegular', sans-serif;
-	font-size: 1.1em;
+	font-family: 'ParchmentMF', sans-serif;
+	font-size: 2em;
 	font-weight: lighter;
 	padding: 0.25em 0 0 0;
+}
+
+#announce p {
+	display: none;
 }
 
 /* Stats
@@ -1033,10 +1114,11 @@ html, body, .pun table, .pun div, .pun form, .pun p, .pun h1, .pun h2, .pun h3, 
 
 #punindex td.tc2, #punindex td.tc3, #punindex td.tcr, .pun #vf td.tc2, .pun #vf td.tc3,
 .pun #vf td.tcr, #punindex td.tcl div.forumdesc, .pun #vf td.tcl span {
-	font-size: 0.923em;
+	font-size: 1em;
 }
 
 .pun #vf td.tcl a {
+	font-family: 'Fertigo', sans-serif;
 	font-weight: bold;
 }
 
@@ -1183,8 +1265,32 @@ MAIN POSTS
 }
 
 .pun .blockpost .postleft .postavatar {
+	border-radius: 0.4em;
 	display: block;
 	margin: 0 0 4px 0;
+}
+
+.pun .blockpost .postleft .avatar {
+	height: 140px;
+	position: relative;
+	width: 140px;
+}
+
+.pun .blockpost .postleft .avatar::after {
+	border: 1px solid rgba(255, 255, 255, 0.2) !important;
+	border-radius: 0.4em;
+	content: ' ';
+	position: absolute;
+	height: 138px;
+	left: 0;
+	top: 0;
+	width: 138px;
+}
+
+.pun .blockpost .postleft .avatar img {
+	border-radius: 0.4em;
+	height: 140px;
+	width: 140px;
 }
 
 .pun .blockpost .postright {
@@ -1377,7 +1483,9 @@ MAIN POSTS
 }
 
 .pun .postmsg img.smile, #punhelp samp img.smile {
-    vertical-align: middle;
+	height: auto;
+	vertical-align: middle;
+	width: auto;
 }
 
 .pun .postmsg .postimg img {
@@ -1672,7 +1780,7 @@ MAIN FORMS
 }
 
 .pun #postpreview, .pun #posterror {
-	margin-bottom: 12px;
+	margin-bottom: 4em;
 }
 
 .pun #postpreview .postright {
@@ -1778,7 +1886,7 @@ PROFILES (+ ADMIN MENU)
 #viewprofile dt, #adstats dt {
 	padding: 7px 0;
 	position: absolute;
-	width: 13em;
+	width: 22em;
 	left: 0;
 }
 
@@ -1813,7 +1921,7 @@ PROFILES (+ ADMIN MENU)
 #viewprofile dd, #adstats dd {
 	border-style: none none solid none;
 	border-width: 1px;
-	padding: 7px 0 7px 13em;
+	padding: 7px 0 7px 24em;
 }
 
 /*****************************************************************
@@ -2052,8 +2160,10 @@ html, body, .pun {
 
 .pun .blockpost {
 	background: #333 url(/OnEnAGros/style/OnEnAGros/img/h2_bg.png) -90px -70px no-repeat;
+	border-radius: 3px;
 	border-top: 3px solid #222;
 	box-shadow: 0 1px 2px #999;
+	margin: 2em 0;
 }
 
 .pun .blockpost h2 {
@@ -2275,7 +2385,7 @@ html, body, .pun {
 ----------------------------------------------------------------*/
 
 div.scenario {
-    background-image: url(/OnEnAGros/style/OnEnAGros/img/sc_bg.jpg);
+    background-image: url(/OnEnAGros/img/sc_bg.jpg);
     border: 1px solid #000;
     -webkit-box-shadow: black 5px 5px 20px;
     -khtml-box-shadow: black 5px 5px 20px;
@@ -2417,25 +2527,100 @@ table thead {
     font-size: 0.8em;
 }
 
+.trophy {
+	float: left;
+	min-height: 16em;
+	text-align: center;
+	width: 22em;
+}
 
+.trophy-icon {
+	margin: 0 auto !important;
+	position: relative;
+	text-align: center;
+	width: 5em;
+}
 
+.icon-trophy-gold {
+	color: #f3b900;
+	font-size: 5em !important;
+	position: relative;
+	text-shadow: 0 0 1px #222;
+}
 
+.icon-trophy-gold::after {
+	color: transparent;
+	content: attr(title);
+	font-size: 0.9em;
+	left: 3px;
+	position: absolute;
+	text-shadow: 0 0 8px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.05);
+	top: 3px;
+}
 
+.icon-trophy-medal {
+	color: #ffe591;
+	font-size: 1.5em;
+	left: 1.2em;
+	position: absolute;
+	text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.25), -1px -1px 0 rgba(255, 255, 255, 0.75);
+	top: 0.75em;
+}
 
+.toolbar {
+	background: #222;
+	box-shadow: 0 1px 1px #000, 0 -4px 1px #2b2b2b inset;
+	display: none;
+	font-family: 'Raleway', sans-serif;
+	font-size: 0.85em;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 9999;
+}
 
+.toolbar ul {
+	margin: 0 auto;
+	padding: 0;
+	width: 1170px;
+}
 
+.toolbar li {
+	display: inline-block;
+	line-height: 1.5em;
+	margin: 0;
+	padding: 0.5em;
+}
 
+.toolbar li:hover {
+	background: #2b2b2b;
+}
 
+.toolbar li.logout,
+.toolbar li.avatar {
+	float: right;
+	padding: 0.5em 1em;
+}
 
+.toolbar .avatar img {
+	border-radius: 0.3em;
+	float: left;
+	height: 1.5em;
+	margin-right: 0.5em;
+	width: 1.5em;
+}
 
+.toolbar a {
+	color: #888;
+	text-decoration: none;
+	text-shadow: 0 1px 0 #111;
+}
 
-
-
-
-
-
-.pun {
-	
+.toolbar li:hover a,
+.toolbar a:hover {
+	color: #fff;
+	text-decoration: none;
+	text-shadow: 0 1px 0 #000;
 }
 
 .pun .blockpost .postleft,

@@ -5,6 +5,7 @@
 /**
  * Implement Wikilike links 
  */
+if ( !function_exists('do_wikilinks') ) :
 function do_wikilinks( $text )
 {
 	global $db;
@@ -42,11 +43,12 @@ function do_wikilinks( $text )
 	
 	return $link;
 }
-
+endif;
 
 /**
  * Parse the contents of [livre] bbcode
  */
+if ( !function_exists('handle_livre_tag') ) :
 function handle_livre_tag( $livre, $episodes = '' )
 {
 	global $db;
@@ -97,11 +99,4 @@ function handle_livre_tag( $livre, $episodes = '' )
 
 	return $ret;
 }
-
-
-
-
-
-
-
-
+endif;

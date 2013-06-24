@@ -13,6 +13,8 @@ $pattern[] = '#\[video\]([^\[<]*?)/video/([^_\[<]*?)_([^\[<]*?)\[/video\]#ms';
 $pattern[] = '#\[video=([0-9]+),([0-9]+)\]([^\[<]*?)/video/([^_\[<]*?)_([^\[<]*?)\[/video\]#ms';
 $pattern[] = '#\[video\]([^\[<]*?)/(v/|watch\?v=)([^\[<]*?)\[/video\]#ms';
 $pattern[] = '#\[video=([0-9]+),([0-9]+)\]([^\[<]*?)/(v/|watch\?v=)([^\[<]*?)\[/video\]#ms';
+$pattern[] = '#\[video\]vimeo.com/([0-9]+?)\[/video\]#ms';
+$pattern[] = '#\[video=([0-9]+),([0-9]+)\]vimeo.com/([0-9]+?)\[/video\]#ms';
 
 $pattern[] = '#\[scenario\](.*?)\[/scenario\]#ms';
 $pattern[] = '#\[titre\](.*?)\[/titre\]#ms';
@@ -37,6 +39,9 @@ $pattern[] = '#\[td\]{{partiel}}\[/td\]#ms';
 $pattern[] = '#\[td\](.*?)\[/td\]#ms';
 
 $pattern[] = '#\[size=([0-9]{1}|[0-9]{2})](.*?)\[/size\]#e';
+$pattern[] = '#\[font=(.*?)](.*?)\[/font\]#e';
+$pattern[] = '#\[f=(.*?)](.*?)\[/f\]#e';
+$pattern[] = '#\[icon](.*?)\[/icon\]#ms';
 
 $pattern[] = '#\[spoiler\]\s*#';
 $pattern[] = '#\[spoiler=(&quot;|"|\'|)(.*?)\\1\]#se';
@@ -55,6 +60,8 @@ $replace[] = '<object type="application/x-shockwave-flash" data="http://www.dail
 $replace[] = '<object type="application/x-shockwave-flash" data="http://www.dailymotion.com/swf/video/$4" width="$1" height="$2"><param name="movie" value="http://www.dailymotion.com/swf/video/$4" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
 $replace[] = '<object type="application/x-shockwave-flash" data="http://www.youtube.com/v/$3" width="425" height="344"><param name="movie" value="http://www.youtube.com/v/$3" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
 $replace[] = '<object type="application/x-shockwave-flash" data="http://www.youtube.com/v/$5" width="$1" height="$2"><param name="movie" value="http://www.youtube.com/v/$5" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><p>Flash required</p></object>';
+$replace[] = '<iframe src="http://player.vimeo.com/video/$1?byline=0&amp;portrait=0&amp;color=ffffff" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
+$replace[] = '<iframe src="http://player.vimeo.com/video/$3?byline=0&amp;portrait=0&amp;color=ffffff" width="$1" height="$2" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
 
 $replace[] = '</p><div class="scenario">$1</div><p>';
 $replace[] = '<div class="titre">$1</div>';
@@ -79,6 +86,9 @@ $replace[] = '<td style="background-color:#ffffdd;font-weight:bold;">Partiel</td
 $replace[] = '<td>$1</td>';
 
 $replace[] = '$oeag->oeag_size_bbcode(\'$1\', \'$2\')';
+$replace[] = '$oeag->oeag_font_bbcode(\'$1\', \'$2\', \'p\')';
+$replace[] = '$oeag->oeag_font_bbcode(\'$1\', \'$2\', \'span\')';
+$replace[] = '<i class="icon-$1"></i>';
 
 $replace[] = '</p><div class="quotebox" onclick="pchild=this.getElementsByTagName(\'p\'); if(pchild[0].style.visibility!=\'hidden\'){pchild[0].style.visibility=\'hidden\';}else{pchild[0].style.visibility=\'\';}"><cite>Spoiler :<br /><span style="font-weight:normal;font-size:80%;">(Cliquez pour afficher)</span></cite><blockquote><div><p style="visibility:hidden;">';
 $replace[] = '"</p><div class=\"quotebox\" onclick=\"pchild=this.getElementsByTagName(\'p\'); if(pchild[0].style.visibility!=\'hidden\'){pchild[0].style.visibility=\'hidden\';}else{pchild[0].style.visibility=\'\';}\"><cite>Spoiler : ".str_replace(array(\'[\', \'\\"\'), array(\'&#91;\', \'"\'), \'$2\')." <br /><span style=\"font-weight:normal;font-size:80%;\">(Cliquez pour afficher)</span></cite><blockquote><div><p style=\"visibility:hidden;\">$1"';

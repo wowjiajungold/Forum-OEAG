@@ -109,7 +109,7 @@ class OnEnAGros {
             
             $ret .= "\t\t\t".'<dl id="birthdaylist" class="clearb">'."\n\t\t\t\t".'<dt><strong>'.$this->lang['Birthday'].' </strong></dt>'."\n";
             foreach ( $birthdays as $birthday )
-                $ret .= "\t\t\t\t".'<dd><a href="profile.php?id='.$birthday[0].'">'.pun_htmlspecialchars( $birthday[1] ).'</a> ('.calculAge( $birthday[2] ).')</dd>';
+                $ret .= "\t\t\t\t".'<dd><a href="profile.php?id='.$birthday[0].'">'.pun_htmlspecialchars( $birthday[1] ).'</a> ('.$this->oeag_get_age( $birthday[2] ).')</dd>';
             $ret .= "\n\t\t\t".'</dl>'."\n";
         }
         else
@@ -174,7 +174,7 @@ class OnEnAGros {
                 'user_avatar'   => generate_avatar_markup('h0'),
                 'user_title'    => '',
                 'user_info'     => array(),
-                'user_contacts' => '',
+                'user_contacts' => array(),
                 'signature'     => '',
                 'is_online'     => '',
             );
@@ -239,24 +239,24 @@ class OnEnAGros {
         
         global $tags, $tags_block, $tags_inline, $tags_trim, $tags_quotes, $tags_limit_bbcode, $tags_fix;
         
-        $new_tags = array('size', 'spoiler', 'acronym', 'q', 'sup', 'sub', 'left', 'right', 'center', 'justify', 'video', 'scenario', 'titre', 'intro', 'texte', 'perso', 'didascalie', 'noir', 'table', 'tr', 'th', 'td');
-        $tags = array_merge($tags, $new_tags);
+        $new_tags = array('size', 'spoiler', 'acronym', 'q', 'sup', 'sub', 'left', 'right', 'center', 'justify', 'video', 'scenario', 'titre', 'intro', 'texte', 'perso', 'didascalie', 'noir', 'table', 'tr', 'th', 'td', 'font', 'icon');
+        $tags = @array_merge( $tags, $new_tags );
     
         // Block tags, block tags can only go within another block tag, they cannot be in a normal tag
-        $new_tags = array('spoiler', 'left', 'right', 'center', 'justify', 'scenario', 'intro', 'texte', 'didascalie', 'table', 'tr', 'th', 'td');
-        $tags_block = array_merge($tags_block, $new_tags);
+        $new_tags = array('spoiler', 'left', 'right', 'center', 'justify', 'scenario', 'intro', 'texte', 'didascalie', 'table', 'tr', 'th', 'td', 'font', 'icon');
+        $tags_block = @array_merge($tags_block, $new_tags);
         
         // Inline tags, we do not allow new lines in these
         $new_tags = array('acronym', 'q', 'sup', 'sub', 'video', 'titre', 'perso');
-        $tags_inline = array_merge($tags_inline, $new_tags);
+        $tags_inline = @array_merge($tags_inline, $new_tags);
         
         // Tags we trim interior space
         $new_tags = array('video'/*, 'table', 'tr', 'th', 'td'*/);
-        $tags_trim = array_merge($tags_trim, $new_tags);
+        $tags_trim = @array_merge($tags_trim, $new_tags);
         
         // Tags we remove quotes from the argument
         $new_tags = array('video');
-        $tags_quotes = array_merge($tags_quotes, $new_tags);
+        $tags_quotes = @array_merge($tags_quotes, $new_tags);
         
         /*$tags_limit_bbcode = array(
             '*'         => array('b', 'i', 'u', 's', 'ins', 'del', 'em', 'color', 'colour', 'url', 'email', 'list', 'img', 'code', 'topic', 'post', 'forum', 'user'),
@@ -297,7 +297,7 @@ class OnEnAGros {
         
         // Tags we can automatically fix bad nesting
         $new_tags = array('spoiler'); 
-        $tags_fix = array_merge($tags_fix, $new_tags);
+        $tags_fix = @array_merge($tags_fix, $new_tags);
         
         $ret = array(
             'tags'               => $tags,
@@ -350,6 +350,27 @@ class OnEnAGros {
             $size = $s;
     
         return '<span style="font-size:'.$size.'px;">'.$t.'</span>';
+    }
+
+    /**
+     * Add a [font] | [f] BBCode
+     * 
+     * @param int $f text font. Should be allowed.
+     * @param string $t text
+     * @param string $p HTML container
+     * @return HTML markup
+     * 
+     * @since OnEnAGros 1.5.3
+     */
+    public static function oeag_font_bbcode( $f, $t, $p ) {
+        
+        $f = strtolower( $f );
+        
+        if ( in_array( $f, array( 'verdana', 'helvetica', 'georgia', 'tahoma', 'qlassik', 'parchment', 'fertigo', 'raleway', 'sans-serif', 'serif', 'monospace' ) )
+          && in_array( $p, array( 'p', 'span' ) ) )
+            return sprintf( '<%s class="%s">%s</%s>', $p, $f, $t, $p );
+        else
+            return sprintf( '<span class="verdana">%s</span>', $t );
     }
 
     /**
@@ -545,14 +566,14 @@ class OnEnAGros {
      */
     public function oeag_prof_reg_sex_form() {
         
-        global $pun_user;
+        global $user;
         
         $d = $m = $y = '';
         $l = array( "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" );
         $thisyear = date("Y");
         
-        if ( !empty( $pun_user['birthdate'] ) ) {
-            $t = explode( "/", $pun_user['birthdate'] );
+        if ( !empty( $user['birthdate'] ) ) {
+            $t = explode( "/", $user['birthdate'] );
             $d = $t[0];
             $m = $t[1];
             $y = $t[2];
@@ -592,14 +613,14 @@ class OnEnAGros {
      */
     public function oeag_prof_reg_birthdate_form() {
         
-        global $pun_user;
+        global $user;
 
         echo "\t\t\t\t\t\t\t".'<label>'.$this->lang['Sex'].'<br />'."\n";
         echo "\t\t\t\t\t\t\t\t".'<select name="form[sex]">'."\n";
-        echo "\t\t\t\t\t\t\t\t\t".'<option value=""'.( $pun_user['sex'] == null ? ' selected="selected"' : '' ).'>--</option>'."\n";
-        echo "\t\t\t\t\t\t\t\t\t".'<option value="0"'.( $pun_user['sex'] == "0" ? ' selected="selected"' : '' ).'>'.$this->lang['Male'].'</option>'."\n";
-        echo "\t\t\t\t\t\t\t\t\t".'<option value="1"'.( $pun_user['sex'] == "1" ? ' selected="selected"' : '' ).'>'.$this->lang['Female'].'</option>'."\n";
-        echo "\t\t\t\t\t\t\t\t\t".'<option value="2"'.( $pun_user['sex'] == "2" ? ' selected="selected"' : '' ).'>'.$this->lang['Bigg'].'</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value=""'.( $user['sex'] == null ? ' selected="selected"' : '' ).'>--</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="0"'.( $user['sex'] == "0" ? ' selected="selected"' : '' ).'>'.$this->lang['Male'].'</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="1"'.( $user['sex'] == "1" ? ' selected="selected"' : '' ).'>'.$this->lang['Female'].'</option>'."\n";
+        echo "\t\t\t\t\t\t\t\t\t".'<option value="2"'.( $user['sex'] == "2" ? ' selected="selected"' : '' ).'>'.$this->lang['Bigg'].'</option>'."\n";
         echo "\t\t\t\t\t\t\t\t".'</select>'."\n";
         echo "\t\t\t\t\t\t\t".'</label>'."\n";
 
@@ -670,11 +691,11 @@ class OnEnAGros {
         
         global $tid, $pun_user, $cur_posting, $_POST, $errors;
 
-        $ret = array();
+        $ret = $_errors = array();
 
         if ( $tid && !isset( $_POST['preview'] ) )
             if( $pun_user['last_post'] != '' && $pun_user['username'] == $cur_posting['last_poster'] && ( time() - $cur_posting['last_post'] ) < ( $pun_user['g_double_post'] * 60 ) )
-                $_errors = sprintf( $this->lang['Double post'], $pun_user['g_double_post'] );
+                $_errors[] = sprintf( $this->lang['Double post'], $pun_user['g_double_post'] );
         
         return array(
             'errors' => array_merge( $errors, $_errors ),
@@ -833,7 +854,8 @@ class OnEnAGros {
             'errors' => array_merge( $errors, $_errors )
         );
     }
-/**
+
+    /**
      * Random quote generator
      * 
      * @return string a random quote
@@ -902,6 +924,52 @@ class OnEnAGros {
         );
 
         return $quotes[rand(0, count($quotes)-1)];
+    }
+
+    public function oeag_easter_search() {
+        
+        global $keywords;
+        
+        echo 'ping';
+        
+        $s = strtolower( $keywords );
+        
+        $poulette = ( 
+               false !== strstr( $s, 'elle est ou la poulette' )
+            && false !== strstr( $s, 'elle est où la poulette' )
+            && false !== strstr( $s, 'ou elle est la poulette' )
+            && false !== strstr( $s, 'où elle est la poulette' )
+        );
+        
+        if ( $poulette )
+            message( 'Elle est bien cachée ?' );
+        
+    }
+
+    /**
+     * Display lateral toolbox
+     * 
+     * @since OnEnAGros 5.0
+     */
+    public function oeag_toolbar() {
+        
+        global $lang_common, $tpl_main, $pun_user;
+        
+        $tpl_temp = array();
+
+        $tpl_temp[] = '      <div id="oeag-toolbar" class="toolbar">';
+        $tpl_temp[] = '        <ul>';
+        $tpl_temp[] = '          <li><a href="#brdheader" data-original-title="Haut de la page"><i class="icon-chevron-up"></i></a></li>';
+        $tpl_temp[] = '          <li><a href="#brdheader" data-original-title="Bas de la page"><i class="icon-chevron-down"></i></a></li>';
+        $tpl_temp[] = '          <li><a href="http://forum.onenagros.org/" data-original-title="Accueil"><i class="icon-home"></i></a></li>';
+        $tpl_temp[] = '          <li><a href="http://forum.onenagros.org/search.php?action=show_new" data-original-title="'.$lang_common['New posts header'].'"><i class="icon-star"></i></a></li>';
+        $tpl_temp[] = '          <li><a href="http://forum.onenagros.org/search.php?action=show_replies" data-original-title="'.$lang_common['Posted topics'].'"><i class="icon-comment"></i></a></li>';
+        $tpl_temp[] = '          <li class="logout"><a href="login.php?action=out&amp;id='.$pun_user['id'].'&amp;csrf_token='.pun_hash($pun_user['id'].pun_hash(get_remote_address())).'" data-original-title="'.$lang_common['Logout'].'"><i class="icon-signout"></i></a></li>';
+        $tpl_temp[] = '          <li class="avatar"><a href="http://forum.onenagros.org/profile.php?id='.$pun_user['id'].'" data-original-title="'.$lang_common['Profile'].'">'.generate_avatar_markup($pun_user['id']).''.$pun_user['username'].'</a></li>';
+        $tpl_temp[] = '        </ul>';
+        $tpl_temp[] = '      </div>';
+
+        return $tpl_main = str_replace('<pun_toolbox>', implode( '', $tpl_temp ), $tpl_main);
     }
 
 }

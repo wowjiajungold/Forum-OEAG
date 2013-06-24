@@ -10,6 +10,8 @@
 if (!defined('PUN'))
 	exit;
 
+global $db, $oeag;
+
 // Send no-cache headers
 header('Expires: Thu, 21 Jul 1977 07:30:00 GMT'); // When yours truly first set eyes on this world! :)
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
@@ -95,9 +97,11 @@ if (!defined('PUN_ALLOW_INDEX'))
     <link rel="stylesheet" type="text/css" href="style/<?php echo $pun_user['style'].'.css' ?>" />
     <!--<link rel="stylesheet" type="text/css" href="OnEnAGros/css/bootstrap.min.css" />-->
     <link rel="stylesheet" type="text/css" href="OnEnAGros/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Raleway:400" />
     <link rel="shortcut icon" href="OnEnAGros/img/favicon.png" />
 
     <script type="text/javascript" src="//code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="OnEnAGros/js/jquery.tablesorter.min.js"></script>
     <script type="text/javascript" src="OnEnAGros/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="OnEnAGros/js/custom.js"></script>
 <?php
@@ -181,8 +185,23 @@ $tpl_main = str_replace('<pun_page>', htmlspecialchars(basename($_SERVER['PHP_SE
 // $tpl_main = str_replace('<pun_title>', '<h1><a href="index.php">'.pun_htmlspecialchars($pun_config['o_board_title']).'</a></h1>', $tpl_main);
 if ( $pun_user['is_guest'] )
 	$tpl_main = str_replace('<pun_title>', '', $tpl_main);
-else
-	$tpl_main = str_replace('<pun_title>', '<div class="nav user_welcome"><span class="user_name">'.pun_htmlspecialchars($pun_user['username']).'</span><span class="user_title">'.pun_htmlspecialchars($pun_user['title']).'</span></div>', $tpl_main);
+else {
+	$pun_title   = array();
+	$pun_title[] = '          <div class="nav user_welcome">'."\n";
+	$pun_title[] = '              <span class="user_name">'.pun_htmlspecialchars($pun_user['username']).'</span>'."\n";
+	$pun_title[] = '              <span class="user_title">'.pun_htmlspecialchars($pun_user['title']).'</span>'."\n";
+	$pun_title[] = '          </div>'."\n";
+
+	$pun_title[] = '          <div class="nav user_search">'."\n";
+	$pun_title[] = '              <form id="search" method="get" action="search.php">'."\n";
+	$pun_title[] = '                  <input type="hidden" name="action" value="search" />'."\n";
+	$pun_title[] = '                  <input type="text" class="search_query" name="keywords" size="24" placeholder="Elle est où la poulette ?" maxlength="100" />'."\n";
+	$pun_title[] = '                  <input type="submit" class="search_submit icon-search" name="search" value="&#xf002;" accesskey="s">'."\n";
+	$pun_title[] = '              </form>'."\n";
+	$pun_title[] = '          </div>'."\n";
+
+	$tpl_main = str_replace('<pun_title>', implode( '', $pun_title ), $tpl_main);
+}
 // END SUBST - <pun_title>
 
 
@@ -207,8 +226,10 @@ if (!$pun_user['is_guest'])
 if ($pun_config['o_rules'] == '1' && (!$pun_user['is_guest'] || $pun_user['g_read_board'] == '1' || $pun_config['o_regs_allow'] == '1'))
 	$links[] = '<li id="navrules" class="nav '.((PUN_ACTIVE_PAGE == 'rules') ? 'isactive' : '').'"><a href="misc.php?action=rules" data-original-title="'.$lang_common['Rules'].'"><i class="icon-legal"></i></a></li>';
 
-if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
-	$links[] = '<li id="navsearch" class="nav '.((PUN_ACTIVE_PAGE == 'search') ? 'isactive' : '').'"><a href="search.php" data-original-title="'.$lang_common['Search'].'"><i class="icon-search"></i></a></li>';
+//if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
+//	$links[] = '<li id="navsearch" class="nav '.((PUN_ACTIVE_PAGE == 'search') ? 'isactive' : '').'"><a href="search.php" data-original-title="'.$lang_common['Search'].'"><i class="icon-search"></i></a></li>';
+
+$links[] = '<li id="navsite" class="nav"><a href="http://www.onenagros.org/" data-original-title="Allez sur le site OnEnAGros!"><img src="/OnEnAGros/img/favicon.png" alt="OnEnAGros!"></a></li>';
 
 // Are there any additional navlinks we should insert into the array before imploding it?
 if ($pun_user['g_read_board'] == '1' && $pun_config['o_additional_navlinks'] != '')
@@ -218,7 +239,7 @@ if ($pun_user['g_read_board'] == '1' && $pun_config['o_additional_navlinks'] != 
 		// Insert any additional links into the $links array (at the correct index)
 		$num_links = count($extra_links[1]);
 		for ($i = 0; $i < $num_links; ++$i)
-			array_splice($links, $extra_links[1][$i], 0, array('<li id="navextra'.($i + 1).'">'.$extra_links[2][$i].'</li>'));
+			array_splice($links, $extra_links[1][$i], 0, array('<li id="navextra'.($i + 1).'" class="nav">'.$extra_links[2][$i].'</li>'));
 	}
 }
 
@@ -282,14 +303,14 @@ else
 	$page_statusinfo[] = '<span><i class="icon-time"></i> '.sprintf( $lang_common['Last visit'], format_time( $pun_user['last_visit'] ) ).'</span>';
 	$page_statusinfo[] = '<span><i class="icon-edit"></i> '.$pun_user['num_posts'].' '.( $pun_user['num_posts'] > 1 ? strtolower( $lang_common['Posts'] ) : strtolower( $lang_common['Message'] ) ).'</span>';
 
-	$result = $db->query( 'SELECT COUNT(*) AS c FROM '.$db->prefix.'topics WHERE poster LIKE "'.$pun_user['username'].'"' );
-	if ( $r = $db->fetch_assoc( $result ) )
-		$page_statusinfo[] = '<span><i class="icon-list"></i> '.$r['c'].' '.strtolower( $lang_common['Topic'] ).( $r['c'] > 1 ? 's' : '' ).'</span>';
+	$results = $db->query( 'SELECT COUNT(*) AS c FROM '.$db->prefix.'topics WHERE poster LIKE "'.$pun_user['username'].'"' );
+	if ( $result = $db->fetch_assoc( $results ) )
+		$page_statusinfo[] = '<span><i class="icon-list"></i> '.$result['c'].' '.strtolower( $lang_common['Topic'] ).( $result['c'] > 1 ? 's' : '' ).'</span>';
 
 	if ($pun_user['g_read_board'] == '1' && $pun_user['g_search'] == '1')
 	{
-		$page_topicsearches[] = '<li class="brdmenu show_replies"><a href="search.php?action=show_replies" title="'.$lang_common['Show posted topics'].'" data-original-title="'.$lang_common['Posted topics'].'"><i class="icon-star"></i></a></li>';
-		$page_topicsearches[] = '<li class="brdmenu show_new"><a href="search.php?action=show_new" title="'.$lang_common['Show new posts'].'" data-original-title="'.$lang_common['New posts header'].'"><i class="icon-comment"></i></a></li>';
+		$page_topicsearches[] = '<li class="brdmenu show_new"><a href="search.php?action=show_new" title="'.$lang_common['Show new posts'].'" data-original-title="'.$lang_common['New posts header'].'"><i class="icon-star"></i></a></li>';
+		$page_topicsearches[] = '<li class="brdmenu show_replies"><a href="search.php?action=show_replies" title="'.$lang_common['Show posted topics'].'" data-original-title="'.$lang_common['Posted topics'].'"><i class="icon-comment"></i></a></li>';
 	}
 }
 
@@ -312,7 +333,8 @@ $first = true;
 
 while ( $assoc = $db->fetch_assoc( $result_wp ) ) {
 	$post_date = substr( $assoc['post_date'], 8, 2 )."/".substr( $assoc['post_date'], 5, 2 );
-	$post_title = ( strlen( $assoc['post_title'] ) > 25 ? substr( $assoc['post_title'], 0, 25 ).'…' : $assoc['post_title'] );
+	$post_title = strip_tags( $assoc['post_title'] );
+	$post_title = ( strlen( $post_title ) > 25 ? substr( $post_title, 0, 25 ).'…' : $post_title );
 	$url = "http://www.onenagros.org/".substr( $assoc['post_date'], 0, 10 )."-".$assoc['post_name'].".html";
 	$wp_page[] = '<li class="wp_post"><span class="wp_post_date">'.$post_date.'</span><span class="wp_post_url"><a href="'.$url.'">'.$post_title.'</span></a></li>';
 }
@@ -379,6 +401,7 @@ if ($pun_user['is_admmod'])
 $tpl_temp .= "\n\t\t\t\t".'</div>';
 $tpl_temp .= "\n\t\t\t".'</div>';
 
+$tpl_main = str_replace('<pun_announcement>', '', $tpl_main);
 $tpl_main = str_replace('<pun_status>', $tpl_temp, $tpl_main);
 // END SUBST - <pun_status>
 

@@ -16,7 +16,7 @@ $(window).load(function() {
         e.preventDefault();
         $.ajax({
             type: 'GET',
-            url:  '/wp_synchro.php',
+            url:  '/OnEnAGros/wp_synchro.php',
             success: function(data) {
                 $('#wp-synchro').html(data);
             },
@@ -27,7 +27,24 @@ $(window).load(function() {
         
     });
     
-    $('.nav a, .brdmenu a').tooltip({
+    $('.nav a, .brdmenu a, .toolbar a').tooltip({
         placement: 'bottom'
+    });
+    
+    $(window).scroll(function() {
+        if ( window.scrollY > 460 )
+            $('#oeag-toolbar').show();
+        else
+            $('#oeag-toolbar').hide();
+    });
+    
+    $('a').click(function(e) {
+        console.log(this.hash);
+        if ( $(this.hash).length > 0 ) {
+            e.preventDefault();
+            $('body').animate({
+                scrollTop: ( $(this.hash).offset().top - 42 )
+            }, 250);
+        }
     });
 });
